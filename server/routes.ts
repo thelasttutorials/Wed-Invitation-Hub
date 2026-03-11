@@ -62,9 +62,18 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
+  // Converts empty-string date fields to null so PostgreSQL doesn't reject them
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function sanitizeDates(body: any): any {
+    for (const key of ["akadDate", "receptionDate"]) {
+      if (body[key] === "" || body[key] === undefined) body[key] = null;
+    }
+    return body;
+  }
+
   app.post("/api/invitations", requireAdmin, async (req, res) => {
     try {
-      const body = req.body;
+      const body = sanitizeDates({ ...req.body });
       if (!body.slug) {
         const base = slugify(`${body.groomName || ""} ${body.brideName || ""}`);
         let slug = base;
@@ -102,8 +111,15 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       const id = parseInt(req.params.id as string);
       if (isNaN(id)) return res.status(400).json({ error: "ID tidak valid." });
 
-      const body = req.body;
-      if (body.slug) body.slug = slugify(body.slug);
+      const body = sanitizeDates({ ...req.body });
+      if (body.slug) {
+        body.slug = slugify(body.slug);
+        // Ensure the slug isn't already taken by a DIFFERENT invitation
+        const existing = await storage.getInvitationBySlug(body.slug);
+        if (existing && existing.id !== id) {
+          return res.status(400).json({ error: "Slug sudah digunakan. Pilih nama yang berbeda." });
+        }
+      }
 
       const parsed = updateInvitationSchema.safeParse(body);
       if (!parsed.success) {
