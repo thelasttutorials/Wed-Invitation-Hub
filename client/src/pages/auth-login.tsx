@@ -62,7 +62,10 @@ export default function AuthLogin() {
     retry: false,
   });
 
+  const themeParam = searchParams.get("theme");
+
   function getPostAuthDestination() {
+    if (themeParam) return `/dashboard/new?theme=${themeParam}`;
     if (planParam) return `/pricing?autoselect=${planParam}`;
     return "/dashboard";
   }
@@ -142,7 +145,11 @@ export default function AuthLogin() {
 
   function buildOppositeHref() {
     const base = isRegister ? "/login" : "/register";
-    return planParam ? `${base}?plan=${planParam}` : base;
+    const params = new URLSearchParams();
+    if (planParam) params.set("plan", planParam);
+    if (themeParam) params.set("theme", themeParam);
+    const qs = params.toString();
+    return qs ? `${base}?${qs}` : base;
   }
 
   if (meLoading) {
@@ -185,12 +192,18 @@ export default function AuthLogin() {
                   </p>
                 </div>
 
-                {/* Plan intent banner */}
-                {planParam && (
+                {/* Intent banner — plan or theme */}
+                {(planParam || themeParam) && (
                   <div className="mb-4 bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 text-sm text-rose-700 text-center">
-                    Setelah {isRegister ? "daftar" : "masuk"}, paket{" "}
-                    <span className="font-semibold capitalize">{planParam}</span>{" "}
-                    akan langsung diproses.
+                    {themeParam ? (
+                      <>Setelah {isRegister ? "daftar" : "masuk"}, tema{" "}
+                        <span className="font-semibold capitalize">{themeParam.replace(/-/g, " ")}</span>{" "}
+                        akan langsung dipilih untuk undanganmu.</>
+                    ) : (
+                      <>Setelah {isRegister ? "daftar" : "masuk"}, paket{" "}
+                        <span className="font-semibold capitalize">{planParam}</span>{" "}
+                        akan langsung diproses.</>
+                    )}
                   </div>
                 )}
 

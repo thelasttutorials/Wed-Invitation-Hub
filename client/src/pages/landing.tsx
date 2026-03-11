@@ -53,6 +53,8 @@ export default function Landing() {
     placeholderData: HERO_DEFAULTS,
   });
 
+  const { data: me } = useQuery({ queryKey: ["/api/auth/me"], retry: false });
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
@@ -673,7 +675,7 @@ export default function Landing() {
                       </Button>
                     </a>
                     <a
-                      href="/register"
+                      href={me ? `/dashboard/new?theme=${theme.demoSlug}` : `/login?theme=${theme.demoSlug}`}
                       className="flex-1"
                       onClick={e => e.stopPropagation()}
                     >

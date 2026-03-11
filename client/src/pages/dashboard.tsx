@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, useSearch } from "wouter";
 import { useRef, useState } from "react";
 import { useSEO } from "@/lib/seo";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -396,11 +396,16 @@ type NewInvForm = z.infer<typeof newInvSchema>;
 function NewInvitationSection() {
   const { toast } = useToast();
   const [, navigate] = useLocation();
+  const searchStr = useSearch();
+  const themeFromUrl = new URLSearchParams(searchStr).get("theme") ?? "romantic-floral";
   const { data: subData } = useQuery<SubMe>({ queryKey: ["/api/subscription/me"] });
+
+  const validThemeSlugs = THEME_OPTIONS.map(t => t.value);
+  const defaultTheme = validThemeSlugs.includes(themeFromUrl) ? themeFromUrl : "romantic-floral";
 
   const form = useForm<NewInvForm>({
     resolver: zodResolver(newInvSchema),
-    defaultValues: { groomName: "", brideName: "", receptionDate: "", venueName: "", venueAddress: "", slug: "", themeSlug: "romantic-floral" },
+    defaultValues: { groomName: "", brideName: "", receptionDate: "", venueName: "", venueAddress: "", slug: "", themeSlug: defaultTheme },
   });
 
   const createMutation = useMutation({
