@@ -85,7 +85,10 @@ export default function InvitationPage() {
   });
 
   const rsvpMutation = useMutation({
-    mutationFn: (body: typeof rsvpForm) => apiRequest("POST", `/api/invitations/${slug}/rsvp`, body),
+    mutationFn: (body: typeof rsvpForm) => apiRequest("POST", `/api/invitations/${slug}/rsvp`, {
+      ...body,
+      guestCount: parseInt(String(body.guestCount), 10) || 1,
+    }),
     onSuccess: () => {
       toast({ title: "RSVP berhasil!", description: "Terima kasih atas konfirmasi kehadiranmu." });
       setRsvpForm({ guestName: guestName, attendance: "hadir", guestCount: "1", message: "" });

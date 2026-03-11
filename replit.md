@@ -23,73 +23,77 @@ A full-stack SaaS platform for digital wedding invitations in Indonesian. Built 
 | `guestbook_entries` | `wishes` | Guest messages/wishes (alias: `guestbookEntries`) |
 
 ### Notes
-- `rsvpEntries` and `guestbookEntries` are exported as **aliases** for backward compatibility with any code using the old names.
-- `invitations.slug` unique constraint is named `invitations_slug_key` in DB — matched explicitly in schema via `uniqueIndex("invitations_slug_key")` to prevent Drizzle from renaming it.
-- `admins` table is empty — must be seeded before auth is implemented.
-- `landing_settings` is seeded with 9 default keys (hero_title, hero_subtitle, hero_cta_primary, hero_cta_secondary, features_title, features_subtitle, pricing_title, pricing_subtitle, footer_tagline).
+- `rsvpEntries` and `guestbookEntries` are exported as **aliases** for backward compatibility.
+- `invitations.slug` unique constraint named `invitations_slug_key` in DB — matched via `uniqueIndex("invitations_slug_key")`.
+- Default admin seeded on startup: `admin@wedhub.com` / `admin123`
 
 ## Pages & Routes
 
 ### Frontend (Wouter)
-- `/` → `client/src/pages/landing.tsx` — Marketing landing page
-- `/invitation/:slug` → `client/src/pages/invitation.tsx` — Public invitation page per couple
-- `/admin` → `client/src/pages/admin/dashboard.tsx` — Admin dashboard (unprotected)
-- `/admin/new` → `client/src/pages/admin/new-invitation.tsx` — Create invitation
-- `/admin/:id/edit` → `client/src/pages/admin/edit-invitation.tsx` — Edit invitation
+- `/` → `landing.tsx` — Marketing landing page (dynamic hero from DB)
+- `/invite/:slug` → `invite.tsx` — **Canonical** public invitation page (with RSVP + Ucapan)
+- `/invitation/:slug` → `invitation.tsx` — Legacy backward-compat page
+- `/admin` → `dashboard.tsx` — Stats + quick links
+- `/admin/invitations` → `invitations.tsx` — CRUD list
+- `/admin/new` → `new-invitation.tsx` — Create form
+- `/admin/:id/edit` → `edit-invitation.tsx` — Edit form
+- `/admin/rsvp` → `rsvp.tsx` — View RSVP per invitation
+- `/admin/wishes` → `wishes.tsx` — View ucapan per invitation
+- `/admin/landing` → `landing.tsx` — Edit hero content
+- `/admin/login` → `login.tsx` — Auth
 
 ### Backend API (`server/routes.ts`)
+
+**Public (no auth):**
+- `GET /api/invitations/:slug` — Invitation data + loveStory + rsvp + guestbook
+- `POST /api/public/invitations/:slug/rsvp` — Submit RSVP (snake_case fields)
+- `POST /api/public/invitations/:slug/wishes` — Submit ucapan (guest_name, message)
+- `POST /api/invitations/:slug/rsvp` — Legacy RSVP endpoint (camelCase)
+- `POST /api/invitations/:slug/guestbook` — Legacy wishes endpoint
+- `GET /api/landing` — Public hero data
+- `GET /api/landing-settings` — All settings key→value
+
+**Admin (requireAdmin):**
 - `GET /api/invitations` — All invitations
-- `GET /api/invitations/id/:id` — Single by ID (+ loveStory)
-- `GET /api/invitations/:slug` — Single by slug (+ loveStory + rsvp + guestbook)
-- `POST /api/invitations` — Create (auto-generates slug from names)
-- `PATCH /api/invitations/:id` — Update (+ optional loveStory replace)
+- `GET /api/invitations/id/:id` — Single by ID + loveStory
+- `POST /api/invitations` — Create (auto-slug from names)
+- `PATCH /api/invitations/:id` — Update + loveStory replace
 - `DELETE /api/invitations/:id` — Delete
-- `GET /api/invitations/:id/rsvp` — All RSVPs for an invitation
-- `POST /api/invitations/:slug/rsvp` — Submit RSVP
-- `GET /api/invitations/:id/guestbook` — All wishes/guestbook entries
-- `POST /api/invitations/:slug/guestbook` — Submit wish
-- `GET /api/landing-settings` — All settings as key→value map
-- `GET /api/stats` — Aggregated stats (totalInvitations, totalRsvp, totalGuestbook)
+- `GET /api/invitations/:id/rsvp` — RSVPs per invitation
+- `GET /api/invitations/:id/guestbook` — Wishes per invitation
+- `GET /api/admin/landing` — Hero settings
+- `PATCH /api/admin/landing` — Update hero settings
+- `GET /api/stats` — Totals: invitations, rsvp, guestbook
 
-## Storage Layer (`server/storage.ts`)
-Real `DatabaseStorage` class — no mocks. All methods query PostgreSQL via Drizzle.
+## Key Implementation Notes
 
-Key method groups:
-- `getAdminByEmail`, `getAdminById`, `createAdmin`
-- `getAllLandingSettings`, `getLandingSetting`, `upsertLandingSetting`, `upsertManyLandingSettings`
-- `getAllInvitations`, `getInvitationBySlug`, `getInvitationById`, `createInvitation`, `updateInvitation`, `deleteInvitation`, `slugExists`
-- `getLoveStoryByInvitation`, `replaceLoveStory` (delete-all + re-insert in one call)
-- `getRsvpsByInvitation`, `createRsvp`
-- `getWishesByInvitation`, `createWish`, `deleteWish`
+### RSVP (invite.tsx)
+- Fields: `guest_name`, `attendance_status` (hadir/tidak_hadir/belum_pasti), `guest_count`, `note`
+- Pre-fills name from `?to=NamaTamu` query param
+- Shows success state after submit with "Ubah konfirmasi" option
+- Endpoint: `POST /api/public/invitations/:slug/rsvp`
 
-## Design Tokens
-- **Primary color**: Blue `217 91% 60%` (configured in `index.css`)
-- **Background**: White / Slate-50 alternating sections
-- **Border radius**: `rounded-md` (cards), `rounded-xl` (large cards)
+### Ucapan (invite.tsx)
+- Fields: `guest_name`, `message`
+- Shows list of existing wishes below form (from `data.guestbook`)
+- After submit: invalidates query, list refreshes immediately
+- Endpoint: `POST /api/public/invitations/:slug/wishes`
+
+### Landing Page Hero
+- Editable from `/admin/landing` — saves to `landing_settings` table
+- Public page fetches from `/api/landing` with fallback defaults
+- Keys: hero_title, hero_subtitle, hero_cta_primary, hero_cta_link
+
+### Date Sanitization
+- `sanitizeDates()` in routes.ts converts empty-string `akadDate`/`receptionDate` to `null` before DB insert
 
 ## Auth & Security
-
-### Admin Login
-- Login page: `/admin/login` (`client/src/pages/admin/login.tsx`)
-- Session stored via `express-session` (memory store, 7-day cookie)
+- Session via `express-session` (7-day cookie, `SESSION_SECRET` env var)
 - Passwords hashed with `bcryptjs` (cost factor 12)
-- Default admin: `admin@wedhub.com` / `admin123` (seeded on startup in `server/auth.ts`)
+- `requireAdmin` middleware protects all admin API routes
+- `AdminGuard` component protects all `/admin/*` frontend routes
 
-### Auth API
-- `POST /api/admin/login` — validates credentials, sets session
-- `POST /api/admin/logout` — destroys session
-- `GET /api/admin/me` — returns admin info if authenticated, 401 otherwise
-
-### Route Protection
-- Backend: `requireAdmin` middleware (in `server/auth.ts`) protects all admin API routes
-- Frontend: `AdminGuard` component (`client/src/components/admin-guard.tsx`) wraps all `/admin/*` routes and redirects to `/admin/login` if `GET /api/admin/me` returns 401
-
-### Protected API Routes (require session)
-`GET /api/invitations`, `GET /api/invitations/id/:id`, `POST /api/invitations`, `PATCH /api/invitations/:id`, `DELETE /api/invitations/:id`, `GET /api/invitations/:id/rsvp`, `GET /api/invitations/:id/guestbook`, `GET /api/stats`
-
-### Public API Routes (no auth required)
-`GET /api/invitations/:slug`, `POST /api/invitations/:slug/rsvp`, `POST /api/invitations/:slug/guestbook`, `GET /api/landing-settings`
-
-## Migration
-- Run `npm run db:push` to sync schema → database
-- Schema is stable; no destructive prompts expected after the `invitations_slug_key` fix
+## Development
+- Run: `npm run dev` (workflow: "Start application")
+- DB sync: `npm run db:push`
+- Default admin: `admin@wedhub.com` / `admin123`

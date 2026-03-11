@@ -294,12 +294,16 @@ export default function Landing() {
 
             {/* Desktop CTA Buttons */}
             <div className="hidden md:flex items-center gap-3">
-              <Button variant="ghost" size="sm" data-testid="button-masuk">
-                Masuk
-              </Button>
-              <Button size="sm" data-testid="button-mulai-gratis">
-                Buat Undangan
-              </Button>
+              <a href="/admin/login">
+                <Button variant="ghost" size="sm" data-testid="button-masuk">
+                  Masuk
+                </Button>
+              </a>
+              <a href="/admin/new">
+                <Button size="sm" data-testid="button-mulai-gratis">
+                  Buat Undangan
+                </Button>
+              </a>
             </div>
 
             {/* Mobile Menu Toggle */}
@@ -327,8 +331,12 @@ export default function Landing() {
               </a>
             ))}
             <div className="flex flex-col gap-2 pt-2 border-t border-slate-100">
-              <Button variant="outline" size="sm" data-testid="button-masuk-mobile">Masuk</Button>
-              <Button size="sm" data-testid="button-mulai-gratis-mobile">Buat Undangan</Button>
+              <a href="/admin/login" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="outline" size="sm" className="w-full" data-testid="button-masuk-mobile">Masuk</Button>
+              </a>
+              <a href="/admin/new" onClick={() => setMobileMenuOpen(false)}>
+                <Button size="sm" className="w-full" data-testid="button-mulai-gratis-mobile">Buat Undangan</Button>
+              </a>
             </div>
           </div>
         )}
@@ -377,15 +385,17 @@ export default function Landing() {
                 <ChevronRight className="w-4 h-4" />
               </Button>
             </a>
-            <Button
-              variant="outline"
-              size="lg"
-              data-testid="button-hero-lihat-tema"
-              className="gap-2 px-8 text-base"
-            >
-              <Eye className="w-4 h-4" />
-              {heroData.hero_cta_secondary}
-            </Button>
+            <a href="#tema">
+              <Button
+                variant="outline"
+                size="lg"
+                data-testid="button-hero-lihat-tema"
+                className="gap-2 px-8 text-base"
+              >
+                <Eye className="w-4 h-4" />
+                {heroData.hero_cta_secondary}
+              </Button>
+            </a>
           </div>
 
           {/* Stats */}
@@ -727,13 +737,15 @@ export default function Landing() {
                   ))}
                 </ul>
 
-                <Button
-                  variant={plan.highlight ? "secondary" : plan.variant}
-                  data-testid={`button-cta-pricing-${plan.name.toLowerCase()}`}
-                  className={`w-full ${plan.highlight ? "bg-white text-primary font-semibold" : ""}`}
-                >
-                  {plan.cta}
-                </Button>
+                <a href="/admin/new" className="block">
+                  <Button
+                    variant={plan.highlight ? "secondary" : plan.variant}
+                    data-testid={`button-cta-pricing-${plan.name.toLowerCase()}`}
+                    className={`w-full ${plan.highlight ? "bg-white text-primary font-semibold" : ""}`}
+                  >
+                    {plan.cta}
+                  </Button>
+                </a>
               </div>
             ))}
           </div>

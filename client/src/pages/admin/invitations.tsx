@@ -93,7 +93,7 @@ export default function AdminInvitations() {
                     </Badge>
                   </div>
                   <p className="text-slate-400 text-xs mt-0.5 truncate">
-                    /invitation/{inv.slug}
+                    /invite/{inv.slug}
                     {inv.receptionDate &&
                       ` · ${new Date(inv.receptionDate).toLocaleDateString("id-ID", {
                         day: "numeric",
