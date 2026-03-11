@@ -70,6 +70,122 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
+  // Create invitation as authenticated customer
+  app.post("/api/my-invitations", requireUser, async (req, res) => {
+    try {
+      const userId = req.session.userId!;
+      const sub = await storage.getActiveSubscription(userId);
+      const plan = sub?.plan;
+      const existing = await storage.getInvitationsByUser(userId);
+      const realCount = existing.filter(inv => !inv.slug.startsWith("demo-")).length;
+      const maxInv = plan?.maxInvitations ?? 1;
+      if (realCount >= maxInv) {
+        return res.status(403).json({ error: `Batas undangan paket ${plan?.name ?? "Gratis"} sudah tercapai (${maxInv}). Upgrade paket untuk menambah lebih banyak.` });
+      }
+      const body = sanitizeDates({ ...req.body, userId, isPublished: false });
+      const parsed = insertInvitationSchema.safeParse(body);
+      if (!parsed.success) {
+        return res.status(400).json({ error: "Data tidak valid.", details: parsed.error.flatten() });
+      }
+      // Check slug uniqueness
+      const slugBase = parsed.data.slug || slugify(`${parsed.data.groomName}-${parsed.data.brideName}`);
+      let slug = slugBase;
+      let attempt = 0;
+      while (true) {
+        const existing = await storage.getInvitationBySlug(slug);
+        if (!existing) break;
+        attempt++;
+        slug = `${slugBase}-${attempt}`;
+      }
+      const inv = await storage.createInvitation({ ...parsed.data, slug });
+      res.json(inv);
+    } catch (err) {
+      res.status(500).json({ error: "Gagal membuat undangan." });
+    }
+  });
+
+  // Delete invitation owned by customer
+  app.delete("/api/my-invitations/:id", requireUser, async (req, res) => {
+    try {
+      const userId = req.session.userId!;
+      const id = parseInt(req.params.id as string);
+      if (isNaN(id)) return res.status(400).json({ error: "ID tidak valid." });
+      const inv = await storage.getInvitationById(id);
+      if (!inv) return res.status(404).json({ error: "Undangan tidak ditemukan." });
+      if (inv.userId !== userId) return res.status(403).json({ error: "Bukan milik Anda." });
+      await storage.deleteInvitation(id);
+      res.json({ success: true });
+    } catch {
+      res.status(500).json({ error: "Gagal menghapus undangan." });
+    }
+  });
+
+  // Customer stats summary
+  app.get("/api/my-stats", requireUser, async (req, res) => {
+    try {
+      const userId = req.session.userId!;
+      const invitations = await storage.getInvitationsByUser(userId);
+      const realInvitations = invitations.filter(inv => !inv.slug.startsWith("demo-"));
+      let rsvpCount = 0;
+      let wishCount = 0;
+      let guestCount = 0;
+      await Promise.all(realInvitations.map(async (inv) => {
+        const [rsvps, wishes, guests] = await Promise.all([
+          storage.getRsvpsByInvitation(inv.id),
+          storage.getWishesByInvitation(inv.id),
+          storage.getGuestsByInvitation(inv.id),
+        ]);
+        rsvpCount += rsvps.length;
+        wishCount += wishes.length;
+        guestCount += guests.length;
+      }));
+      res.json({
+        invitationCount: realInvitations.length,
+        rsvpCount,
+        wishCount,
+        guestCount,
+      });
+    } catch {
+      res.status(500).json({ error: "Gagal memuat statistik." });
+    }
+  });
+
+  // Customer RSVP list — all RSVP from user's invitations
+  app.get("/api/my-rsvp", requireUser, async (req, res) => {
+    try {
+      const userId = req.session.userId!;
+      const invitations = await storage.getInvitationsByUser(userId);
+      const realInvitations = invitations.filter(inv => !inv.slug.startsWith("demo-"));
+      const results = await Promise.all(
+        realInvitations.map(async (inv) => {
+          const rsvps = await storage.getRsvpsByInvitation(inv.id);
+          return { invitation: inv, rsvps };
+        })
+      );
+      res.json(results.filter(r => r.rsvps.length > 0));
+    } catch {
+      res.status(500).json({ error: "Gagal memuat data RSVP." });
+    }
+  });
+
+  // Customer wishes list — all wishes from user's invitations
+  app.get("/api/my-wishes", requireUser, async (req, res) => {
+    try {
+      const userId = req.session.userId!;
+      const invitations = await storage.getInvitationsByUser(userId);
+      const realInvitations = invitations.filter(inv => !inv.slug.startsWith("demo-"));
+      const results = await Promise.all(
+        realInvitations.map(async (inv) => {
+          const wishes = await storage.getWishesByInvitation(inv.id);
+          return { invitation: inv, wishes };
+        })
+      );
+      res.json(results.filter(r => r.wishes.length > 0));
+    } catch {
+      res.status(500).json({ error: "Gagal memuat ucapan tamu." });
+    }
+  });
+
   // Must come before /:slug to avoid "id" being treated as a slug
   app.get("/api/invitations/id/:id", requireAdmin, async (req, res) => {
     try {

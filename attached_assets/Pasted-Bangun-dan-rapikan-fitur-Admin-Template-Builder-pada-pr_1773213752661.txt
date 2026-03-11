@@ -1,0 +1,391 @@
+Bangun dan rapikan fitur Admin Template Builder pada project Wed Invitation Hub agar tampil dan bekerja seperti contoh UI yang sudah ada.
+
+Jangan rewrite project dari nol.
+Jangan merusak fitur lain yang sudah berjalan seperti auth, pricing, billing, payments, invitations, RSVP, wishes, contact, privacy, dan halaman publik.
+Fokus hanya pada sistem Admin Theme Library + Template Builder + Theme Detail + Preview.
+
+TARGET UTAMA
+Saya ingin hasil akhir seperti ini:
+
+1. Ada halaman Theme Library admin
+2. Theme Library menampilkan card tema seperti contoh
+3. Setiap tema punya thumbnail, nama, deskripsi singkat, slug, badge status aktif
+4. Ada tombol Builder pada tiap card
+5. Ada tombol Buat Tema Baru
+6. Klik Builder membuka halaman builder tema
+7. Builder punya topbar seperti contoh
+8. Builder punya mode preview desktop / tablet / mobile
+9. Ada halaman detail / preview tema seperti contoh
+10. Ada tombol Gunakan Tema
+11. Semua route aktif
+12. Tidak ada blank page
+13. Tidak ada broken import
+14. Tidak ada error runtime
+15. Jangan ubah desain yang sudah bagus kecuali untuk menyesuaikan agar mirip contoh
+
+==================================================
+STEP 1 — ADMIN THEME LIBRARY
+==================================================
+
+Buat / rapikan halaman admin:
+
+/admin/templates
+atau
+/admin/themes
+
+Gunakan struktur yang sudah ada jika sudah tersedia. Jangan buat duplikasi route yang membingungkan.
+
+Halaman ini harus menampilkan Theme Library seperti contoh screenshot:
+- title: Theme Library
+- subtitle: jumlah tema tersedia
+- button kanan atas: Buat Tema Baru
+
+Setiap theme card harus menampilkan:
+- thumbnail/preview image
+- badge status aktif
+- nama tema
+- deskripsi singkat
+- slug tema
+- menu actions sederhana jika sudah ada
+- tombol Builder
+
+Tema minimal:
+- Luxury Gold
+- Romantic Floral
+- Minimal Modern
+- Classic Elegant
+- Eternal Rose
+
+Pastikan grid card rapi, responsive, dan mirip dengan contoh:
+- card clean
+- rounded corner
+- shadow halus
+- thumbnail proporsional
+- badge aktif di kanan atas
+- tombol Builder di bawah card
+
+Jangan ubah visual secara liar. Pertahankan gaya yang sudah ada dan rapikan agar lebih konsisten dengan screenshot.
+
+==================================================
+STEP 2 — KLIK CARD DAN TOMBOL BUILDER
+==================================================
+
+Pastikan setiap card tema dan tombol Builder benar-benar aktif.
+
+Flow:
+- klik card tema → buka detail tema atau builder sesuai implementasi paling masuk akal
+- klik tombol Builder → buka halaman builder tema tersebut
+
+Route yang harus aktif:
+- /admin/templates
+- /admin/templates/new
+- /admin/templates/:id/edit
+- /admin/templates/:id/preview
+- /admin/templates/:id/detail
+
+Jika lebih cocok memakai slug, boleh:
+- /admin/templates/:slug/edit
+- /admin/templates/:slug/preview
+
+Yang penting konsisten dan tidak bentrok.
+
+==================================================
+STEP 3 — HALAMAN BUILDER TEMA
+==================================================
+
+Buat / rapikan halaman builder seperti contoh screenshot kedua.
+
+Topbar builder harus berisi:
+- tombol Kembali
+- input atau title nama tema
+- tombol preview device:
+  - desktop
+  - tablet
+  - mobile
+- tombol Buat Tema / Save Theme di kanan atas
+
+Builder harus terlihat seperti editor template premium.
+
+Struktur layout:
+- topbar fixed / sticky
+- area preview utama di tengah
+- property/editor sidebar jika memang sudah ada atau perlu
+- builder canvas / preview area
+
+Jangan membuat builder kosong.
+Minimal builder harus bisa:
+- load data tema
+- menampilkan preview section tema
+- edit data dasar tema
+- save perubahan
+
+==================================================
+STEP 4 — HALAMAN DETAIL / PREVIEW TEMA
+==================================================
+
+Buat / rapikan halaman detail tema seperti contoh screenshot ketiga.
+
+Halaman detail harus menampilkan:
+- tombol kembali
+- nama tema
+- badge Premium jika tema premium
+- controls preview device
+- tombol share jika memang ada
+- tombol Gunakan Tema
+
+Preview tema harus tampil besar dan sesuai style tema.
+
+Tombol Gunakan Tema harus aktif:
+- jika user/admin sedang memilih tema untuk invitation, maka tema tersimpan
+- jika konteks admin, arahkan ke flow yang sesuai
+- jangan hanya tombol palsu
+
+==================================================
+STEP 5 — DATA MODEL TEMPLATE
+==================================================
+
+Pastikan ada schema / model yang rapi untuk template.
+
+Minimal field template:
+- id
+- name
+- slug
+- description
+- category
+- thumbnail_url
+- preview_image_url
+- is_active
+- is_premium
+- created_at
+- updated_at
+
+Jika builder memakai sections, tambahkan:
+template_sections
+- id
+- template_id
+- section_type
+- sort_order
+- config_json
+- style_json
+- is_enabled
+- created_at
+- updated_at
+
+Jika struktur JSON tunggal lebih cocok, boleh gunakan itu, tapi tetap rapi dan maintainable.
+
+==================================================
+STEP 6 — DEFAULT TEMPLATES
+==================================================
+
+Pastikan minimal ada seed/default templates berikut:
+- Luxury Gold
+- Romantic Floral
+- Minimal Modern
+- Classic Elegant
+- Eternal Rose
+
+Masing-masing harus punya:
+- nama
+- slug unik
+- deskripsi
+- thumbnail
+- preview
+- status aktif
+- premium/free status
+- sample section layout
+- style preset
+
+==================================================
+STEP 7 — STYLE PRESET PER TEMA
+==================================================
+
+Pastikan tiap tema punya style preset yang jelas.
+
+Luxury Gold
+- mewah
+- gold
+- champagne
+- ivory
+- serif premium
+- elegant glow halus
+
+Romantic Floral
+- pink lembut
+- floral
+- warm romantic
+- elegant feminine
+
+Minimal Modern
+- clean
+- modern
+- whitespace bagus
+- grey/white balance
+- mudah dibaca
+
+Classic Elegant
+- navy
+- white
+- silver
+- timeless
+- formal premium
+
+Eternal Rose
+- rose pink
+- soft romantic
+- delicate premium
+- feminine elegant
+
+Preview tema harus benar-benar terlihat beda sesuai preset ini.
+
+==================================================
+STEP 8 — BUILDER BASIC FEATURES
+==================================================
+
+Walaupun fokus utama adalah membuat builder seperti contoh, builder harus tetap usable.
+
+Minimal fitur builder:
+- load template
+- edit nama tema
+- edit deskripsi tema
+- edit thumbnail / preview image
+- edit status premium/free
+- edit status aktif
+- edit sections basic jika memang sistem sudah mendukung
+- save draft
+- preview desktop/tablet/mobile
+
+Jika drag & drop builder sudah ada:
+- hubungkan ke halaman ini
+- jangan rusak
+- rapikan UI agar selaras dengan screenshot
+
+Jika drag & drop belum stabil:
+- jangan paksa fitur kompleks setengah jadi
+- prioritaskan builder yang stabil, bisa edit, bisa save, dan preview benar
+
+==================================================
+STEP 9 — TOMBOL BUAT TEMA BARU
+==================================================
+
+Tombol Buat Tema Baru harus aktif.
+
+Flow:
+- klik tombol
+- buka halaman create theme
+- user/admin dapat mengisi:
+  - nama tema
+  - slug
+  - deskripsi
+  - kategori
+  - premium/free
+  - status aktif
+  - thumbnail
+- setelah submit, tema baru masuk ke Theme Library
+
+Jangan biarkan tombol ini mati.
+
+==================================================
+STEP 10 — INTEGRASI DENGAN INVITATION
+==================================================
+
+Template yang ada di library harus bisa dipakai untuk invitation.
+
+Minimal:
+- tema bisa dipilih
+- tema bisa dipreview
+- tema bisa digunakan pada halaman invitation/public preview
+- data invitation dipetakan ke template
+
+Tapi jangan merusak flow invitation yang sudah ada.
+
+==================================================
+STEP 11 — UI CONSISTENCY
+==================================================
+
+Pastikan semua halaman berikut konsisten:
+- theme library
+- theme builder
+- theme detail
+- theme create
+
+Gunakan design system yang sama:
+- spacing konsisten
+- card konsisten
+- button konsisten
+- topbar konsisten
+- badge konsisten
+- font konsisten
+- icon konsisten
+
+Jangan sampai halaman builder terasa berbeda jauh dari theme library.
+
+==================================================
+STEP 12 — ERROR PREVENTION
+==================================================
+
+Cegah error berikut:
+- broken imports
+- route not found
+- blank page
+- undefined theme data
+- thumbnail null crash
+- slug undefined
+- preview image gagal load tanpa fallback
+- save handler tidak tersambung
+- duplicate route bentrok
+- TypeScript errors besar
+
+Tambahkan fallback aman untuk:
+- image kosong
+- description kosong
+- slug kosong
+- no template data
+
+==================================================
+STEP 13 — PERFORMANCE DAN STABILITAS
+==================================================
+
+Pastikan:
+- theme library cepat dibuka
+- preview image tidak terlalu berat
+- builder tidak lag berlebihan
+- page transitions normal
+- tidak ada fetch berulang yang tidak perlu
+- loading state ada
+- empty state ada jika template belum ada
+
+==================================================
+STEP 14 — FINAL VALIDATION
+==================================================
+
+Sebelum selesai, pastikan:
+- /admin/templates aktif
+- semua card tema tampil benar
+- semua tombol Builder aktif
+- tombol Buat Tema Baru aktif
+- halaman edit builder aktif
+- halaman detail / preview aktif
+- tombol Gunakan Tema aktif
+- preview desktop/tablet/mobile aktif
+- tidak ada blank page
+- tidak ada error runtime
+- tidak ada broken import
+- project tetap bisa dijalankan
+
+==================================================
+OUTPUT YANG WAJIB DIBERIKAN SETELAH SELESAI
+==================================================
+
+Berikan ringkasan singkat:
+1. file apa saja yang diubah
+2. route apa saja yang aktif
+3. halaman apa saja yang dibuat / dirapikan
+4. template apa saja yang tersedia
+5. fitur builder apa saja yang aktif
+6. bagian apa saja yang masih perlu dites jika ada
+
+INSTRUKSI TAMBAHAN
+- Kerjakan bertahap
+- Jangan refactor fitur lain yang tidak berkaitan
+- Jangan ubah desain yang sudah bagus, cukup sesuaikan agar mirip contoh
+- Prioritaskan stabilitas, fungsi klik, builder yang usable, dan tidak error

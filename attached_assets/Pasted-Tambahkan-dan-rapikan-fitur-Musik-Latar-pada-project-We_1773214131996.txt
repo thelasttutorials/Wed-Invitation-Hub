@@ -1,0 +1,424 @@
+Tambahkan dan rapikan fitur Musik Latar pada project Wed Invitation Hub agar admin dan user dapat mengatur musik undangan dengan tampilan dan flow seperti contoh UI yang sudah ada.
+
+Jangan rewrite project dari nol.
+Jangan merusak fitur lain seperti auth, pricing, billing, template builder, invitation, RSVP, wishes, dan admin dashboard.
+Fokus hanya pada fitur musik latar untuk template/undangan.
+
+TUJUAN UTAMA
+Saya ingin ada fitur Musik Latar yang lengkap seperti ini:
+
+ADMIN / USER bisa:
+1. memilih musik dari perpustakaan lagu
+2. memasukkan URL musik custom
+3. memberi label lagu
+4. mempreview lagu sebelum dipakai
+5. menyimpan musik untuk template atau invitation
+6. memilih apakah musik autoplay, loop, dan volume default
+7. menggunakan musik dari:
+   - MP3 direct URL
+   - YouTube
+   - Spotify
+8. halaman undangan publik memutar musik yang dipilih jika diaktifkan
+
+Jangan buat UI dummy.
+Semua input, tombol, preview, save, dan player harus benar-benar aktif.
+
+==================================================
+STEP 1 — UI MUSIK LATAR
+==================================================
+
+Buat / rapikan panel Musik Latar dengan tampilan seperti contoh screenshot.
+
+Komponen UI minimal:
+
+- title: Musik Latar
+- description:
+  Pilih dari perpustakaan atau masukkan URL MP3 sendiri
+
+Bagian 1:
+Pilih dari Perpustakaan
+
+Tampilkan daftar lagu dalam panel scrollable:
+- thumbnail
+- judul lagu
+- artis
+- klik untuk memilih
+
+Contoh item:
+- Marry You — Bruno Mars
+- Perfect — Ed Sheeran
+- Sempurna — Andra & The Backbone
+- Thinking Out Loud — Ed Sheeran
+
+Bagian 2:
+URL Musik Kustom
+
+Input:
+- URL Musik Kustom (MP3 atau YouTube atau Spotify)
+
+Bagian 3:
+Label Lagu (opsional)
+
+Input:
+- label lagu
+
+Bagian 4:
+Preview / status pilihan
+
+Tampilkan misalnya:
+- Dipilih dari perpustakaan: Perfect
+atau
+- URL custom aktif
+
+Bagian 5:
+Pengaturan tambahan
+- autoplay on/off
+- loop on/off
+- volume default (0 sampai 100)
+- start muted on/off jika perlu
+
+==================================================
+STEP 2 — SUMBER MUSIK YANG DIDUKUNG
+==================================================
+
+Dukung sumber musik berikut:
+
+1. Library internal
+- daftar lagu yang disediakan sistem
+- tiap lagu punya title, artist, thumbnail, source_url, source_type
+
+2. MP3 direct URL
+- URL file .mp3 yang langsung bisa diputar
+
+3. YouTube
+- URL youtube watch / short / embed
+- ekstrak video id jika perlu
+- gunakan embed/player yang aman dan stabil
+
+4. Spotify
+- dukung URL track Spotify resmi
+- gunakan embed/preview resmi jika memungkinkan
+- jangan mengklaim bisa memutar full audio Spotify jika platform/embed tidak mengizinkan
+- jika keterbatasan teknis ada, gunakan embed preview resmi dan jelaskan di implementasi
+
+Sumber type enum:
+- library
+- mp3
+- youtube
+- spotify
+
+==================================================
+STEP 3 — DATA MODEL MUSIK
+==================================================
+
+Buat schema/model yang rapi.
+
+Jika musik melekat ke invitation:
+invitation_music_settings
+- id
+- invitation_id
+- source_type
+- source_url
+- library_track_id
+- label
+- autoplay
+- loop
+- volume
+- is_enabled
+- created_at
+- updated_at
+
+Jika juga bisa dipakai pada template:
+template_music_settings
+- id
+- template_id
+- source_type
+- source_url
+- library_track_id
+- label
+- autoplay
+- loop
+- volume
+- is_enabled
+- created_at
+- updated_at
+
+Library lagu:
+music_library
+- id
+- title
+- artist
+- thumbnail_url
+- source_type
+- source_url
+- preview_url
+- is_active
+- created_at
+- updated_at
+
+Jika struktur yang lebih simpel lebih cocok, boleh disesuaikan, tapi tetap rapi dan mudah dipakai.
+
+==================================================
+STEP 4 — ADMIN MUSIC LIBRARY
+==================================================
+
+Tambahkan halaman admin untuk mengelola perpustakaan lagu.
+
+Route admin:
+- /admin/music
+atau
+- /admin/music-library
+
+Admin bisa:
+- lihat daftar lagu
+- tambah lagu baru
+- edit lagu
+- hapus/nonaktifkan lagu
+- upload thumbnail
+- atur source_type
+- atur source_url
+- atur preview_url jika perlu
+
+Field lagu:
+- title
+- artist
+- thumbnail_url
+- source_type
+- source_url
+- preview_url
+- is_active
+
+Tambahkan validasi agar source_url sesuai jenis sumber.
+
+==================================================
+STEP 5 — PENGATURAN MUSIK DI BUILDER / INVITATION EDITOR
+==================================================
+
+Tambahkan panel Musik Latar di:
+- template builder jika musik bisa jadi default template
+- invitation editor / dashboard user untuk memilih musik undangan
+
+User flow:
+- pilih lagu dari library
+atau
+- masukkan URL custom
+- isi label opsional
+- preview
+- save
+
+Pastikan setelah disimpan:
+- setting musik muncul lagi saat halaman dibuka ulang
+- pilihan musik benar-benar tersimpan di database
+
+==================================================
+STEP 6 — VALIDASI URL MUSIK
+==================================================
+
+Tambahkan validasi sumber musik.
+
+MP3:
+- URL harus valid
+- jika memungkinkan cek ekstensi atau content type
+
+YouTube:
+- dukung format:
+  - youtube.com/watch?v=
+  - youtu.be/
+  - youtube.com/embed/
+- ekstrak video id dengan aman
+
+Spotify:
+- dukung format track Spotify resmi
+- ekstrak track id jika perlu
+- validasi domain spotify
+
+Jika URL tidak valid:
+- tampilkan pesan error yang jelas
+- jangan simpan data rusak
+
+==================================================
+STEP 7 — PREVIEW MUSIK
+==================================================
+
+Tambahkan preview player di panel musik.
+
+Jika library atau mp3:
+- gunakan audio player HTML5 atau player custom ringan
+
+Jika YouTube:
+- gunakan embedded preview / iframe / player yang sesuai
+- preview harus aman dan tidak merusak layout
+
+Jika Spotify:
+- gunakan embed preview resmi
+
+Pastikan preview:
+- bisa diputar
+- bisa dihentikan
+- tidak error jika source invalid
+- tidak bentrok dengan player publik invitation
+
+==================================================
+STEP 8 — PLAYER DI HALAMAN UNDANGAN PUBLIK
+==================================================
+
+Halaman undangan publik harus memakai musik yang telah dipilih.
+
+Fitur player publik:
+- tombol play/pause
+- indikator judul lagu jika ada
+- volume default
+- loop jika diaktifkan
+- autoplay jika diaktifkan dan browser mengizinkan
+- fallback jika autoplay diblokir browser
+
+Catatan penting:
+- browser sering memblokir autoplay audio
+- jika autoplay gagal, tampilkan tombol play yang jelas
+- jangan membuat halaman error hanya karena autoplay diblokir
+
+Jika source:
+MP3:
+- gunakan audio player native/custom
+
+YouTube:
+- gunakan embed/player yang sesuai
+
+Spotify:
+- gunakan embed resmi bila didukung
+
+==================================================
+STEP 9 — UX YANG BAGUS
+==================================================
+
+UI harus rapi seperti contoh screenshot.
+
+Tambahkan:
+- daftar lagu scrollable
+- selected state yang jelas
+- preview state
+- label lagu
+- helper text
+- loading state
+- error message
+- success message saat save
+
+Tampilkan status seperti:
+- Dipilih dari perpustakaan: Perfect
+- URL custom aktif
+- Sumber: YouTube
+- Sumber: Spotify
+
+==================================================
+STEP 10 — HAK AKSES BERDASARKAN PAKET
+==================================================
+
+Jika project sudah punya sistem paket:
+- tentukan apakah musik hanya untuk Premium/Pro
+- validasi di frontend dan backend
+
+Contoh:
+- paket Gratis tidak bisa pakai musik custom
+- paket Premium/Pro bisa pakai musik
+- jika user gratis mencoba simpan musik, backend harus menolak dengan pesan jelas
+
+Gunakan validasi yang sudah ada jika sistem paket sudah aktif.
+
+==================================================
+STEP 11 — ROUTE / API YANG DIBUTUHKAN
+==================================================
+
+ADMIN
+- GET /api/admin/music
+- POST /api/admin/music
+- PATCH /api/admin/music/:id
+- DELETE /api/admin/music/:id
+
+INVITATION / TEMPLATE MUSIC
+- GET /api/invitations/:id/music
+- PATCH /api/invitations/:id/music
+- GET /api/templates/:id/music
+- PATCH /api/templates/:id/music
+
+Jika editor hanya untuk user:
+- GET /api/music/library
+- GET /api/my-invitation/:id/music
+- PATCH /api/my-invitation/:id/music
+
+Sesuaikan dengan struktur route project yang sudah ada, jangan buat duplikasi tidak perlu.
+
+==================================================
+STEP 12 — ERROR PREVENTION
+==================================================
+
+Cegah error berikut:
+- URL tidak valid
+- preview gagal membuat halaman crash
+- thumbnail kosong membuat layout rusak
+- source_type mismatch
+- autoplay diblokir browser
+- iframe YouTube/Spotify merusak responsivitas
+- state musik tidak tersimpan
+- duplicate player berjalan bersamaan
+- broken import
+- null data crash
+
+Tambahkan fallback aman untuk:
+- thumbnail kosong
+- label kosong
+- source_url kosong
+- source invalid
+
+==================================================
+STEP 13 — PERFORMANCE
+==================================================
+
+Pastikan fitur musik:
+- tidak membuat builder/editor lag
+- tidak memuat semua preview berat sekaligus
+- lazy render preview jika perlu
+- tidak autoplay banyak player bersamaan
+- tidak merusak performa invitation publik
+
+==================================================
+STEP 14 — FINAL VALIDATION
+==================================================
+
+Sebelum selesai, pastikan:
+- panel Musik Latar tampil seperti contoh
+- pilih lagu dari library bekerja
+- input URL custom bekerja
+- MP3 direct URL bekerja
+- YouTube URL bekerja
+- Spotify URL bekerja sejauh didukung embed resmi
+- preview bekerja
+- save setting bekerja
+- invitation publik memutar musik terpilih
+- fallback autoplay aman
+- tidak ada tombol mati
+- tidak ada blank page
+- tidak ada error runtime
+- project tetap bisa dijalankan
+
+==================================================
+OUTPUT YANG WAJIB DIBERIKAN SETELAH SELESAI
+==================================================
+
+Berikan ringkasan singkat:
+1. file apa saja yang diubah
+2. route apa saja yang aktif
+3. source musik apa saja yang didukung
+4. bagaimana flow admin music library
+5. bagaimana flow user memilih musik
+6. bagian apa yang masih perlu dites jika ada
+
+INSTRUKSI TAMBAHAN
+- Kerjakan bertahap
+- Jangan refactor fitur lain yang tidak berkaitan
+- Jangan ubah desain bagus yang sudah ada, cukup sesuaikan agar mirip contoh
+- Pastikan fitur musik benar-benar aktif end-to-end
+
+
+Kerjakan hanya scope fitur Musik Latar untuk admin dan user.
+Jangan merusak template builder, invitation, payment, auth, dan halaman lain.
+Pastikan project tetap bisa dijalankan setelah perubahan.

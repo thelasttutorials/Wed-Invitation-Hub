@@ -1,0 +1,209 @@
+Perbaiki dan lengkapi sistem order pada project Wed Invitation Hub agar user dapat membeli paket atau template, lalu admin dapat mengelola order tersebut dengan status yang jelas.
+
+Jangan rewrite project dari nol.
+Jangan merusak fitur lain seperti auth, template builder, invitation, RSVP, musik latar, dan dashboard.
+Fokus hanya pada sistem pembelian, order, dan manajemen order oleh admin.
+
+==================================================
+TUJUAN
+==================================================
+
+User harus bisa:
+
+1. memilih paket (Free / Premium / Pro)
+2. memilih template atau layanan
+3. membuat order
+4. melihat status order
+5. melanjutkan pembayaran jika diperlukan
+
+Admin harus bisa:
+
+6. melihat semua order dari user
+7. membuka detail order
+8. membatalkan order
+9. menyelesaikan order
+10. mengubah status order dengan aman
+
+==================================================
+FLOW USER
+==================================================
+
+1. User membuka halaman pricing atau template
+2. User memilih paket atau template
+3. Sistem membuat order baru
+4. Order tersimpan di database
+5. User diarahkan ke halaman detail order / billing
+6. Jika paket berbayar:
+   - user melakukan pembayaran
+7. Jika paket gratis:
+   - langsung aktif tanpa pembayaran
+
+User dapat melihat order di:
+
+/dashboard/orders
+
+==================================================
+FLOW ADMIN
+==================================================
+
+Admin memiliki halaman:
+
+/admin/orders
+
+Admin dapat melihat:
+
+- order number
+- nama user
+- paket/template yang dibeli
+- harga
+- status order
+- tanggal order
+
+Admin dapat melakukan:
+
+Cancel Order → ubah status menjadi cancelled  
+Complete Order → ubah status menjadi completed
+
+==================================================
+STATUS ORDER
+==================================================
+
+Gunakan status berikut:
+
+pending  
+waiting_payment  
+waiting_confirmation  
+processing  
+completed  
+cancelled  
+rejected  
+
+Keterangan:
+
+pending → order baru dibuat  
+waiting_payment → menunggu pembayaran  
+waiting_confirmation → bukti transfer diupload  
+processing → sedang diproses admin  
+completed → order berhasil  
+cancelled → dibatalkan  
+rejected → ditolak
+
+==================================================
+DATABASE ORDER
+==================================================
+
+Pastikan tabel order memiliki field berikut:
+
+orders
+- id
+- order_number
+- user_id
+- item_type (plan/template/service)
+- item_id
+- item_name
+- amount
+- payment_method
+- order_status
+- payment_status
+- customer_note
+- admin_note
+- created_at
+- updated_at
+
+Order number harus unik.
+
+==================================================
+HALAMAN USER ORDER
+==================================================
+
+User harus dapat melihat order miliknya di:
+
+/dashboard/orders
+
+Tampilan minimal:
+
+Order Number  
+Item  
+Harga  
+Status Order  
+Tanggal  
+
+Halaman detail order harus menampilkan:
+
+- detail paket/template
+- status pembayaran
+- langkah berikutnya
+- catatan admin jika ada
+
+==================================================
+HALAMAN ADMIN ORDER
+==================================================
+
+Admin dapat melihat semua order di:
+
+/admin/orders
+
+Admin dapat:
+
+- membuka detail order
+- mengubah status order
+- membatalkan order
+- menandai order selesai
+
+Tambahkan konfirmasi sebelum cancel atau complete order.
+
+==================================================
+VALIDASI
+==================================================
+
+Pastikan:
+
+- user hanya melihat order miliknya
+- admin dapat melihat semua order
+- order completed tidak bisa dibatalkan sembarangan
+- order cancelled tidak bisa diproses lagi
+- order harus tersimpan sebelum pembayaran dilakukan
+
+==================================================
+API ROUTES
+==================================================
+
+USER
+
+GET /api/orders/me  
+GET /api/orders/:id  
+POST /api/orders  
+
+ADMIN
+
+GET /api/admin/orders  
+GET /api/admin/orders/:id  
+PATCH /api/admin/orders/:id/status  
+PATCH /api/admin/orders/:id/cancel  
+PATCH /api/admin/orders/:id/complete  
+
+==================================================
+VALIDASI AKHIR
+==================================================
+
+Pastikan:
+
+- user bisa membuat order
+- order tersimpan di database
+- user bisa melihat order
+- admin bisa melihat semua order
+- admin bisa membatalkan order
+- admin bisa menyelesaikan order
+- status order terlihat jelas
+- tidak ada tombol mati
+- tidak ada route error
+- project tetap stabil
+
+==================================================
+HASIL AKHIR
+==================================================
+
+User bisa membeli paket atau template.
+Order tercatat di sistem.
+Admin bisa mengelola order tersebut.
+Status order sinkron antara user dan admin.

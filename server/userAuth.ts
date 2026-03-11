@@ -131,7 +131,13 @@ export function registerUserAuthRoutes(app: Express) {
     }
 
     req.session.userId = user.id;
-    return res.json({ ok: true, user: { id: user.id, email: user.email } });
+    req.session.save((err) => {
+      if (err) {
+        console.error("[userAuth] Gagal menyimpan sesi:", err);
+        return res.status(500).json({ error: "Gagal menyimpan sesi. Coba lagi." });
+      }
+      return res.json({ ok: true, user: { id: user.id, email: user.email } });
+    });
   });
 
   app.get("/api/auth/me", async (req, res) => {

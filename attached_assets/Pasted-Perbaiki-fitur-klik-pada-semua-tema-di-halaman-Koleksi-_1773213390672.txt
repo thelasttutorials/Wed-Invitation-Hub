@@ -1,0 +1,160 @@
+Perbaiki fitur klik pada semua tema di halaman "Koleksi Tema" agar ketika tema diklik atau tombol "Preview Demo" ditekan, halaman preview undangan tampil seperti contoh desain yang sudah ada.
+
+JANGAN:
+- mengubah desain UI yang sudah dibuat
+- mengubah layout card tema
+- menghapus komponen yang sudah ada
+- mengubah styling atau tampilan yang sudah benar
+
+Fokus hanya pada memperbaiki fungsi klik dan routing preview tema.
+
+==================================================
+TUJUAN
+==================================================
+
+Ketika user:
+
+- klik card tema
+- klik tombol "Preview Demo"
+- klik tombol "Gunakan"
+
+maka sistem harus membuka halaman preview undangan sesuai tema tersebut.
+
+Preview harus menampilkan tampilan undangan seperti contoh pada desain.
+
+==================================================
+STEP 1 — AKTIFKAN KLIK CARD TEMA
+==================================================
+
+Pastikan setiap card tema memiliki action klik.
+
+Jika card saat ini hanya berupa div statis:
+ubah menjadi clickable component.
+
+Contoh action yang diharapkan:
+
+klik card tema  
+→ buka halaman preview tema
+
+Gunakan slug tema untuk menentukan preview.
+
+==================================================
+STEP 2 — ROUTE PREVIEW TEMA
+==================================================
+
+Pastikan ada route preview tema:
+
+/demo/:slug
+
+Contoh:
+
+/demo/luxury-gold  
+/demo/romantic-floral  
+/demo/minimal-modern  
+/demo/classic-elegant  
+
+Route ini harus memuat preview undangan sesuai template.
+
+==================================================
+STEP 3 — HUBUNGKAN CARD DENGAN SLUG
+==================================================
+
+Setiap tema harus memiliki slug unik:
+
+Luxury Gold → luxury-gold  
+Romantic Floral → romantic-floral  
+Minimal Modern → minimal-modern  
+Classic Elegant → classic-elegant  
+
+Saat card diklik:
+
+navigate ke  
+/demo/{slug}
+
+==================================================
+STEP 4 — TOMBOL PREVIEW DEMO
+==================================================
+
+Tombol "Preview Demo" harus membuka halaman preview tema.
+
+Pastikan tombol ini memanggil route:
+
+/demo/{slug}
+
+Jika sekarang tombol tidak melakukan apa-apa, tambahkan handler yang benar.
+
+==================================================
+STEP 5 — TOMBOL GUNAKAN
+==================================================
+
+Tombol "Gunakan" harus:
+
+Jika user belum login:
+redirect ke login
+
+Jika user sudah login:
+pilih tema untuk undangan user
+
+Setelah itu:
+redirect ke halaman builder atau dashboard invitation.
+
+==================================================
+STEP 6 — HALAMAN PREVIEW TEMA
+==================================================
+
+Halaman preview harus menampilkan contoh undangan seperti desain.
+
+Minimal menampilkan:
+
+- cover opening
+- nama pasangan
+- tanggal acara
+- lokasi
+- countdown
+- section contoh
+- style sesuai tema
+
+Gunakan sample data jika invitation belum dibuat.
+
+==================================================
+STEP 7 — JANGAN UBAH DESAIN
+==================================================
+
+Jangan mengubah:
+
+- desain card tema
+- layout grid
+- warna
+- font
+- icon
+- spacing
+
+Yang diperbaiki hanya:
+
+- fungsi klik
+- routing
+- handler preview
+- integrasi slug tema
+
+==================================================
+STEP 8 — VALIDASI
+==================================================
+
+Pastikan setelah perbaikan:
+
+- semua tema bisa diklik
+- preview demo terbuka
+- tidak ada tombol mati
+- tidak ada route error
+- desain tetap sama seperti sebelumnya
+
+==================================================
+OUTPUT
+==================================================
+
+Berikan laporan singkat:
+
+- file yang diubah
+- route preview yang aktif
+- slug tema yang dipakai
+- bagian fungsi klik yang diperbaiki

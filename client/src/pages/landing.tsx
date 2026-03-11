@@ -34,7 +34,7 @@ const HERO_DEFAULTS = {
   hero_subtitle:      "Platform undangan pernikahan online terbaik di Indonesia. Elegan, personal, dan mudah dibagikan.",
   hero_cta_primary:   "Buat Undangan Sekarang",
   hero_cta_secondary: "Lihat Contoh",
-  hero_cta_link:      "/admin/new",
+  hero_cta_link:      "/register",
 };
 
 export default function Landing() {
@@ -306,12 +306,12 @@ export default function Landing() {
 
             {/* Desktop CTA Buttons */}
             <div className="hidden md:flex items-center gap-3">
-              <a href="/admin/login">
+              <a href="/login">
                 <Button variant="ghost" size="sm" data-testid="button-masuk">
                   Masuk
                 </Button>
               </a>
-              <a href="/admin/new">
+              <a href="/register">
                 <Button size="sm" data-testid="button-mulai-gratis">
                   Buat Undangan
                 </Button>
@@ -343,10 +343,10 @@ export default function Landing() {
               </a>
             ))}
             <div className="flex flex-col gap-2 pt-2 border-t border-slate-100">
-              <a href="/admin/login" onClick={() => setMobileMenuOpen(false)}>
+              <a href="/login" onClick={() => setMobileMenuOpen(false)}>
                 <Button variant="outline" size="sm" className="w-full" data-testid="button-masuk-mobile">Masuk</Button>
               </a>
-              <a href="/admin/new" onClick={() => setMobileMenuOpen(false)}>
+              <a href="/register" onClick={() => setMobileMenuOpen(false)}>
                 <Button size="sm" className="w-full" data-testid="button-mulai-gratis-mobile">Buat Undangan</Button>
               </a>
             </div>
@@ -667,7 +667,7 @@ export default function Landing() {
                       </Button>
                     </a>
                     <a
-                      href="/admin/new"
+                      href="/register"
                       className="flex-1"
                       onClick={e => e.stopPropagation()}
                     >
@@ -771,7 +771,7 @@ export default function Landing() {
                   ))}
                 </ul>
 
-                <a href="/admin/new" className="block">
+                <a href="/register" className="block">
                   <Button
                     variant={plan.highlight ? "secondary" : plan.variant}
                     data-testid={`button-cta-pricing-${plan.name.toLowerCase()}`}
@@ -902,7 +902,7 @@ export default function Landing() {
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="/admin/new">
+            <a href="/register">
               <Button
                 size="lg"
                 data-testid="button-cta-mulai"

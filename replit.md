@@ -55,12 +55,12 @@ A full-stack SaaS platform for digital wedding invitations in Indonesian. Built 
 - `/login`, `/register` → `auth-login.tsx` — OTP email login/register
 
 **Customer Dashboard:**
-- `/dashboard` → `dashboard.tsx` section="home"
-- `/dashboard/invitations` → section="invitations"
-- `/dashboard/new` → section="new"
-- `/dashboard/rsvp` → section="rsvp"
-- `/dashboard/wishes` → section="wishes"
-- `/dashboard/settings` → section="settings"
+- `/dashboard` → `dashboard.tsx` section="home" — Stats from `/api/my-stats` (real counts)
+- `/dashboard/invitations` → section="invitations" — List user invitations, copy/view/edit/delete
+- `/dashboard/new` → section="new" — Form to create new invitation (POST /api/my-invitations)
+- `/dashboard/rsvp` → section="rsvp" — RSVP grouped by invitation from /api/my-rsvp
+- `/dashboard/wishes` → section="wishes" — Ucapan grouped by invitation from /api/my-wishes
+- `/dashboard/settings` → section="settings" — Account email, plan info, logout
 - `/dashboard/billing` → section="billing" — Active plan, transfer instructions, upload proof
 - `/dashboard/orders` → section="orders" — Order history with Invoice links
 - `/dashboard/guests` → `dashboard/guests.tsx` — Guest management (add, import CSV, WhatsApp share, check-in)
@@ -108,6 +108,14 @@ A full-stack SaaS platform for digital wedding invitations in Indonesian. Built 
 - `GET /api/orders/me` — My order history
 - `POST /api/orders/:id/upload-proof` — Upload transfer proof (triggers email notification)
 - `GET /api/orders/:id/invoice` — Invoice data for paid order
+
+**Customer Invitations (`server/routes.ts`):**
+- `GET /api/my-invitations` — My invitation list (requireUser)
+- `POST /api/my-invitations` — Create invitation with subscription check (requireUser)
+- `DELETE /api/my-invitations/:id` — Delete own invitation (requireUser, ownership check)
+- `GET /api/my-stats` — Stats summary: invitationCount, rsvpCount, wishCount, guestCount (requireUser)
+- `GET /api/my-rsvp` — All RSVP from user's invitations grouped by invitation (requireUser)
+- `GET /api/my-wishes` — All ucapan from user's invitations grouped by invitation (requireUser)
 
 **Guest Management (`server/guestRoutes.ts`):**
 - `GET /api/guests?invitationId=X` — Guest list (auth user, own invitation only)
@@ -182,6 +190,8 @@ A full-stack SaaS platform for digital wedding invitations in Indonesian. Built 
 - Flow: email → 6-digit OTP (5 min expiry) → login/register
 - Rate limit: max 5 OTP requests per email per 10 minutes
 - OTP single-use; email via Resend (`RESEND_API_KEY` env) or server console log
+- **CRITICAL**: verify-code endpoint uses `req.session.save()` callback to ensure session persists before response
+- OTP codes stored in `email_verifications` table (columns: id, email, code, expires_at, used_at, created_at)
 
 ### Auth Sessions
 - Admin: `adminId` in session; Customer: `userId` in session — coexist via TS module augmentation
