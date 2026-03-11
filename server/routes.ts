@@ -196,6 +196,32 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
+  // ── Landing (public hero data) ────────────────────────────────────────────────
+
+  const HERO_DEFAULTS = {
+    hero_title:         "Undangan Pernikahan Digital yang Tak Terlupakan",
+    hero_subtitle:      "Platform undangan pernikahan online terbaik di Indonesia. Elegan, personal, dan mudah dibagikan.",
+    hero_cta_primary:   "Buat Undangan Sekarang",
+    hero_cta_secondary: "Lihat Contoh",
+  };
+
+  app.get("/api/landing", async (_req, res) => {
+    try {
+      const settings = await storage.getAllLandingSettings();
+      const map: Record<string, string> = {};
+      for (const s of settings) map[s.key] = s.value;
+      res.json({
+        hero_title:         map.hero_title         || HERO_DEFAULTS.hero_title,
+        hero_subtitle:      map.hero_subtitle      || HERO_DEFAULTS.hero_subtitle,
+        hero_cta_primary:   map.hero_cta_primary   || HERO_DEFAULTS.hero_cta_primary,
+        hero_cta_secondary: map.hero_cta_secondary || HERO_DEFAULTS.hero_cta_secondary,
+      });
+    } catch {
+      // Always return something — never break the public landing page
+      res.json(HERO_DEFAULTS);
+    }
+  });
+
   // ── Landing settings ──────────────────────────────────────────────────────────
 
   app.get("/api/landing-settings", async (_req, res) => {

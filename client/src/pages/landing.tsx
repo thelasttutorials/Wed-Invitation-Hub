@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -28,9 +29,22 @@ import {
   Sparkles,
 } from "lucide-react";
 
+const HERO_DEFAULTS = {
+  hero_title:         "Undangan Pernikahan Digital yang Tak Terlupakan",
+  hero_subtitle:      "Platform undangan pernikahan online terbaik di Indonesia. Elegan, personal, dan mudah dibagikan.",
+  hero_cta_primary:   "Buat Undangan Sekarang",
+  hero_cta_secondary: "Lihat Contoh",
+};
+
 export default function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const { data: heroData = HERO_DEFAULTS } = useQuery<typeof HERO_DEFAULTS>({
+    queryKey: ["/api/landing"],
+    staleTime: 5 * 60 * 1000,
+    placeholderData: HERO_DEFAULTS,
+  });
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -344,26 +358,20 @@ export default function Landing() {
             data-testid="hero-title"
             className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight tracking-tight max-w-4xl mx-auto"
           >
-            Undangan Pernikahan{" "}
-            <span className="relative inline-block">
-              <span className="relative z-10 text-primary">Digital</span>
-              <span className="absolute bottom-1 left-0 right-0 h-3 bg-blue-100 rounded-sm -z-0 opacity-70" />
-            </span>{" "}
-            yang Elegan & Berkesan
+            {heroData.hero_title}
           </h1>
 
           <p
             data-testid="hero-subtitle"
             className="mt-6 text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed"
           >
-            Buat undangan pernikahan digital yang memukau dalam hitungan menit.
-            Isi data, pilih tema, kirim via WhatsApp — tanpa biaya cetak, tanpa repot.
+            {heroData.hero_subtitle}
           </p>
 
           {/* CTA Buttons */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button size="lg" data-testid="button-hero-buat-undangan" className="gap-2 px-8 text-base">
-              Buat Undangan Sekarang
+              {heroData.hero_cta_primary}
               <ChevronRight className="w-4 h-4" />
             </Button>
             <Button
@@ -373,7 +381,7 @@ export default function Landing() {
               className="gap-2 px-8 text-base"
             >
               <Eye className="w-4 h-4" />
-              Lihat Contoh Undangan
+              {heroData.hero_cta_secondary}
             </Button>
           </div>
 
