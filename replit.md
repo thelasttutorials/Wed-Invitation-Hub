@@ -21,6 +21,8 @@ A full-stack SaaS platform for digital wedding invitations in Indonesian. Built 
 | `love_story_items` | `loveStoryItems` | Timeline entries per invitation |
 | `rsvp_entries` | `rsvps` | Guest attendance confirmations (alias: `rsvpEntries`) |
 | `guestbook_entries` | `wishes` | Guest messages/wishes (alias: `guestbookEntries`) |
+| `users` | `users` | Customer accounts — email only, auth via OTP |
+| `email_verifications` | `emailVerifications` | Short-lived 6-digit OTP codes for passwordless login |
 
 ### Notes
 - `rsvpEntries` and `guestbookEntries` are exported as **aliases** for backward compatibility.
@@ -33,6 +35,14 @@ A full-stack SaaS platform for digital wedding invitations in Indonesian. Built 
 - `/` → `landing.tsx` — Marketing landing page (dynamic hero from DB)
 - `/invite/:slug` → `invite.tsx` — **Canonical** public invitation page (with RSVP + Ucapan)
 - `/invitation/:slug` → `invitation.tsx` — Legacy backward-compat page
+- `/login` → `auth-login.tsx` — Customer OTP login/register (step 1: email, step 2: OTP)
+- `/register` → `auth-login.tsx` — Alias for /login (same OTP flow)
+- `/dashboard` → `dashboard.tsx` — Customer dashboard home
+- `/dashboard/invitations` → `dashboard.tsx` — My invitations (coming soon)
+- `/dashboard/new` → `dashboard.tsx` — Create invitation (coming soon)
+- `/dashboard/rsvp` → `dashboard.tsx` — RSVP list (coming soon)
+- `/dashboard/wishes` → `dashboard.tsx` — Guest wishes (coming soon)
+- `/dashboard/settings` → `dashboard.tsx` — Account settings (coming soon)
 - `/admin` → `dashboard.tsx` — Stats + quick links
 - `/admin/invitations` → `invitations.tsx` — CRUD list
 - `/admin/new` → `new-invitation.tsx` — Create form
@@ -40,7 +50,7 @@ A full-stack SaaS platform for digital wedding invitations in Indonesian. Built 
 - `/admin/rsvp` → `rsvp.tsx` — View RSVP per invitation
 - `/admin/wishes` → `wishes.tsx` — View ucapan per invitation
 - `/admin/landing` → `landing.tsx` — Edit hero content
-- `/admin/login` → `login.tsx` — Auth
+- `/admin/login` → `login.tsx` — Admin auth
 
 ### Backend API (`server/routes.ts`)
 
@@ -52,6 +62,12 @@ A full-stack SaaS platform for digital wedding invitations in Indonesian. Built 
 - `POST /api/invitations/:slug/guestbook` — Legacy wishes endpoint
 - `GET /api/landing` — Public hero data
 - `GET /api/landing-settings` — All settings key→value
+
+**Customer Auth (`server/userAuth.ts`):**
+- `POST /api/auth/request-code` — Generate & send OTP to email (rate limited: 5/10min)
+- `POST /api/auth/verify-code` — Verify OTP → login/register user, set session
+- `GET /api/auth/me` — Get current customer session
+- `POST /api/auth/logout` — Destroy customer session
 
 **Admin (requireAdmin):**
 - `GET /api/invitations` — All invitations
@@ -67,33 +83,38 @@ A full-stack SaaS platform for digital wedding invitations in Indonesian. Built 
 
 ## Key Implementation Notes
 
+### Customer Auth (OTP)
+- Flow: email input → OTP (6 digit, 5 min expiry) → login/register in one step
+- Rate limit: max 5 OTP requests per email per 10 minutes (in-memory window)
+- OTP is single-use (marked `usedAt` after verify)
+- Email sending: uses Resend if `RESEND_API_KEY` set; otherwise logs OTP to server console
+- Session stores `userId`; `AdminGuard` uses `adminId` — they don't conflict
+- `UserGuard` component redirects to `/login` if not authenticated
+
 ### RSVP (invite.tsx)
 - Fields: `guest_name`, `attendance_status` (hadir/tidak_hadir/belum_pasti), `guest_count`, `note`
 - Pre-fills name from `?to=NamaTamu` query param
-- Shows success state after submit with "Ubah konfirmasi" option
 - Endpoint: `POST /api/public/invitations/:slug/rsvp`
 
 ### Ucapan (invite.tsx)
 - Fields: `guest_name`, `message`
-- Shows list of existing wishes below form (from `data.guestbook`)
-- After submit: invalidates query, list refreshes immediately
+- Shows list of existing wishes from `data.guestbook`
 - Endpoint: `POST /api/public/invitations/:slug/wishes`
 
 ### Landing Page Hero
 - Editable from `/admin/landing` — saves to `landing_settings` table
-- Public page fetches from `/api/landing` with fallback defaults
 - Keys: hero_title, hero_subtitle, hero_cta_primary, hero_cta_link
 
 ### Date Sanitization
-- `sanitizeDates()` in routes.ts converts empty-string `akadDate`/`receptionDate` to `null` before DB insert
+- `sanitizeDates()` in routes.ts converts empty-string `akadDate`/`receptionDate` to `null`
 
 ## Auth & Security
-- Session via `express-session` (7-day cookie, `SESSION_SECRET` env var)
-- Passwords hashed with `bcryptjs` (cost factor 12)
-- `requireAdmin` middleware protects all admin API routes
-- `AdminGuard` component protects all `/admin/*` frontend routes
+- **Admin**: `express-session` (7-day cookie), bcrypt (cost 12), `requireAdmin` middleware
+- **Customer**: OTP via email, `requireUser` middleware, session `userId`
+- `SESSION_SECRET` env var required in production
 
 ## Development
 - Run: `npm run dev` (workflow: "Start application")
 - DB sync: `npm run db:push`
 - Default admin: `admin@wedhub.com` / `admin123`
+- Email: set `RESEND_API_KEY` env var to enable real email; else OTP shown in server console

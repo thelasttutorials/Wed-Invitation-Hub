@@ -16,6 +16,8 @@ import AdminLanding from "@/pages/admin/landing";
 import AdminRsvp from "@/pages/admin/rsvp";
 import AdminWishes from "@/pages/admin/wishes";
 import AdminGuard from "@/components/admin-guard";
+import AuthLogin from "@/pages/auth-login";
+import Dashboard from "@/pages/dashboard";
 
 function Router() {
   return (
@@ -24,6 +26,30 @@ function Router() {
       <Route path="/" component={Landing} />
       <Route path="/invite/:slug" component={InvitePage} />
       <Route path="/invitation/:slug" component={InvitationPage} />
+
+      {/* Customer auth — no guard */}
+      <Route path="/login" component={AuthLogin} />
+      <Route path="/register" component={AuthLogin} />
+
+      {/* Customer dashboard */}
+      <Route path="/dashboard">
+        {() => <Dashboard section="home" />}
+      </Route>
+      <Route path="/dashboard/invitations">
+        {() => <Dashboard section="invitations" />}
+      </Route>
+      <Route path="/dashboard/new">
+        {() => <Dashboard section="new" />}
+      </Route>
+      <Route path="/dashboard/rsvp">
+        {() => <Dashboard section="rsvp" />}
+      </Route>
+      <Route path="/dashboard/wishes">
+        {() => <Dashboard section="wishes" />}
+      </Route>
+      <Route path="/dashboard/settings">
+        {() => <Dashboard section="settings" />}
+      </Route>
 
       {/* Admin login — no guard */}
       <Route path="/admin/login" component={AdminLogin} />

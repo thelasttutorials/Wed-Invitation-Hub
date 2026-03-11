@@ -118,6 +118,30 @@ export const rsvpEntries = rsvps;
 export const guestbookEntries = wishes;
 
 // ─────────────────────────────────────────────────────────────
+// users
+// Customer accounts. No password — authentication via OTP email.
+// ─────────────────────────────────────────────────────────────
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  isVerified: boolean("is_verified").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().default(sql`NOW()`),
+});
+
+// ─────────────────────────────────────────────────────────────
+// email_verifications
+// Short-lived OTP codes used for passwordless login.
+// ─────────────────────────────────────────────────────────────
+export const emailVerifications = pgTable("email_verifications", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull(),
+  code: varchar("code", { length: 6 }).notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  usedAt: timestamp("used_at"),
+  createdAt: timestamp("created_at").notNull().default(sql`NOW()`),
+});
+
+// ─────────────────────────────────────────────────────────────
 // Insert schemas (Zod)
 // ─────────────────────────────────────────────────────────────
 export const insertAdminSchema = createInsertSchema(admins).omit({
@@ -181,3 +205,19 @@ export type InsertWish = z.infer<typeof insertWishSchema>;
 export type RsvpEntry = Rsvp;
 export type GuestbookEntry = Wish;
 export type InsertGuestbook = InsertWish;
+
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertEmailVerificationSchema = createInsertSchema(emailVerifications).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
+
+export type EmailVerification = typeof emailVerifications.$inferSelect;
+export type InsertEmailVerification = z.infer<typeof insertEmailVerificationSchema>;

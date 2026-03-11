@@ -1,6 +1,6 @@
 import { Pool } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { eq, desc, asc } from "drizzle-orm";
+import { eq, desc, asc, and, gt } from "drizzle-orm";
 import * as schema from "@shared/schema";
 import type {
   Admin,
@@ -15,6 +15,8 @@ import type {
   InsertRsvp,
   Wish,
   InsertWish,
+  User,
+  EmailVerification,
 } from "@shared/schema";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -59,6 +61,18 @@ export interface IStorage {
   getWishesByInvitation(invitationId: number): Promise<Wish[]>;
   createWish(data: InsertWish): Promise<Wish>;
   deleteWish(id: number): Promise<boolean>;
+
+  // Users (customer accounts)
+  getUserByEmail(email: string): Promise<User | undefined>;
+  getUserById(id: number): Promise<User | undefined>;
+  createUser(email: string): Promise<User>;
+  verifyUser(id: number): Promise<void>;
+
+  // Email verifications (OTP)
+  createVerification(email: string, code: string, expiresAt: Date): Promise<EmailVerification>;
+  findValidVerification(email: string, code: string): Promise<EmailVerification | undefined>;
+  markVerificationUsed(id: number): Promise<void>;
+  countRecentVerifications(email: string, since: Date): Promise<number>;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -217,6 +231,71 @@ class DatabaseStorage implements IStorage {
   async deleteWish(id: number): Promise<boolean> {
     const result = await db.delete(schema.wishes).where(eq(schema.wishes.id, id)).returning();
     return result.length > 0;
+  }
+
+  // ── Users ────────────────────────────────────────────────────
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const result = await db.select().from(schema.users).where(eq(schema.users.email, email));
+    return result[0];
+  }
+
+  async getUserById(id: number): Promise<User | undefined> {
+    const result = await db.select().from(schema.users).where(eq(schema.users.id, id));
+    return result[0];
+  }
+
+  async createUser(email: string): Promise<User> {
+    const result = await db.insert(schema.users).values({ email, isVerified: true }).returning();
+    return result[0];
+  }
+
+  async verifyUser(id: number): Promise<void> {
+    await db.update(schema.users).set({ isVerified: true }).where(eq(schema.users.id, id));
+  }
+
+  // ── Email verifications ──────────────────────────────────────
+
+  async createVerification(email: string, code: string, expiresAt: Date): Promise<EmailVerification> {
+    const result = await db
+      .insert(schema.emailVerifications)
+      .values({ email, code, expiresAt })
+      .returning();
+    return result[0];
+  }
+
+  async findValidVerification(email: string, code: string): Promise<EmailVerification | undefined> {
+    const result = await db
+      .select()
+      .from(schema.emailVerifications)
+      .where(
+        and(
+          eq(schema.emailVerifications.email, email),
+          eq(schema.emailVerifications.code, code),
+          gt(schema.emailVerifications.expiresAt, new Date()),
+        ),
+      );
+    return result.find((r) => r.usedAt === null);
+  }
+
+  async markVerificationUsed(id: number): Promise<void> {
+    await db
+      .update(schema.emailVerifications)
+      .set({ usedAt: new Date() })
+      .where(eq(schema.emailVerifications.id, id));
+  }
+
+  async countRecentVerifications(email: string, since: Date): Promise<number> {
+    const result = await db
+      .select()
+      .from(schema.emailVerifications)
+      .where(
+        and(
+          eq(schema.emailVerifications.email, email),
+          gt(schema.emailVerifications.createdAt, since),
+        ),
+      );
+    return result.length;
   }
 }
 

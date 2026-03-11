@@ -1,0 +1,383 @@
+Lanjutkan project ini menjadi platform undangan digital pernikahan dengan sistem paket berlangganan dan aktivasi fitur berdasarkan paket. Gunakan pembayaran transfer bank manual saja. Jangan bangun ulang dari nol. Lanjutkan dari struktur project yang sudah ada.
+
+TUJUAN
+Buat sistem paket:
+1. Mulai Gratis
+2. Premium
+3. Pro
+
+Setiap user bisa memilih paket.
+Fitur yang aktif harus mengikuti paket yang dipilih.
+Untuk paket berbayar, aktivasi dilakukan setelah user melakukan pembayaran transfer dan admin mengonfirmasi pembayaran.
+
+ATURAN PENTING
+- Jangan merusak landing page, admin, invitation, RSVP, dan auth yang sudah ada.
+- Jangan buat payment gateway otomatis.
+- Gunakan pembayaran transfer manual saja.
+- Semua data harus tersimpan di database.
+- Semua status paket dan pembayaran harus bisa dikelola dari admin.
+- Jangan buat UI dummy. Semua tombol dan status harus benar-benar berfungsi.
+
+==================================================
+1. PAKET LANGGANAN
+==================================================
+
+Buat 3 paket:
+
+A. Mulai Gratis
+- harga: 0
+- maksimal 1 undangan
+- tema standar saja
+- RSVP aktif
+- wishes aktif
+- galeri maksimal 3 foto
+- tanpa background music premium
+- tanpa custom domain
+- tanpa amplop digital
+
+B. Premium
+- harga bisa diedit admin
+- maksimal 5 undangan
+- semua tema standar + beberapa tema premium
+- RSVP aktif
+- wishes aktif
+- galeri maksimal 15 foto
+- background music aktif
+- love story aktif
+- gift/amplop digital aktif
+- prioritas support
+
+C. Pro
+- harga bisa diedit admin
+- undangan tidak terbatas atau limit tinggi
+- semua tema premium aktif
+- RSVP aktif
+- wishes aktif
+- galeri penuh
+- background music aktif
+- love story aktif
+- gift/amplop digital aktif
+- custom domain opsional
+- fitur paling lengkap
+
+==================================================
+2. DATABASE YANG DIBUTUHKAN
+==================================================
+
+Pastikan ada tabel / schema untuk:
+
+pricing_plans
+- id
+- name
+- slug
+- price
+- description
+- max_invitations
+- max_gallery_photos
+- allow_premium_templates
+- allow_music
+- allow_love_story
+- allow_gift
+- allow_custom_domain
+- is_active
+- created_at
+- updated_at
+
+user_subscriptions
+- id
+- user_id
+- plan_id
+- status
+- started_at
+- expires_at
+- created_at
+- updated_at
+
+orders
+- id
+- user_id
+- plan_id
+- order_number
+- amount
+- payment_method
+- payment_status
+- transfer_proof_url
+- notes
+- created_at
+- updated_at
+
+payment_confirmations
+- id
+- order_id
+- sender_name
+- sender_bank
+- transfer_date
+- transfer_amount
+- proof_image_url
+- note
+- created_at
+
+Tambahkan relasi yang benar.
+
+==================================================
+3. STATUS YANG HARUS ADA
+==================================================
+
+Status subscription:
+- free
+- pending_payment
+- active
+- expired
+- cancelled
+
+Status order/payment:
+- pending
+- waiting_confirmation
+- paid
+- rejected
+- cancelled
+
+Payment method:
+- bank_transfer
+
+==================================================
+4. FLOW USER
+==================================================
+
+Flow yang diinginkan:
+
+1. User daftar / login
+2. User masuk ke halaman paket /pricing atau /dashboard/billing
+3. User bisa pilih:
+   - Mulai Gratis
+   - Premium
+   - Pro
+4. Jika pilih Mulai Gratis:
+   - paket langsung aktif
+   - user bisa langsung membuat undangan sesuai limit paket gratis
+5. Jika pilih Premium atau Pro:
+   - sistem membuat order baru
+   - tampilkan instruksi transfer bank
+   - user upload bukti transfer
+   - status menjadi waiting_confirmation
+   - admin meninjau pembayaran
+   - jika admin setujui, paket aktif
+   - jika admin tolak, status rejected
+
+==================================================
+5. HALAMAN PRICING / PILIH PAKET
+==================================================
+
+Buat / rapikan halaman pricing agar user bisa:
+- melihat 3 paket
+- melihat harga
+- melihat fitur tiap paket
+- klik tombol:
+  - Mulai Gratis
+  - Pilih Premium
+  - Pilih Pro
+
+Tampilan harus jelas mana paket aktif user saat ini.
+
+==================================================
+6. HALAMAN BILLING / PEMBAYARAN
+==================================================
+
+Buat halaman billing untuk user.
+
+Fitur:
+- lihat paket saat ini
+- upgrade paket
+- lihat status pembayaran
+- lihat riwayat order
+- upload bukti transfer
+- lihat instruksi transfer
+
+Tampilkan rekening transfer yang bisa diatur admin:
+- nama bank
+- nomor rekening
+- atas nama
+
+==================================================
+7. ADMIN SETTINGS UNTUK PEMBAYARAN
+==================================================
+
+Di admin dashboard, buat menu:
+- Pricing
+- Orders / Payments
+- Bank Settings
+
+Admin bisa:
+- edit harga Premium
+- edit harga Pro
+- edit fitur paket
+- aktif/nonaktif paket
+- melihat semua order
+- melihat bukti transfer
+- approve pembayaran
+- reject pembayaran
+- mengatur rekening bank tujuan transfer
+
+Bank settings minimal:
+- bank_name
+- account_number
+- account_holder
+- payment_note
+
+==================================================
+8. AKTIVASI FITUR BERDASARKAN PAKET
+==================================================
+
+Pastikan fitur benar-benar dibatasi sesuai paket.
+
+Contoh:
+- jika paket gratis, user tidak bisa pilih template premium
+- jika paket gratis, user tidak bisa upload galeri lebih dari batas
+- jika paket gratis, field gift/amplop digital nonaktif
+- jika paket belum active, fitur premium tidak bisa digunakan
+- jika paket Premium active, fitur premium aktif sesuai haknya
+- jika paket Pro active, semua fitur aktif
+
+Pembatasan harus dilakukan:
+1. di frontend UI
+2. di backend validation
+
+Jangan hanya sembunyikan tombol. Backend juga harus menolak jika user tidak berhak.
+
+==================================================
+9. ORDER DAN PEMBAYARAN TRANSFER
+==================================================
+
+Saat user memilih Premium atau Pro:
+
+Buat order dengan data:
+- order_number unik
+- plan_id
+- amount
+- payment_method = bank_transfer
+- payment_status = pending
+
+Lalu tampilkan halaman detail pembayaran:
+- nominal transfer
+- nama bank tujuan
+- nomor rekening
+- atas nama
+- instruksi transfer
+- form upload bukti transfer
+
+Setelah user upload bukti:
+- ubah status ke waiting_confirmation
+
+==================================================
+10. ADMIN KONFIRMASI PEMBAYARAN
+==================================================
+
+Admin harus punya halaman untuk review pembayaran.
+
+Tampilkan:
+- nama user
+- email user
+- paket yang dibeli
+- nominal
+- bukti transfer
+- tanggal upload
+- catatan user
+
+Admin action:
+- Approve
+- Reject
+
+Jika Approve:
+- order payment_status jadi paid
+- subscription user jadi active
+- paket user berubah sesuai plan
+
+Jika Reject:
+- order payment_status jadi rejected
+- subscription tidak aktif
+- user bisa upload ulang bukti jika diperlukan
+
+==================================================
+11. ROUTE / API YANG DIBUTUHKAN
+==================================================
+
+Buat atau rapikan route berikut:
+
+PUBLIC / USER
+- GET /api/pricing
+- POST /api/subscriptions/start-free
+- POST /api/orders
+- GET /api/orders/me
+- GET /api/subscription/me
+- POST /api/orders/:id/upload-proof
+
+ADMIN
+- GET /api/admin/pricing
+- PATCH /api/admin/pricing/:id
+- GET /api/admin/orders
+- GET /api/admin/orders/:id
+- PATCH /api/admin/orders/:id/approve
+- PATCH /api/admin/orders/:id/reject
+- GET /api/admin/bank-settings
+- PATCH /api/admin/bank-settings
+
+==================================================
+12. FRONTEND PAGE YANG DIBUTUHKAN
+==================================================
+
+Pastikan ada halaman:
+- /pricing
+- /dashboard/billing
+- /dashboard/orders
+- /admin/pricing
+- /admin/orders
+- /admin/bank-settings
+
+==================================================
+13. UX YANG WAJIB
+==================================================
+
+Tambahkan:
+- badge paket aktif
+- tombol upgrade
+- status pembayaran yang jelas
+- loading state
+- error state
+- pesan sukses setelah upload bukti transfer
+- pesan jika pembayaran menunggu konfirmasi admin
+
+==================================================
+14. SEED DATA AWAL
+==================================================
+
+Buat seed pricing plans default:
+- Mulai Gratis
+- Premium
+- Pro
+
+Buat juga seed bank settings contoh:
+- Bank BCA
+- 1234567890
+- Wed Invitation Hub
+
+==================================================
+15. FINAL RESULT YANG DIINGINKAN
+==================================================
+
+Hasil akhir harus:
+- user bisa pilih Mulai Gratis dan langsung aktif
+- user bisa pilih Premium / Pro
+- sistem membuat order pembayaran transfer
+- user bisa upload bukti transfer
+- admin bisa approve / reject
+- paket user aktif sesuai hasil pembayaran
+- fitur undangan terkunci / terbuka sesuai paket
+- semua data tersimpan permanen di database
+- semua route dan tombol benar-benar aktif
+
+INSTRUKSI IMPLEMENTASI
+- Jangan buat simulasi palsu
+- Jangan pakai mock data sebagai sumber utama
+- Jangan bikin UI tanpa backend
+- Pastikan frontend, backend, database, dan admin terhubung end-to-end
+- Pertahankan struktur project yang sudah ada dan rapikan seperlunya
