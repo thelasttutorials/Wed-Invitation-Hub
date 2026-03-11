@@ -183,6 +183,34 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
+  // ── Public RSVP (canonical endpoint for /invite/:slug page) ──────────────────
+
+  app.post("/api/public/invitations/:slug/rsvp", async (req, res) => {
+    try {
+      const inv = await storage.getInvitationBySlug(req.params.slug);
+      if (!inv) return res.status(404).json({ error: "Undangan tidak ditemukan." });
+
+      const { guest_name, attendance_status, guest_count, note } = req.body;
+
+      const parsed = insertRsvpSchema.safeParse({
+        invitationId:  inv.id,
+        guestName:     guest_name     ?? req.body.guestName     ?? "",
+        attendance:    attendance_status ?? req.body.attendance ?? "belum_pasti",
+        guestCount:    guest_count    ?? req.body.guestCount    ?? 1,
+        message:       note           ?? req.body.message       ?? "",
+      });
+
+      if (!parsed.success) {
+        return res.status(400).json({ error: "Data tidak lengkap.", details: parsed.error.flatten() });
+      }
+
+      const entry = await storage.createRsvp(parsed.data);
+      res.status(201).json(entry);
+    } catch {
+      res.status(500).json({ error: "Gagal menyimpan RSVP." });
+    }
+  });
+
   // ── Wishes (guestbook) ────────────────────────────────────────────────────────
 
   app.get("/api/invitations/:id/guestbook", requireAdmin, async (req, res) => {

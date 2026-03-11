@@ -1,11 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useSearch } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   MapPin, Calendar, Clock, Heart, ChevronDown,
-  Share2, ExternalLink, Music2, Pause, ArrowUp, Users,
+  Share2, ExternalLink, Music2, Pause, ArrowUp, Users, Send, CheckCircle2,
 } from "lucide-react";
 import type { Invitation, LoveStoryItem } from "@shared/schema";
 
@@ -68,6 +72,26 @@ export default function InvitePage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showTop, setShowTop] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const [rsvpForm, setRsvpForm] = useState({
+    guest_name: guestName === "Tamu Undangan" ? "" : guestName,
+    attendance_status: "hadir",
+    guest_count: 1,
+    note: "",
+  });
+  const [rsvpDone, setRsvpDone] = useState(false);
+
+  const rsvpMutation = useMutation({
+    mutationFn: (body: typeof rsvpForm) =>
+      apiRequest("POST", `/api/public/invitations/${slug}/rsvp`, body),
+    onSuccess: () => {
+      setRsvpDone(true);
+      toast({ title: "RSVP terkirim!", description: "Terima kasih atas konfirmasimu." });
+    },
+    onError: () => {
+      toast({ title: "Gagal mengirim RSVP", description: "Silakan coba lagi.", variant: "destructive" });
+    },
+  });
 
   const { data, isLoading } = useQuery<InvitationData>({
     queryKey: ["/api/invitations", slug],
@@ -499,6 +523,131 @@ export default function InvitePage() {
             </div>
           </section>
         )}
+
+        {/* RSVP */}
+        <section data-testid="section-rsvp" className="py-16 px-6 bg-[#fefaf7]" id="rsvp">
+          <div className="max-w-md mx-auto">
+            <div className="text-center mb-8">
+              <p className="text-rose-400 text-xs uppercase tracking-widest mb-2">Konfirmasi Kehadiran</p>
+              <h3 className="text-gray-800 text-2xl font-semibold" style={{ fontFamily: "'Playfair Display', serif" }}>
+                RSVP
+              </h3>
+              <p className="text-gray-500 text-sm mt-2">
+                Mohon konfirmasi kehadiranmu sebelum acara dimulai.
+              </p>
+            </div>
+
+            {rsvpDone ? (
+              <div className="bg-white rounded-2xl p-8 shadow-sm border border-rose-100 text-center space-y-4" data-testid="rsvp-success">
+                <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-7 h-7 text-emerald-500" />
+                </div>
+                <h4 className="text-gray-800 font-bold text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  Terima kasih!
+                </h4>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  RSVP kamu sudah kami terima. Sampai jumpa di hari bahagia kami!
+                </p>
+                <button
+                  onClick={() => setRsvpDone(false)}
+                  className="text-rose-400 hover:text-rose-500 text-sm underline underline-offset-2"
+                  data-testid="button-rsvp-again"
+                >
+                  Ubah konfirmasi
+                </button>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-rose-100 space-y-5">
+                <div>
+                  <Label htmlFor="rsvp-name" className="text-sm font-medium text-gray-700">
+                    Nama Lengkap
+                  </Label>
+                  <Input
+                    id="rsvp-name"
+                    data-testid="input-rsvp-name"
+                    value={rsvpForm.guest_name}
+                    onChange={e => setRsvpForm(f => ({ ...f, guest_name: e.target.value }))}
+                    placeholder="Nama lengkapmu"
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-sm font-medium text-gray-700">Kehadiran</Label>
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    {([
+                      ["hadir", "Hadir ✓"],
+                      ["tidak_hadir", "Tidak Hadir"],
+                      ["belum_pasti", "Belum Pasti"],
+                    ] as const).map(([val, label]) => (
+                      <button
+                        key={val}
+                        type="button"
+                        data-testid={`button-attendance-${val}`}
+                        onClick={() => setRsvpForm(f => ({ ...f, attendance_status: val }))}
+                        className={`py-2 px-2 rounded-xl text-xs font-medium border transition-all ${
+                          rsvpForm.attendance_status === val
+                            ? "bg-rose-500 text-white border-rose-500"
+                            : "bg-white text-gray-600 border-gray-200 hover:border-rose-300"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="rsvp-count" className="text-sm font-medium text-gray-700">
+                    Jumlah Tamu
+                  </Label>
+                  <Input
+                    id="rsvp-count"
+                    data-testid="input-rsvp-count"
+                    type="number"
+                    min={1}
+                    max={20}
+                    value={rsvpForm.guest_count}
+                    onChange={e => setRsvpForm(f => ({ ...f, guest_count: Math.max(1, parseInt(e.target.value) || 1) }))}
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="rsvp-note" className="text-sm font-medium text-gray-700">
+                    Catatan <span className="text-gray-400 font-normal">(opsional)</span>
+                  </Label>
+                  <Textarea
+                    id="rsvp-note"
+                    data-testid="input-rsvp-note"
+                    value={rsvpForm.note}
+                    onChange={e => setRsvpForm(f => ({ ...f, note: e.target.value }))}
+                    placeholder="Pesan untuk pengantin..."
+                    className="mt-1"
+                    rows={3}
+                  />
+                </div>
+
+                <Button
+                  onClick={() => {
+                    if (!rsvpForm.guest_name.trim()) {
+                      toast({ title: "Nama wajib diisi", variant: "destructive" });
+                      return;
+                    }
+                    rsvpMutation.mutate(rsvpForm);
+                  }}
+                  disabled={rsvpMutation.isPending}
+                  className="w-full bg-rose-500 hover:bg-rose-600 text-white rounded-xl"
+                  data-testid="button-submit-rsvp"
+                >
+                  {rsvpMutation.isPending ? "Mengirim..." : (
+                    <>Kirim Konfirmasi <Send className="w-4 h-4 ml-2" /></>
+                  )}
+                </Button>
+              </div>
+            )}
+          </div>
+        </section>
 
         {/* Additional Notes */}
         {invitation.additionalNotes && (
