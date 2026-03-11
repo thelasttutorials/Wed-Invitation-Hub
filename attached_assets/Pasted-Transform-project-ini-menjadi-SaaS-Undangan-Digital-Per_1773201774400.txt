@@ -1,0 +1,651 @@
+Transform project ini menjadi SaaS "Undangan Digital Pernikahan" fullstack yang production-ready, dengan Admin Dashboard super lengkap untuk mengatur seluruh website, landing page, template, paket harga, pesanan, dan data pelanggan.
+
+VISI PRODUK
+Project ini harus berubah dari landing page statis menjadi platform bisnis undangan digital pernikahan yang bisa dijual ke banyak pelanggan.
+Sistem harus mendukung:
+- landing page marketing
+- admin panel utama
+- customer dashboard
+- manajemen template
+- manajemen paket harga
+- pembuatan undangan
+- order management
+- pembayaran manual / status pembayaran
+- RSVP & ucapan tamu
+- analytics sederhana
+- SEO-ready
+- mobile responsive
+- siap deploy
+
+TECH STACK
+Tetap gunakan stack project yang sudah ada:
+- React + Vite
+- Express.js
+- PostgreSQL
+- Drizzle ORM
+- Tailwind CSS
+- shadcn/ui jika perlu
+- session-based auth atau JWT yang aman
+- upload image support
+- environment variables rapi
+- struktur folder modular dan scalable
+
+==================================================
+1. ROLE SYSTEM
+==================================================
+
+Buat 2 role utama:
+1. Super Admin
+2. Customer/User
+
+Super Admin bisa:
+- mengatur seluruh landing page
+- mengatur template undangan
+- mengatur paket harga
+- mengatur FAQ
+- mengatur testimoni
+- mengatur pesanan
+- mengatur customer
+- mengatur status pembayaran
+- melihat statistik global
+- mengaktifkan / menonaktifkan template
+- mengatur branding website
+
+Customer/User bisa:
+- login ke dashboard
+- memilih paket
+- membuat undangan
+- memilih template
+- mengedit isi undangan
+- melihat RSVP
+- melihat ucapan tamu
+- share link undangan
+
+==================================================
+2. AUTHENTICATION
+==================================================
+
+Buat sistem auth lengkap:
+- /admin/login untuk super admin
+- /login untuk customer
+- /register untuk customer
+- protected routes
+- session management
+- logout
+- auth middleware
+- role-based access control
+
+Seed default super admin:
+email: admin@wedhub.com
+password: admin123
+
+==================================================
+3. LANDING PAGE MANAGEMENT
+==================================================
+
+Super Admin harus bisa mengedit seluruh landing page dari dashboard tanpa ubah kode.
+
+Section yang harus editable:
+A. Navbar
+- logo
+- nama brand
+- menu items
+- tombol CTA
+
+B. Hero Section
+- headline
+- subheadline
+- badge
+- CTA primary
+- CTA secondary
+- hero image
+- background image/video opsional
+
+C. Feature Section
+- tambah fitur
+- edit fitur
+- hapus fitur
+- icon
+- title
+- description
+- urutan tampil
+
+D. Template Showcase
+- daftar template
+- preview image
+- kategori template
+- premium/free
+- aktif/nonaktif
+- tombol preview
+
+E. How It Works
+- langkah 1, 2, 3, dst
+- icon
+- judul
+- deskripsi
+
+F. Testimonials
+- nama customer
+- foto
+- isi testimoni
+- rating
+- status publish
+
+G. Pricing
+- nama paket
+- harga
+- fitur paket
+- badge populer
+- urutan paket
+- tombol beli
+
+H. FAQ
+- tambah
+- edit
+- hapus
+- sorting
+
+I. Footer
+- logo
+- deskripsi
+- kontak
+- email
+- WhatsApp
+- Instagram
+- TikTok
+- copyright
+
+Semua konten landing page harus diambil dari database, bukan hardcoded.
+
+==================================================
+4. TEMPLATE MANAGEMENT
+==================================================
+
+Super Admin harus bisa mengelola template undangan.
+
+Fitur template:
+- tambah template
+- edit template
+- hapus template
+- aktif/nonaktif
+- kategori template
+- nama template
+- slug template
+- preview image
+- thumbnail
+- deskripsi
+- jenis warna
+- premium/free
+- demo URL
+
+Setiap template bisa memiliki:
+- cover
+- hero pasangan
+- event section
+- countdown
+- love story
+- galeri
+- video
+- maps
+- RSVP
+- wishes
+- gift section
+- music
+
+Buat sistem agar customer bisa memilih template saat membuat undangan.
+
+==================================================
+5. PRICING PLAN / PAKET
+==================================================
+
+Super Admin bisa mengatur paket harga.
+
+Contoh paket:
+- Basic
+- Premium
+- Exclusive
+
+Data paket:
+- nama paket
+- harga
+- durasi aktif
+- jumlah foto maksimal
+- jumlah tamu maksimal
+- fitur yang didapat
+- template premium allowed atau tidak
+- custom domain allowed atau tidak
+- music allowed atau tidak
+- gallery allowed atau tidak
+- RSVP allowed atau tidak
+- gift section allowed atau tidak
+- badge populer
+
+Paket harus bisa dihubungkan ke customer dan order.
+
+==================================================
+6. CUSTOMER MANAGEMENT
+==================================================
+
+Super Admin bisa:
+- melihat daftar customer
+- tambah customer
+- edit customer
+- nonaktifkan customer
+- reset akses
+- melihat undangan milik customer
+- melihat paket customer
+- melihat status pembayaran
+
+Customer data:
+- nama
+- email
+- password hashed
+- nomor WhatsApp
+- paket aktif
+- status akun
+- tanggal daftar
+
+==================================================
+7. ORDER / PEMESANAN
+==================================================
+
+Buat sistem pesanan.
+
+Alur:
+- customer pilih paket
+- customer buat order
+- order punya status:
+  - pending
+  - waiting_payment
+  - paid
+  - expired
+  - cancelled
+- admin bisa ubah status pembayaran manual
+- jika paid, customer bisa akses fitur sesuai paket
+
+Data order:
+- order number
+- customer_id
+- package_id
+- total harga
+- payment status
+- payment proof image
+- notes
+- created_at
+
+Tambahkan halaman admin untuk melihat semua order.
+
+==================================================
+8. CUSTOMER DASHBOARD
+==================================================
+
+Buat dashboard customer dengan menu:
+- overview
+- paket saya
+- undangan saya
+- edit undangan
+- RSVP
+- ucapan tamu
+- pengaturan akun
+
+Di dashboard customer harus ada:
+- statistik RSVP
+- total ucapan
+- status paket
+- status pembayaran
+- link undangan
+- tombol copy link
+- tombol preview undangan
+
+==================================================
+9. INVITATION MANAGEMENT
+==================================================
+
+Customer bisa membuat undangan digital pernikahan.
+
+Data undangan:
+- slug
+- nama mempelai pria
+- nama mempelai wanita
+- nama orang tua
+- tanggal akad
+- waktu akad
+- tanggal resepsi
+- waktu resepsi
+- lokasi akad
+- lokasi resepsi
+- alamat lengkap
+- Google Maps link
+- quotes pembuka
+- cerita cinta
+- galeri foto
+- video prewedding
+- background music
+- rekening / gift section
+- dress code opsional
+- protokol acara opsional
+- penutup
+- nama kontak
+
+Fitur undangan publik:
+- parameter nama tamu ?to=
+- cover pembuka
+- animasi buka undangan
+- countdown
+- event detail
+- maps
+- galeri
+- love story
+- RSVP
+- wishes
+- share WhatsApp
+- copy link
+- music player
+- responsive mobile
+
+Link undangan:
+- /invite/:slug
+atau
+- /undangan/:slug
+
+==================================================
+10. RSVP MANAGEMENT
+==================================================
+
+Buat fitur RSVP yang benar-benar tersimpan di database.
+
+Field RSVP:
+- nama tamu
+- nomor WhatsApp opsional
+- jumlah hadir
+- status hadir / tidak hadir / masih ragu
+- pesan singkat
+- waktu submit
+
+Customer dan admin bisa melihat daftar RSVP:
+- filter hadir
+- filter tidak hadir
+- total tamu
+- export CSV
+
+==================================================
+11. WISHES / UCAPAN TAMU
+==================================================
+
+Buat fitur buku tamu / ucapan.
+
+Field:
+- nama tamu
+- pesan ucapan
+- waktu kirim
+- status moderasi opsional
+
+Customer bisa:
+- melihat semua ucapan
+- hapus ucapan spam jika perlu
+
+Admin bisa:
+- melihat seluruh ucapan dari semua undangan
+
+==================================================
+12. MEDIA MANAGEMENT
+==================================================
+
+Tambahkan upload media:
+- upload foto galeri
+- upload thumbnail template
+- upload hero image landing page
+- upload bukti pembayaran
+- upload testimoni photo
+
+Pastikan:
+- validasi file
+- ukuran file dibatasi
+- penyimpanan rapi
+- fallback image tersedia
+
+==================================================
+13. ANALYTICS
+==================================================
+
+Tambahkan statistik sederhana.
+
+Super Admin:
+- total customer
+- total order
+- total paid order
+- total invitation
+- total RSVP
+- total wishes
+
+Customer:
+- total kunjungan sederhana
+- total RSVP
+- total hadir
+- total ucapan
+
+==================================================
+14. DATABASE DESIGN
+==================================================
+
+Buat schema PostgreSQL + Drizzle untuk tabel berikut:
+
+admins
+customers
+landing_settings
+landing_features
+landing_steps
+templates
+template_categories
+testimonials
+pricing_plans
+pricing_plan_features
+faqs
+orders
+payments
+invitations
+invitation_events
+invitation_stories
+invitation_galleries
+invitation_gifts
+guests
+rsvps
+wishes
+visitors
+
+Tambahkan relasi yang benar antar tabel.
+Gunakan migration Drizzle yang rapi.
+
+==================================================
+15. API ROUTES
+==================================================
+
+Buat REST API lengkap dan benar-benar terhubung.
+
+AUTH
+- POST /api/admin/login
+- POST /api/admin/logout
+- GET /api/admin/me
+- POST /api/auth/register
+- POST /api/auth/login
+- POST /api/auth/logout
+- GET /api/auth/me
+
+LANDING
+- GET /api/landing
+- PATCH /api/admin/landing
+
+FEATURES
+- GET /api/features
+- POST /api/admin/features
+- PATCH /api/admin/features/:id
+- DELETE /api/admin/features/:id
+
+TEMPLATES
+- GET /api/templates
+- POST /api/admin/templates
+- PATCH /api/admin/templates/:id
+- DELETE /api/admin/templates/:id
+
+PRICING
+- GET /api/pricing
+- POST /api/admin/pricing
+- PATCH /api/admin/pricing/:id
+- DELETE /api/admin/pricing/:id
+
+FAQ
+- GET /api/faqs
+- POST /api/admin/faqs
+- PATCH /api/admin/faqs/:id
+- DELETE /api/admin/faqs/:id
+
+CUSTOMERS
+- GET /api/admin/customers
+- GET /api/admin/customers/:id
+- PATCH /api/admin/customers/:id
+- DELETE /api/admin/customers/:id
+
+ORDERS
+- POST /api/orders
+- GET /api/orders/me
+- GET /api/admin/orders
+- PATCH /api/admin/orders/:id/payment-status
+
+INVITATIONS
+- GET /api/invitations/me
+- POST /api/invitations
+- GET /api/invitations/:id
+- PATCH /api/invitations/:id
+- DELETE /api/invitations/:id
+- GET /api/public/invitations/:slug
+
+RSVP
+- POST /api/public/invitations/:slug/rsvp
+- GET /api/invitations/:id/rsvps
+- GET /api/invitations/:id/rsvps/export
+
+WISHES
+- POST /api/public/invitations/:slug/wishes
+- GET /api/invitations/:id/wishes
+- DELETE /api/invitations/:id/wishes/:wishId
+
+==================================================
+16. ADMIN UI
+==================================================
+
+Buat admin dashboard modern:
+- sidebar
+- topbar
+- cards statistik
+- table management
+- modal form
+- upload image
+- search
+- pagination
+- filter
+- responsive
+
+Menu admin:
+- Dashboard
+- Landing Page
+- Features
+- Templates
+- Pricing
+- Testimonials
+- FAQ
+- Customers
+- Orders
+- Invitations
+- Analytics
+- Settings
+
+==================================================
+17. CUSTOMER UI
+==================================================
+
+Buat customer dashboard modern:
+- sidebar / tabs
+- edit profile
+- my package
+- my invitation
+- preview invitation
+- RSVP list
+- wishes list
+- copy invitation link
+- upgrade package CTA
+
+==================================================
+18. SETTINGS / BRANDING
+==================================================
+
+Super Admin bisa atur:
+- nama brand
+- logo
+- favicon
+- warna utama
+- WhatsApp business
+- email support
+- domain info
+- SEO meta default
+- Google Analytics script field opsional
+- Facebook Pixel field opsional
+
+==================================================
+19. SEO & PERFORMANCE
+==================================================
+
+Pastikan:
+- meta tags dinamis
+- title dinamis
+- description dinamis
+- open graph untuk undangan
+- image preview
+- lazy load image
+- loading skeleton
+- form validation
+- error handling
+- no dead button
+- no placeholder dummy
+- semua data nyata dari database
+
+==================================================
+20. DEPLOYMENT READY
+==================================================
+
+Project harus:
+- clean folder structure
+- env.example lengkap
+- migration ready
+- seed ready
+- no TypeScript errors
+- no broken imports
+- backend dan frontend terhubung
+- siap deploy di Replit / VPS / Railway / Render
+
+==================================================
+21. FINAL OUTPUT YANG DIINGINKAN
+==================================================
+
+Hasil akhir harus berupa:
+1. Landing page marketing yang editable dari admin
+2. Admin dashboard super lengkap
+3. Customer dashboard
+4. SaaS undangan digital pernikahan multi-user
+5. Paket harga & order management
+6. Template management
+7. RSVP & wishes tersimpan di database
+8. Semua fitur aktif dan bukan dummy
+9. Siap dijadikan bisnis undangan digital
+
+INSTRUKSI PENTING IMPLEMENTASI
+- Jangan hanya membuat UI statis
+- Semua form harus tersambung ke backend
+- Semua data harus persist di PostgreSQL
+- Ganti semua mock data menjadi data dinamis
+- Implementasikan route, controller, schema, validation, dan UI sampai end-to-end
+- Pertahankan desain elegan modern
+- Rapikan codebase agar modular dan scalable
+- Berikan seed data awal agar project langsung bisa diuji
+
+
+Refactor project ini menjadi SaaS undangan digital pernikahan fullstack yang benar-benar aktif. Jangan buat UI dummy. Implementasikan auth, admin dashboard, customer dashboard, landing page editable dari admin, template management, pricing, order management, invitation CRUD, public invitation page, RSVP, wishes, dan database PostgreSQL dengan Drizzle. Hapus semua mock data, MemStorage, tombol mati, dan route kosong. Semua form harus terhubung ke backend dan semua data harus persist di database. Hasil akhir harus siap deploy dan semua fitur berjalan end-to-end.

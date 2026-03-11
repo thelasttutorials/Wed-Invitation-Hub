@@ -1,0 +1,64 @@
+Ubah dan optimalkan project ini menjadi platform khusus "Undangan Digital Pernikahan" saja.
+
+Instruksi utama:
+- Aktifkan seluruh fitur yang ada.
+- Hilangkan batasan, mode demo, placeholder, dan fitur yang belum berjalan.
+- Fokuskan semua halaman, menu, form, dan template hanya untuk kebutuhan undangan pernikahan.
+- Hapus fitur yang tidak relevan dengan pernikahan.
+- Pastikan seluruh alur aplikasi bisa dipakai end-to-end.
+
+Fitur yang wajib aktif:
+1. Landing page khusus jasa/pembuat undangan digital pernikahan.
+2. Form pembuatan undangan:
+   - nama mempelai pria & wanita
+   - nama orang tua
+   - tanggal akad
+   - tanggal resepsi
+   - waktu acara
+   - lokasi acara
+   - link Google Maps
+   - deskripsi/acara tambahan
+3. Hero section undangan dengan nama pasangan.
+4. Cover pembuka dengan nama tamu undangan dari parameter URL.
+5. Countdown menuju hari pernikahan.
+6. Love story / timeline perjalanan cinta.
+7. Galeri foto.
+8. Video prewedding opsional.
+9. Background music / backsound yang bisa play-pause.
+10. RSVP / konfirmasi kehadiran.
+11. Buku tamu / ucapan dan doa.
+12. Share ke WhatsApp.
+13. Generate link undangan unik per pasangan.
+14. Template desain romantis, elegan, modern, mobile-friendly.
+15. Dashboard admin untuk:
+   - membuat undangan
+   - edit undangan
+   - hapus undangan
+   - lihat RSVP
+   - lihat ucapan tamu
+16. Data tersimpan ke database dan benar-benar terbaca kembali.
+17. Semua tombol, form, navigasi, dan API harus berfungsi.
+18. SEO dasar untuk halaman undangan.
+19. Responsif sempurna di mobile.
+20. Deployment-ready.
+
+Aturan penting:
+- Project ini hanya untuk undangan digital pernikahan, bukan ulang tahun, seminar, event, atau acara lain.
+- Semua teks default harus bernuansa pernikahan.
+- Semua komponen dummy harus diganti menjadi komponen aktif.
+- Jika ada fitur yang belum terhubung, sambungkan frontend, backend, dan database sampai berjalan.
+- Jika ada data mock, ubah menjadi data dinamis.
+- Pastikan tidak ada menu mati, error, atau halaman kosong.
+
+Tambahan UX:
+- Gunakan desain elegan premium.
+- Tambahkan animasi halus.
+- Gunakan Tailwind CSS.
+- Buat struktur kode rapi dan modular.
+- Pastikan performa cepat.
+
+Output yang saya inginkan:
+- Project final yang sepenuhnya aktif
+- Khusus undangan digital pernikahan
+- Semua fitur berjalan tanpa placeholder
+- Siap dipakai dan siap dikembangkan menjadi SaaS undangan pernikahan
