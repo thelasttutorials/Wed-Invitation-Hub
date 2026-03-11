@@ -632,21 +632,25 @@ export default function Landing() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      data-testid={`button-preview-theme-${i}`}
-                      className="flex-1 text-xs"
-                    >
-                      Lihat Demo
-                    </Button>
-                    <Button
-                      size="sm"
-                      data-testid={`button-use-theme-${i}`}
-                      className="flex-1 text-xs"
-                    >
-                      Pakai Tema
-                    </Button>
+                    <a href="/invite/demo-wedding" target="_blank" rel="noopener noreferrer" className="flex-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        data-testid={`button-preview-theme-${i}`}
+                        className="w-full text-xs"
+                      >
+                        Lihat Demo
+                      </Button>
+                    </a>
+                    <a href="/admin/new" className="flex-1">
+                      <Button
+                        size="sm"
+                        data-testid={`button-use-theme-${i}`}
+                        className="w-full text-xs"
+                      >
+                        Pakai Tema
+                      </Button>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -868,23 +872,27 @@ export default function Landing() {
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button
-              size="lg"
-              data-testid="button-cta-mulai"
-              className="bg-white text-primary font-semibold gap-2 px-8 text-base"
-            >
-              <Heart className="w-4 h-4 fill-current" />
-              Buat Undangan Sekarang
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              data-testid="button-cta-lihat-tema"
-              className="border-white/40 text-white bg-white/10 backdrop-blur-sm gap-2 px-8 text-base"
-            >
-              <Eye className="w-4 h-4" />
-              Lihat Contoh Undangan
-            </Button>
+            <a href="/admin/new">
+              <Button
+                size="lg"
+                data-testid="button-cta-mulai"
+                className="bg-white text-primary font-semibold gap-2 px-8 text-base"
+              >
+                <Heart className="w-4 h-4 fill-current" />
+                Buat Undangan Sekarang
+              </Button>
+            </a>
+            <a href="/invite/demo-wedding" target="_blank" rel="noopener noreferrer">
+              <Button
+                variant="outline"
+                size="lg"
+                data-testid="button-cta-lihat-tema"
+                className="border-white/40 text-white bg-white/10 backdrop-blur-sm gap-2 px-8 text-base"
+              >
+                <Eye className="w-4 h-4" />
+                Lihat Contoh Undangan
+              </Button>
+            </a>
           </div>
 
           {/* Trust indicators */}
