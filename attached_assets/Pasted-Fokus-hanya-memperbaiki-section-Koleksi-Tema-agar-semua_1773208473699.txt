@@ -1,0 +1,56 @@
+Fokus hanya memperbaiki section "Koleksi Tema" agar semua tema bisa diklik dan membuka demo undangan yang aktif. Jangan refactor fitur lain dulu.
+
+Konteks:
+- Landing page sudah punya daftar tema seperti Luxury Gold, Romantic Floral, Minimal Modern, dan Classic Elegant.
+- Saat ini kartu tema dan tombol "Lihat Demo" / "Pakai Tema" tidak benar-benar membuka demo.
+- Project sudah punya halaman undangan publik berbasis slug, jadi gunakan struktur yang sudah ada. Jangan bangun ulang dari nol.
+
+Tugas:
+1. Audit section tema di landing page.
+2. Periksa semua elemen pada kartu tema:
+   - seluruh card
+   - tombol "Lihat Demo"
+   - tombol "Pakai Tema"
+   - tombol "Lihat Semua Tema"
+3. Pastikan semuanya benar-benar clickable, bukan hanya teks statis.
+
+Implementasi yang diinginkan:
+4. Jadikan setiap kartu tema clickable.
+5. Bungkus card atau tombol dengan Link / route navigation yang valid.
+6. Gunakan route demo publik yang nyata, misalnya:
+   - /invite/demo-luxury-gold
+   - /invite/demo-romantic-floral
+   - /invite/demo-minimal-modern
+   - /invite/demo-classic-elegant
+
+7. Jika data demo belum ada di database:
+   - buat seed data demo untuk setiap tema
+   - masing-masing punya slug unik
+   - masing-masing punya nama mempelai, tanggal, lokasi, quote, dan love story contoh
+8. Jika database belum siap untuk semua tema:
+   - minimal buat 4 demo invitation aktif yang bisa dibuka
+   - jangan biarkan tombol mengarah ke route kosong
+
+9. Tambahkan field template/theme pada data undangan demo agar tiap demo terasa berbeda secara tampilan atau styling.
+10. Pastikan query parameter ?to= tetap didukung, contoh:
+   - /invite/demo-luxury-gold?to=Bapak+Rahmat
+
+11. Perbaiki tombol "Lihat Semua Tema":
+   - jika belum ada halaman khusus, scroll ke section tema
+   - atau arahkan ke halaman /themes yang benar-benar ada
+   - jangan biarkan tombol mati
+
+12. UX yang wajib:
+   - cursor pointer di kartu tema
+   - hover state jelas
+   - tombol benar-benar bisa ditekan
+   - tidak ada blank page / 404
+
+13. Jangan ubah auth/admin sekarang.
+14. Jangan ubah fitur RSVP/wishes kecuali diperlukan agar demo bisa tampil normal.
+15. Jangan bikin UI dummy; semua link demo harus benar-benar membuka halaman yang aktif.
+
+Output setelah selesai:
+- sebutkan file yang diubah
+- sebutkan route demo final untuk masing-masing tema
+- pastikan semua kartu tema dan tombol demo sekarang bisa diklik
