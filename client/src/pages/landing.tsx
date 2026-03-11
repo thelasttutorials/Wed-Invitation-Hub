@@ -118,7 +118,7 @@ export default function Landing() {
       accent: "bg-yellow-400/20",
       textColor: "text-yellow-100",
       pattern: "gold",
-      demoSlug: "demo-luxury-gold",
+      demoSlug: "luxury-gold",
       couple: "Ardhian & Nadya",
       date: "12 Desember 2026",
     },
@@ -130,7 +130,7 @@ export default function Landing() {
       accent: "bg-rose-400/20",
       textColor: "text-rose-100",
       pattern: "floral",
-      demoSlug: "demo-romantic-floral",
+      demoSlug: "romantic-floral",
       couple: "Bagas & Kinanti",
       date: "21 September 2026",
     },
@@ -142,7 +142,7 @@ export default function Landing() {
       accent: "bg-slate-400/20",
       textColor: "text-slate-100",
       pattern: "minimal",
-      demoSlug: "demo-minimal-modern",
+      demoSlug: "minimal-modern",
       couple: "Rizky & Dinda",
       date: "17 Agustus 2026",
     },
@@ -154,7 +154,7 @@ export default function Landing() {
       accent: "bg-blue-400/20",
       textColor: "text-blue-100",
       pattern: "classic",
-      demoSlug: "demo-classic-elegant",
+      demoSlug: "classic-elegant",
       couple: "Farhan & Salsabila",
       date: "7 November 2026",
     },
@@ -602,7 +602,7 @@ export default function Landing() {
                 key={i}
                 data-testid={`card-theme-${i}`}
                 className="group rounded-xl border border-slate-200 bg-white shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-visible cursor-pointer"
-                onClick={() => window.open(`/invite/${theme.demoSlug}`, "_blank")}
+                onClick={() => window.open(`/demo/${theme.demoSlug}`, "_blank")}
               >
                 {/* Theme preview image area */}
                 <div
@@ -651,7 +651,7 @@ export default function Landing() {
                   </div>
                   <div className="flex gap-2">
                     <a
-                      href={`/invite/${theme.demoSlug}`}
+                      href={`/demo/${theme.demoSlug}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex-1"
@@ -912,7 +912,7 @@ export default function Landing() {
                 Buat Undangan Sekarang
               </Button>
             </a>
-            <a href="/invite/demo-wedding" target="_blank" rel="noopener noreferrer">
+            <a href="/demo/romantic-floral" target="_blank" rel="noopener noreferrer">
               <Button
                 variant="outline"
                 size="lg"
@@ -962,9 +962,9 @@ export default function Landing() {
             <nav className="flex flex-wrap items-center justify-center gap-6">
               {[
                 { label: "Tema", href: "#tema" },
-                { label: "Privasi", href: "#privasi" },
-                { label: "Syarat", href: "#syarat" },
-                { label: "Kontak", href: "#kontak" },
+                { label: "Privasi", href: "/privacy" },
+                { label: "Syarat", href: "/terms" },
+                { label: "Kontak", href: "/contact" },
               ].map((link) => (
                 <a
                   key={link.label}

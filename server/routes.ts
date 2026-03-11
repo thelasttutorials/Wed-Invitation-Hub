@@ -8,6 +8,7 @@ import {
   updateInvitationSchema,
   insertRsvpSchema,
   insertWishSchema,
+  insertContactMessageSchema,
 } from "@shared/schema";
 
 function slugify(text: string): string {
@@ -21,6 +22,30 @@ function slugify(text: string): string {
 }
 
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
+
+  // ── Contact Messages ───────────────────────────────────────────────────────────
+
+  app.post("/api/contact", async (req, res) => {
+    try {
+      const parsed = insertContactMessageSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ error: "Data tidak valid.", details: parsed.error.flatten() });
+      }
+      const message = await storage.createContactMessage(parsed.data);
+      res.json(message);
+    } catch (err) {
+      res.status(500).json({ error: "Gagal mengirim pesan." });
+    }
+  });
+
+  app.get("/api/admin/contact-messages", requireAdmin, async (_req, res) => {
+    try {
+      const messages = await storage.getAllContactMessages();
+      res.json(messages);
+    } catch (err) {
+      res.status(500).json({ error: "Gagal memuat pesan." });
+    }
+  });
 
   // ── Invitations ───────────────────────────────────────────────────────────────
 

@@ -24,6 +24,13 @@ import AdminOrders from "@/pages/admin/orders";
 import AdminBankSettings from "@/pages/admin/bank-settings";
 import AdminTemplates from "@/pages/admin/templates";
 import TemplateBuilder from "@/pages/admin/template-builder";
+import PrivacyPage from "@/pages/privacy";
+import TermsPage from "@/pages/terms";
+import ContactPage from "@/pages/contact";
+import AdminContactMessages from "@/pages/admin/contact-messages";
+import DemoPage from "@/pages/demo";
+import InvoicePage from "@/pages/dashboard/invoice";
+import GuestManagementPage from "@/pages/dashboard/guests";
 
 function Router() {
   return (
@@ -32,6 +39,12 @@ function Router() {
       <Route path="/" component={Landing} />
       <Route path="/invite/:slug" component={InvitePage} />
       <Route path="/invitation/:slug" component={InvitationPage} />
+      <Route path="/demo/:slug" component={DemoPage} />
+
+      {/* Legal & Contact */}
+      <Route path="/privacy" component={PrivacyPage} />
+      <Route path="/terms" component={TermsPage} />
+      <Route path="/contact" component={ContactPage} />
 
       {/* Customer auth — no guard */}
       <Route path="/login" component={AuthLogin} />
@@ -47,6 +60,7 @@ function Router() {
       <Route path="/dashboard/new">
         {() => <Dashboard section="new" />}
       </Route>
+      <Route path="/dashboard/guests" component={GuestManagementPage} />
       <Route path="/dashboard/rsvp">
         {() => <Dashboard section="rsvp" />}
       </Route>
@@ -62,6 +76,7 @@ function Router() {
       <Route path="/dashboard/orders">
         {() => <Dashboard section="orders" />}
       </Route>
+      <Route path="/dashboard/invoice/:id" component={InvoicePage} />
 
       {/* Pricing page — public */}
       <Route path="/pricing" component={PricingPage} />
@@ -154,6 +169,14 @@ function Router() {
         {() => (
           <AdminGuard pageTitle="Templates">
             <AdminTemplates />
+          </AdminGuard>
+        )}
+      </Route>
+
+      <Route path="/admin/contact-messages">
+        {() => (
+          <AdminGuard pageTitle="Pesan Kontak">
+            <AdminContactMessages />
           </AdminGuard>
         )}
       </Route>

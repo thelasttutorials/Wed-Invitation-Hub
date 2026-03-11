@@ -46,6 +46,12 @@ const menuItems = [
     testId: "nav-new-invitation",
   },
   {
+    label: "Manajemen Tamu",
+    href: "/dashboard/guests",
+    icon: Users,
+    testId: "nav-guests",
+  },
+  {
     label: "Daftar RSVP",
     href: "/dashboard/rsvp",
     icon: Users,

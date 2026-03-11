@@ -1,0 +1,88 @@
+Audit seluruh project Wed Invitation Hub lalu langsung perbaiki semua bagian yang broken, missing, half-done, dan tidak terhubung.
+
+Jangan rewrite project dari nol.
+Jangan merusak fitur yang sudah bekerja.
+Jangan buat UI dummy.
+Jangan berhenti di tampilan.
+Selesaikan frontend, backend, database, route, dan integrasi sampai benar-benar jalan.
+
+Fokus utama:
+- cari semua script yang belum ada / belum lengkap
+- cari semua route mati / 404 / blank page
+- cari semua tombol yang tidak bekerja
+- cari semua form yang tidak submit ke backend
+- cari semua integrasi frontend-backend-database yang putus
+- cari semua schema / field / handler yang mismatch
+- cari semua TypeScript error, broken import, dead code, dan crash point
+- perbaiki semuanya bertahap sampai stabil
+
+Wajib audit dan perbaiki bagian ini:
+- landing page
+- template cards
+- demo template
+- pakai tema
+- builder template
+- invitation public page
+- login / register / OTP
+- pricing / billing / orders
+- upload bukti transfer
+- admin approve / reject / complete
+- subscription activation
+- guest management
+- import Excel / CSV
+- RSVP
+- WhatsApp share
+- contact form
+- privacy / terms
+- admin dashboard
+- admin templates
+- admin orders
+- admin bank settings
+
+Prioritas urutan kerja:
+1. perbaiki build/server/runtime error
+2. perbaiki broken imports dan TypeScript error
+3. perbaiki routing dan halaman blank
+4. perbaiki tombol/action mati
+5. perbaiki API/handler yang missing
+6. perbaiki schema/query mismatch
+7. perbaiki integrasi frontend ke backend
+8. perbaiki integrasi backend ke database
+9. perbaiki validasi dan hak akses
+10. rapikan dead code tanpa merusak fitur aktif
+
+Kelompokkan masalah secara internal menjadi:
+- WORKING
+- BROKEN
+- MISSING
+- HALF-DONE
+- DEAD CODE
+
+Lalu langsung perbaiki semuanya.
+
+Pastikan hasil akhir:
+- semua route utama bisa dibuka
+- tidak ada blank page
+- tidak ada tombol mati
+- tidak ada submit palsu
+- semua data utama tersimpan di database
+- semua status pembayaran sinkron
+- semua template bisa diklik
+- builder bisa dibuka dan dipakai
+- invitation publik bisa tampil
+- RSVP bisa masuk
+- import guest bisa jalan
+- contact form bekerja
+- legal pages aktif
+- admin bisa mengelola pembayaran dan template
+- project tetap stabil dan bisa dijalankan
+
+Output setelah selesai wajib:
+1. WORKING
+2. FIXED
+3. ADDED
+4. STILL NEEDS TEST
+5. FILES CHANGED
+
+Kerjakan berdasarkan audit nyata pada codebase ini, bukan asumsi.
+Jangan berhenti sampai fitur utama benar-benar tersambung end-to-end.

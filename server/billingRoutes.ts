@@ -3,6 +3,7 @@ import { z } from "zod";
 import { storage } from "./storage";
 import { requireUser } from "./userAuth";
 import { getUserActivePlan, generateOrderNumber } from "./planHelpers";
+import { sendPaymentReceivedEmail } from "./emailService";
 
 export function registerBillingRoutes(app: Express) {
   app.get("/api/pricing", async (_req, res) => {
@@ -96,7 +97,7 @@ export function registerBillingRoutes(app: Express) {
   });
 
   app.post("/api/orders/:id/upload-proof", requireUser, async (req, res) => {
-    const orderId = parseInt(req.params.id);
+    const orderId = parseInt(String(req.params.id));
     if (isNaN(orderId)) return res.status(400).json({ error: "ID order tidak valid." });
 
     const parsed = uploadProofSchema.safeParse(req.body);
@@ -113,11 +114,39 @@ export function registerBillingRoutes(app: Express) {
       const existing = await storage.getConfirmationByOrder(orderId);
       if (existing) return res.status(400).json({ error: "Bukti transfer sudah diupload. Tunggu konfirmasi admin." });
 
-      const confirmation = await storage.createPaymentConfirmation(parsed.data);
+      const confirmation = await storage.createPaymentConfirmation({ ...parsed.data, orderId });
       await storage.updateOrderStatus(orderId, "waiting_confirmation");
+
+      // Kirim email notifikasi
+      const user = await storage.getUserById(userId);
+      if (user) {
+        await sendPaymentReceivedEmail(user.email, order.orderNumber);
+      }
+
       res.json({ ok: true, confirmation });
-    } catch {
+    } catch (err) {
+      console.error("[billing] Gagal upload bukti:", err);
       res.status(500).json({ error: "Gagal upload bukti transfer." });
+    }
+  });
+
+  app.get("/api/orders/:id/invoice", requireUser, async (req, res) => {
+    const orderId = parseInt(String(req.params.id));
+    if (isNaN(orderId)) return res.status(400).json({ error: "ID order tidak valid." });
+
+    try {
+      const userId = req.session.userId!;
+      const order = await storage.getOrderById(orderId);
+      if (!order) return res.status(404).json({ error: "Order tidak ditemukan." });
+      if (order.userId !== userId) return res.status(403).json({ error: "Bukan order Anda." });
+      if (order.paymentStatus !== "paid") return res.status(400).json({ error: "Order belum lunas." });
+
+      const plan = await storage.getPricingPlanById(order.planId);
+      const user = await storage.getUserById(userId);
+
+      res.json({ order, plan, user });
+    } catch {
+      res.status(500).json({ error: "Gagal memuat invoice." });
     }
   });
 

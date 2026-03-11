@@ -68,7 +68,10 @@ function formatDate(d: string | null | undefined) {
 export default function InvitePage() {
   const { slug } = useParams<{ slug: string }>();
   const searchStr = useSearch();
-  const guestName = new URLSearchParams(searchStr).get("to") || "Tamu Undangan";
+  const searchParams = new URLSearchParams(searchStr);
+  const toParam = searchParams.get("to");
+  const guestCodeParam = searchParams.get("guest");
+
   const { toast } = useToast();
 
   const [opened, setOpened] = useState(false);
@@ -76,15 +79,43 @@ export default function InvitePage() {
   const [showTop, setShowTop] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const { data, isLoading } = useQuery<InvitationData & { guest?: any }>({
+    queryKey: ["/api/invitations", slug, guestCodeParam],
+    queryFn: async () => {
+      const res = await fetch(`/api/invitations/${slug}`);
+      const data = await res.json();
+
+      if (guestCodeParam) {
+        try {
+          const guestRes = await fetch(`/api/public/guests/${guestCodeParam}`);
+          if (guestRes.ok) {
+            data.guest = await guestRes.json();
+          }
+        } catch (e) {
+          console.error("Failed to fetch guest", e);
+        }
+      }
+      return data;
+    },
+  });
+
+  const guestName = data?.guest?.name || toParam || "Tamu Undangan";
+
   const [rsvpForm, setRsvpForm] = useState({
-    guest_name: guestName === "Tamu Undangan" ? "" : guestName,
+    guest_name: "",
     attendance_status: "hadir",
     guest_count: 1,
     note: "",
   });
   const [rsvpDone, setRsvpDone] = useState(false);
 
-  const [wishForm, setWishForm] = useState({ guest_name: guestName === "Tamu Undangan" ? "" : guestName, message: "" });
+  const [wishForm, setWishForm] = useState({ guest_name: "", message: "" });
+
+  useEffect(() => {
+    const name = data?.guest?.name || toParam || "";
+    setRsvpForm(prev => ({ ...prev, guest_name: name }));
+    setWishForm(prev => ({ ...prev, guest_name: name }));
+  }, [data?.guest, toParam]);
 
   const wishesMutation = useMutation({
     mutationFn: (body: typeof wishForm) =>
@@ -109,11 +140,6 @@ export default function InvitePage() {
     onError: () => {
       toast({ title: "Gagal mengirim RSVP", description: "Silakan coba lagi.", variant: "destructive" });
     },
-  });
-
-  const { data, isLoading } = useQuery<InvitationData>({
-    queryKey: ["/api/invitations", slug],
-    queryFn: () => fetch(`/api/invitations/${slug}`).then(r => r.json()),
   });
 
   const countdown = useCountdown(data?.invitation?.receptionDate ?? data?.invitation?.akadDate);

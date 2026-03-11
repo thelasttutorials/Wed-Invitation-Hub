@@ -243,17 +243,27 @@ function OrdersSection() {
           {orders.map((order) => (
             <Card key={order.id}>
               <CardContent className="p-4 flex items-center justify-between gap-3 flex-wrap">
-                <div>
-                  <p className="font-semibold text-sm text-slate-900">{order.orderNumber}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm text-slate-900 truncate">{order.orderNumber}</p>
                   <p className="text-xs text-slate-500 mt-0.5">
                     {order.plan?.name} — Rp {order.amount?.toLocaleString("id-ID")}
                     {" · "}
                     {new Date(order.createdAt).toLocaleDateString("id-ID")}
                   </p>
                 </div>
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLORS[order.paymentStatus] ?? "bg-slate-100 text-slate-600"}`}>
-                  {STATUS_LABELS[order.paymentStatus] ?? order.paymentStatus}
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold border ${STATUS_COLORS[order.paymentStatus] ?? "bg-slate-100 text-slate-600 border-slate-200"}`}>
+                    {STATUS_LABELS[order.paymentStatus] ?? order.paymentStatus}
+                  </span>
+                  {order.paymentStatus === "paid" && (
+                    <Link href={`/dashboard/invoice/${order.id}`}>
+                      <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5" data-testid={`button-invoice-${order.id}`}>
+                        <FileText className="w-3.5 h-3.5" />
+                        Invoice
+                      </Button>
+                    </Link>
+                  )}
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -291,6 +301,7 @@ function DashboardHome() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { href: "/dashboard/invitations", bg: "bg-rose-500", Icon: FileText, val: isLoading ? null : totalInvitations, label: "Undangan", testId: "stat-undangan" },
+          { href: "/dashboard/guests", bg: "bg-emerald-500", Icon: Users, val: "—", label: "Tamu", testId: "stat-guests" },
           { href: "/dashboard/rsvp", bg: "bg-blue-500", Icon: Users, val: "—", label: "RSVP", testId: "stat-rsvp" },
           { href: "/dashboard/wishes", bg: "bg-violet-500", Icon: MessageSquare, val: "—", label: "Ucapan", testId: "stat-ucapan" },
         ].map(({ href, bg, Icon: I, val, label, testId }) => (

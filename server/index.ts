@@ -6,6 +6,7 @@ import { registerUserAuthRoutes } from "./userAuth";
 import { registerBillingRoutes } from "./billingRoutes";
 import { registerAdminBillingRoutes } from "./adminBillingRoutes";
 import { registerAdminTemplateRoutes, seedDefaultTemplates } from "./adminTemplateRoutes";
+import { registerGuestRoutes } from "./guestRoutes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
@@ -84,6 +85,7 @@ app.use((req, res, next) => {
   registerBillingRoutes(app);
   registerAdminBillingRoutes(app);
   registerAdminTemplateRoutes(app);
+  registerGuestRoutes(app);
   await registerRoutes(httpServer, app);
   await seedDefaultAdmin();
   await seedDemoInvitation();

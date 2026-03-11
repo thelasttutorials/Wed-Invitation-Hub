@@ -1,0 +1,234 @@
+Audit dan refactor project Wed Invitation Hub untuk membersihkan codebase, memperbaiki script yang bermasalah, menghapus kode duplikat atau tidak terpakai, serta menambahkan optimasi SEO dan speed/performance.
+
+Jangan rewrite project dari nol.
+Jangan merusak fitur yang sudah bekerja.
+Fokus pada perbaikan script, cleanup codebase, SEO, dan performance.
+
+==================================================
+TUJUAN
+==================================================
+
+1. memperbaiki script yang error atau tidak lengkap
+2. menghapus kode duplikat atau tidak terpakai
+3. membersihkan struktur project
+4. menambahkan SEO dasar
+5. meningkatkan kecepatan website
+6. memastikan project tetap stabil setelah refactor
+
+==================================================
+STEP 1 — AUDIT CODEBASE
+==================================================
+
+Audit seluruh project dan tandai bagian berikut:
+
+WORKING
+- fitur yang sudah berjalan dengan baik
+
+BROKEN
+- script yang error atau tidak berjalan
+
+DUPLICATE
+- fungsi atau komponen yang memiliki kode duplikat
+
+UNUSED / DEAD CODE
+- import tidak digunakan
+- file tidak dipakai
+- helper tidak dipakai
+- route tidak digunakan
+
+HALF-DONE
+- UI ada tetapi backend belum
+- route ada tetapi handler kosong
+- integrasi belum selesai
+
+==================================================
+STEP 2 — PERBAIKI ERROR DASAR
+==================================================
+
+Perbaiki masalah berikut:
+
+- TypeScript error
+- broken import
+- undefined variables
+- server startup error
+- route yang mengarah ke halaman kosong
+- API handler yang tidak lengkap
+- mismatch field antara frontend dan backend
+
+Pastikan server dapat berjalan tanpa crash.
+
+==================================================
+STEP 3 — HAPUS KODE DUPLIKAT
+==================================================
+
+Cari dan rapikan:
+
+- helper yang memiliki fungsi sama
+- komponen UI duplikat
+- route duplikat
+- util duplikat
+- query yang sama
+- file lama yang tidak dipakai
+
+Jika ada dua script dengan fungsi sama:
+pertahankan yang paling stabil dan hapus yang lain.
+
+==================================================
+STEP 4 — HAPUS DEAD CODE
+==================================================
+
+Hapus:
+
+- import tidak digunakan
+- component tidak dipakai
+- route lama
+- fungsi tidak pernah dipanggil
+- mock data lama
+- script setengah jadi
+
+Tetapi jangan menghapus fitur yang aktif.
+
+==================================================
+STEP 5 — RAPIIKAN STRUKTUR PROJECT
+==================================================
+
+Pastikan struktur project rapi dan mudah dipahami.
+
+Contoh pengelompokan:
+
+pages  
+components  
+services / api  
+utils  
+schemas  
+admin modules  
+invitation modules  
+payment modules  
+template modules  
+guest / RSVP modules  
+
+Jika file terlalu besar, pecah seperlunya.
+
+==================================================
+STEP 6 — SEO OPTIMIZATION
+==================================================
+
+Tambahkan SEO dasar untuk halaman penting:
+
+/
+ /pricing
+ /templates
+ /demo/:slug
+ /invite/:slug
+ /privacy
+ /terms
+ /contact
+
+Tambahkan:
+
+title unik  
+meta description  
+Open Graph tags  
+Twitter card  
+alt text gambar penting  
+heading structure yang benar (H1 H2)  
+
+Tambahkan dynamic meta untuk halaman undangan publik.
+
+==================================================
+STEP 7 — TECHNICAL SEO
+==================================================
+
+Tambahkan atau perbaiki:
+
+robots.txt  
+sitemap.xml  
+favicon  
+URL slug yang rapi  
+canonical tag jika perlu  
+
+Pastikan halaman utama dapat diakses crawler.
+
+==================================================
+STEP 8 — PERFORMANCE OPTIMIZATION
+==================================================
+
+Optimasi speed website:
+
+- lazy load gambar
+- lazy load komponen berat
+- kurangi bundle size
+- hapus dependency tidak dipakai
+- kurangi render berulang
+- optimasi builder preview
+- optimasi fetch API agar tidak ganda
+
+Pastikan:
+
+landing page cepat  
+demo template cepat  
+builder tidak lag  
+dashboard responsif  
+
+==================================================
+STEP 9 — IMAGE OPTIMIZATION
+==================================================
+
+Periksa semua asset gambar.
+
+Lakukan:
+
+lazy loading  
+kompres gambar besar  
+thumbnail template ringan  
+fallback image jika kosong  
+
+Tambahkan alt text untuk SEO.
+
+==================================================
+STEP 10 — FINAL TEST
+==================================================
+
+Pastikan flow utama tetap berjalan:
+
+PUBLIC
+- landing page
+- template demo
+- invitation page
+- RSVP
+- contact
+
+USER
+- login/register
+- pricing
+- upload bukti transfer
+- dashboard orders
+- guest import
+- RSVP dashboard
+
+ADMIN
+- template builder
+- orders
+- approve/reject payment
+- bank settings
+
+==================================================
+OUTPUT SETELAH SELESAI
+==================================================
+
+Berikan laporan:
+
+FIXED
+- bug yang diperbaiki
+
+REMOVED
+- file atau script duplikat yang dihapus
+
+SEO IMPROVEMENTS
+- halaman yang sudah dioptimasi
+
+PERFORMANCE IMPROVEMENTS
+- optimasi yang dilakukan
+
+FILES CHANGED
+- file utama yang diubah

@@ -24,6 +24,10 @@ import type {
   BankSetting,
   Template,
   InsertTemplate,
+  Guest,
+  InsertGuest,
+  ContactMessage,
+  InsertContactMessage,
 } from "@shared/schema";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -100,6 +104,7 @@ export interface IStorage {
   getOrdersByUser(userId: number): Promise<Order[]>;
   getAllOrders(): Promise<(Order & { user: User; plan: PricingPlan; confirmation?: PaymentConfirmation })[]>;
   updateOrderStatus(id: number, status: string): Promise<void>;
+  updateOrder(id: number, data: Partial<Order>): Promise<Order | undefined>;
   getPendingOrderByUser(userId: number): Promise<Order | undefined>;
 
   // Payment confirmations
@@ -126,6 +131,23 @@ export interface IStorage {
   updateTemplate(id: number, data: Partial<InsertTemplate>): Promise<Template | undefined>;
   deleteTemplate(id: number): Promise<boolean>;
   upsertTemplate(slug: string, data: Omit<Template, "id" | "createdAt" | "updatedAt">): Promise<Template>;
+
+  // Contact messages
+  createContactMessage(data: schema.InsertContactMessage): Promise<schema.ContactMessage>;
+  getAllContactMessages(): Promise<schema.ContactMessage[]>;
+
+  // Guests
+  getGuestsByInvitation(invitationId: number): Promise<Guest[]>;
+  getGuestById(id: number): Promise<Guest | undefined>;
+  getGuestByCode(guestCode: string): Promise<Guest | undefined>;
+  createGuest(data: InsertGuest): Promise<Guest>;
+  updateGuest(id: number, data: Partial<InsertGuest>): Promise<Guest | undefined>;
+  deleteGuest(id: number): Promise<boolean>;
+  bulkCreateGuests(data: InsertGuest[]): Promise<Guest[]>;
+  checkinGuest(id: number): Promise<Guest | undefined>;
+
+  // Invitations (Updated)
+  getInvitationsByUser(userId: number): Promise<Invitation[]>;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -441,6 +463,11 @@ class DatabaseStorage implements IStorage {
     await db.update(schema.orders).set({ paymentStatus: status, updatedAt: new Date() }).where(eq(schema.orders.id, id));
   }
 
+  async updateOrder(id: number, data: Partial<Order>): Promise<Order | undefined> {
+    const result = await db.update(schema.orders).set({ ...data, updatedAt: new Date() }).where(eq(schema.orders.id, id)).returning();
+    return result[0];
+  }
+
   async getPendingOrderByUser(userId: number): Promise<Order | undefined> {
     const result = await db.select().from(schema.orders)
       .where(and(eq(schema.orders.userId, userId), eq(schema.orders.paymentStatus, "pending")))
@@ -525,6 +552,78 @@ class DatabaseStorage implements IStorage {
     }
     const result = await db.insert(schema.templates).values(data).returning();
     return result[0];
+  }
+
+  // ── Contact messages ─────────────────────────────────────────
+
+  async createContactMessage(data: schema.InsertContactMessage): Promise<schema.ContactMessage> {
+    const result = await db.insert(schema.contactMessages).values(data).returning();
+    return result[0];
+  }
+
+  async getAllContactMessages(): Promise<schema.ContactMessage[]> {
+    return db.select().from(schema.contactMessages).orderBy(desc(schema.contactMessages.createdAt));
+  }
+
+  // ── Guests ───────────────────────────────────────────────────
+
+  async getGuestsByInvitation(invitationId: number): Promise<Guest[]> {
+    return db.select().from(schema.guests)
+      .where(eq(schema.guests.invitationId, invitationId))
+      .orderBy(asc(schema.guests.name));
+  }
+
+  async getGuestById(id: number): Promise<Guest | undefined> {
+    const result = await db.select().from(schema.guests).where(eq(schema.guests.id, id));
+    return result[0];
+  }
+
+  async getGuestByCode(guestCode: string): Promise<Guest | undefined> {
+    const result = await db.select().from(schema.guests).where(eq(schema.guests.guestCode, guestCode));
+    return result[0];
+  }
+
+  async createGuest(data: InsertGuest): Promise<Guest> {
+    const result = await db.insert(schema.guests).values(data).returning();
+    return result[0];
+  }
+
+  async updateGuest(id: number, data: Partial<InsertGuest>): Promise<Guest | undefined> {
+    const result = await db.update(schema.guests)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(schema.guests.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deleteGuest(id: number): Promise<boolean> {
+    const result = await db.delete(schema.guests).where(eq(schema.guests.id, id)).returning();
+    return result.length > 0;
+  }
+
+  async bulkCreateGuests(data: InsertGuest[]): Promise<Guest[]> {
+    if (data.length === 0) return [];
+    return db.insert(schema.guests).values(data).returning();
+  }
+
+  async checkinGuest(id: number): Promise<Guest | undefined> {
+    const result = await db.update(schema.guests)
+      .set({
+        checkinStatus: "checked_in",
+        checkedInAt: new Date(),
+        updatedAt: new Date()
+      })
+      .where(eq(schema.guests.id, id))
+      .returning();
+    return result[0];
+  }
+
+  // ── Invitations (Updated) ───────────────────────────────────
+
+  async getInvitationsByUser(userId: number): Promise<Invitation[]> {
+    return db.select().from(schema.invitations)
+      .where(eq(schema.invitations.userId, userId))
+      .orderBy(desc(schema.invitations.createdAt));
   }
 }
 

@@ -89,7 +89,7 @@ export function registerAdminTemplateRoutes(app: Express) {
   });
 
   app.get("/api/admin/templates/:id", requireAdmin, async (req, res) => {
-    const id = parseInt(req.params.id);
+    const id = parseInt(String(req.params.id));
     if (isNaN(id)) return res.status(400).json({ error: "ID tidak valid." });
     try {
       const tmpl = await storage.getTemplateById(id);
@@ -111,7 +111,7 @@ export function registerAdminTemplateRoutes(app: Express) {
   });
 
   app.patch("/api/admin/templates/:id", requireAdmin, async (req, res) => {
-    const id = parseInt(req.params.id);
+    const id = parseInt(String(req.params.id));
     if (isNaN(id)) return res.status(400).json({ error: "ID tidak valid." });
     const parsed = updateSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ error: parsed.error.errors[0].message });
@@ -146,7 +146,7 @@ export function registerAdminTemplateRoutes(app: Express) {
   });
 
   app.delete("/api/admin/templates/:id", requireAdmin, async (req, res) => {
-    const id = parseInt(req.params.id);
+    const id = parseInt(String(req.params.id));
     if (isNaN(id)) return res.status(400).json({ error: "ID tidak valid." });
     try {
       const ok = await storage.deleteTemplate(id);
@@ -162,6 +162,18 @@ export function registerAdminTemplateRoutes(app: Express) {
     try {
       const templates = await storage.getAllTemplates();
       res.json(templates.filter(t => t.isPublished));
+    } catch {
+      res.status(500).json({ error: "Gagal memuat template." });
+    }
+  });
+
+  app.get("/api/templates/:slug", async (req, res) => {
+    try {
+      const { slug } = req.params;
+      const templates = await storage.getAllTemplates();
+      const tmpl = templates.find(t => t.slug === slug);
+      if (!tmpl) return res.status(404).json({ error: "Template tidak ditemukan." });
+      res.json(tmpl);
     } catch {
       res.status(500).json({ error: "Gagal memuat template." });
     }

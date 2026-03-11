@@ -63,6 +63,7 @@ export const invitations = pgTable("invitations", {
   additionalNotes: text("additional_notes").notNull().default(""),
   isPublished: boolean("is_published").notNull().default(true),
   themeSlug: text("theme_slug").notNull().default("romantic-floral"),
+  userId: integer("user_id"),
   sectionConfig: text("section_config"),
   createdAt: timestamp("created_at").notNull().default(sql`NOW()`),
   updatedAt: timestamp("updated_at").notNull().default(sql`NOW()`),
@@ -168,6 +169,8 @@ export const orders = pgTable("orders", {
   amount: integer("amount").notNull(),
   paymentMethod: text("payment_method").notNull().default("bank_transfer"),
   paymentStatus: text("payment_status").notNull().default("pending"),
+  orderStatus: text("order_status").notNull().default("pending"),
+  adminNote: text("admin_note").notNull().default(""),
   notes: text("notes").notNull().default(""),
   createdAt: timestamp("created_at").notNull().default(sql`NOW()`),
   updatedAt: timestamp("updated_at").notNull().default(sql`NOW()`),
@@ -331,6 +334,38 @@ export const insertTemplateSchema = createInsertSchema(templates).omit({ id: tru
 export type Template = typeof templates.$inferSelect;
 export type InsertTemplate = z.infer<typeof insertTemplateSchema>;
 
+// ─────────────────────────────────────────────────────────────
+// guests
+// Per-invitation guest list for personalised invitation links.
+// ─────────────────────────────────────────────────────────────
+export const guests = pgTable("guests", {
+  id: serial("id").primaryKey(),
+  invitationId: integer("invitation_id").notNull(),
+  name: text("name").notNull(),
+  phone: text("phone").notNull().default(""),
+  email: text("email").notNull().default(""),
+  guestCode: varchar("guest_code", { length: 20 }).notNull().unique(),
+  maxGuest: integer("max_guest").notNull().default(2),
+  checkinStatus: text("checkin_status").notNull().default("pending"),
+  checkedInAt: timestamp("checked_in_at"),
+  createdAt: timestamp("created_at").notNull().default(sql`NOW()`),
+  updatedAt: timestamp("updated_at").notNull().default(sql`NOW()`),
+});
+
+// ─────────────────────────────────────────────────────────────
+// contact_messages
+// Messages submitted via the public contact form.
+// ─────────────────────────────────────────────────────────────
+export const contactMessages = pgTable("contact_messages", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  subject: text("subject").notNull(),
+  message: text("message").notNull(),
+  status: text("status").notNull().default("unread"),
+  createdAt: timestamp("created_at").notNull().default(sql`NOW()`),
+});
+
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
   createdAt: true,
@@ -346,3 +381,11 @@ export type InsertUser = z.infer<typeof insertUserSchema>;
 
 export type EmailVerification = typeof emailVerifications.$inferSelect;
 export type InsertEmailVerification = z.infer<typeof insertEmailVerificationSchema>;
+
+export const insertGuestSchema = createInsertSchema(guests).omit({ id: true, createdAt: true, updatedAt: true });
+export type Guest = typeof guests.$inferSelect;
+export type InsertGuest = z.infer<typeof insertGuestSchema>;
+
+export const insertContactMessageSchema = createInsertSchema(contactMessages).omit({ id: true, createdAt: true });
+export type ContactMessage = typeof contactMessages.$inferSelect;
+export type InsertContactMessage = z.infer<typeof insertContactMessageSchema>;
