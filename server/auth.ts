@@ -44,48 +44,161 @@ export async function seedDefaultAdmin() {
 // ─────────────────────────────────────────────────────────────
 // Seed demo invitation on first startup
 // ─────────────────────────────────────────────────────────────
+const DEMO_INVITATIONS = [
+  {
+    slug: "demo-luxury-gold",
+    groomName: "Ardhian Kusuma",
+    brideName: "Nadya Permata",
+    groomParents: "Bp. Kusuma Wijaya & Ibu Sri Handayani",
+    brideParents: "Bp. Permata Alam & Ibu Dewi Sartika",
+    akadDate: "2026-12-12",
+    akadTime: "08.00 - 10.00 WIB",
+    receptionDate: "2026-12-12",
+    receptionTime: "11.00 - 14.00 WIB",
+    venueName: "The Ritz-Carlton Ballroom",
+    venueAddress: "Jl. MH Thamrin No. 9, Jakarta Pusat",
+    openingQuote: "Dan di antara tanda-tanda kekuasaan-Nya, Dia menciptakan pasangan untukmu agar kamu merasa tenteram. — QS. Ar-Rum: 21",
+    coverPhotoUrl: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=1200&q=80",
+    galleryPhotos: [
+      "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=600",
+      "https://images.unsplash.com/photo-1519741497674-611481863552?w=600",
+      "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600",
+      "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600",
+    ],
+    additionalNotes: "Dresscode: Gold & Ivory. Mohon konfirmasi paling lambat H-7.",
+    loveStory: [
+      { dateLabel: "Januari 2020", title: "Pertemuan Pertama", description: "Kami pertama bertemu di sebuah gala dinner perusahaan. Senyumnya yang hangat langsung mencuri perhatian.", sortOrder: 0 },
+      { dateLabel: "Maret 2021", title: "Jatuh Cinta", description: "Perjalanan bersama ke Bali menjadi titik balik — kami sadar bahwa ini bukan sekadar pertemanan biasa.", sortOrder: 1 },
+      { dateLabel: "November 2024", title: "Lamaran Mewah", description: "Di rooftop bintang lima dengan rangkaian mawar, dia melamar dengan cincin yang paling indah.", sortOrder: 2 },
+      { dateLabel: "Desember 2026", title: "Hari Istimewa", description: "Bersama keluarga dan sahabat tercinta, kami memulai babak baru kehidupan yang penuh kasih.", sortOrder: 3 },
+    ],
+  },
+  {
+    slug: "demo-romantic-floral",
+    groomName: "Bagas Saputra",
+    brideName: "Kinanti Ayu",
+    groomParents: "Bp. Saputra Hadi & Ibu Wulan Sari",
+    brideParents: "Bp. Ayu Pratama & Ibu Melati Indah",
+    akadDate: "2026-09-21",
+    akadTime: "08.30 - 10.00 WIB",
+    receptionDate: "2026-09-21",
+    receptionTime: "11.00 - 15.00 WIB",
+    venueName: "Taman Bunga Nusantara",
+    venueAddress: "Jl. Mariwati Km 7, Cipanas, Cianjur, Jawa Barat",
+    openingQuote: "Cinta adalah persahabatan yang telah terbakar api. — Susan Anspach",
+    coverPhotoUrl: "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=1200&q=80",
+    galleryPhotos: [
+      "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600",
+      "https://images.unsplash.com/photo-1519741497674-611481863552?w=600",
+      "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=600",
+      "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600",
+    ],
+    additionalNotes: "Dresscode: Dusty Rose & Sage Green. Acara outdoor, disarankan pakai alas kaki nyaman.",
+    loveStory: [
+      { dateLabel: "April 2021", title: "Bertemu di Kebun", description: "Pertama kali bertemu saat festival bunga tahunan. Di antara hamparan anyelir, tatapan kami bertemu.", sortOrder: 0 },
+      { dateLabel: "Agustus 2022", title: "Kencan Pertama", description: "Berjalan-jalan sore di taman kota, berbagi es krim dan cerita masa kecil.", sortOrder: 1 },
+      { dateLabel: "Februari 2025", title: "Dilamar di Taman", description: "Di bawah pohon sakura yang sedang mekar, dia melamar dengan cincin dan setangkai lavender.", sortOrder: 2 },
+      { dateLabel: "September 2026", title: "Hari Bunga Kami", description: "Menikah di taman bunga yang indah, dikelilingi keluarga dan sahabat yang kami cintai.", sortOrder: 3 },
+    ],
+  },
+  {
+    slug: "demo-minimal-modern",
+    groomName: "Rizky Pratama",
+    brideName: "Dinda Maharani",
+    groomParents: "Bp. Hendra Santoso & Ibu Wati Lestari",
+    brideParents: "Bp. Agus Salim & Ibu Rina Puspita",
+    akadDate: "2026-08-17",
+    akadTime: "08.00 - 10.00 WIB",
+    receptionDate: "2026-08-17",
+    receptionTime: "11.00 - 14.00 WIB",
+    venueName: "The Grand Ballroom",
+    venueAddress: "Jl. Sudirman No. 1, Jakarta Pusat, DKI Jakarta",
+    openingQuote: "Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Bapak/Ibu/Saudara/i untuk hadir di hari bahagia kami. — QS. Ar-Rum: 21",
+    coverPhotoUrl: "https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=80",
+    galleryPhotos: [
+      "https://images.unsplash.com/photo-1519741497674-611481863552?w=600",
+      "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600",
+      "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600",
+      "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=600",
+    ],
+    additionalNotes: "Dresscode: All White & Navy. Mohon konfirmasi kehadiran paling lambat 7 hari sebelum acara.",
+    loveStory: [
+      { dateLabel: "Maret 2021", title: "Pertama Bertemu", description: "Kami pertama kali bertemu di sebuah acara seminar kampus. Satu tatapan penuh makna yang mengubah segalanya.", sortOrder: 0 },
+      { dateLabel: "Desember 2022", title: "Kencan Pertama", description: "Kencan pertama kami di tepi danau Situ Gintung. Berbagi cerita, tawa, dan harapan hingga larut malam.", sortOrder: 1 },
+      { dateLabel: "Juni 2024", title: "Lamaran", description: "Di bawah sinar bintang dan doa kedua keluarga, dia berlutut dan mengucapkan kata yang mengubah hidup kami selamanya.", sortOrder: 2 },
+      { dateLabel: "Agustus 2026", title: "Hari Bahagia", description: "Hari ini kami resmi mengikat janji suci di hadapan Allah SWT dan kedua keluarga yang kami cintai.", sortOrder: 3 },
+    ],
+  },
+  {
+    slug: "demo-classic-elegant",
+    groomName: "Farhan Hidayat",
+    brideName: "Salsabila Putri",
+    groomParents: "Bp. Hidayat Nugraha & Ibu Siti Aminah",
+    brideParents: "Bp. Putri Santoso & Ibu Fatimah Zahra",
+    akadDate: "2026-11-07",
+    akadTime: "09.00 - 10.30 WIB",
+    receptionDate: "2026-11-07",
+    receptionTime: "12.00 - 16.00 WIB",
+    venueName: "Pendopo Agung Keraton",
+    venueAddress: "Jl. Raya Kuta No. 8, Yogyakarta",
+    openingQuote: "Maha Suci Allah yang telah menciptakan pasangan-pasangan semuanya, baik dari apa yang ditumbuhkan oleh bumi. — QS. Yasin: 36",
+    coverPhotoUrl: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1200&q=80",
+    galleryPhotos: [
+      "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600",
+      "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=600",
+      "https://images.unsplash.com/photo-1519741497674-611481863552?w=600",
+      "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600",
+    ],
+    additionalNotes: "Dresscode: Batik & Kebaya. Kami sangat menghargai kehadiran Bapak/Ibu/Saudara/i.",
+    loveStory: [
+      { dateLabel: "Juni 2020", title: "Takdir Bertemu", description: "Dipertemukan melalui keluarga dalam sebuah acara pengajian. Dari situ, kami mulai saling mengenal.", sortOrder: 0 },
+      { dateLabel: "Oktober 2021", title: "Taaruf", description: "Proses taaruf yang penuh doa dan restu keluarga membawa kami semakin yakin satu sama lain.", sortOrder: 1 },
+      { dateLabel: "Maret 2025", title: "Khitbah", description: "Dengan ijin Allah dan restu kedua keluarga, khitbah berjalan dengan penuh kebahagiaan.", sortOrder: 2 },
+      { dateLabel: "November 2026", title: "Ijab Qabul", description: "Satu kalimat sakral yang mengikat dua jiwa menjadi satu, insya Allah hingga akhir hayat.", sortOrder: 3 },
+    ],
+  },
+];
+
 export async function seedDemoInvitation() {
-  try {
-    const existing = await storage.getInvitationBySlug("demo-wedding");
-    if (existing) return;
+  for (const demo of DEMO_INVITATIONS) {
+    try {
+      const existing = await storage.getInvitationBySlug(demo.slug);
+      if (existing) continue;
 
-    const inv = await storage.createInvitation({
-      slug: "demo-wedding",
-      groomName: "Rizky Pratama",
-      brideName: "Dinda Maharani",
-      groomParents: "Bp. Hendra Santoso & Ibu Wati Lestari",
-      brideParents: "Bp. Agus Salim & Ibu Rina Puspita",
-      akadDate: "2026-08-17",
-      akadTime: "08.00 - 10.00 WIB",
-      receptionDate: "2026-08-17",
-      receptionTime: "11.00 - 14.00 WIB",
-      venueName: "The Grand Ballroom",
-      venueAddress: "Jl. Sudirman No. 1, Jakarta Pusat, DKI Jakarta",
-      mapsUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.521260322283!2d106.8195613!3d-6.2087634!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMTInMzEuNiJTIDEwNsKwNDknMTAuNCJF!5e0!3m2!1sid!2sid!4v1600000000000!5m2!1sid!2sid",
-      openingQuote: "Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Bapak/Ibu/Saudara/i untuk hadir di hari bahagia kami. — QS. Ar-Rum: 21",
-      coverPhotoUrl: "https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=80",
-      galleryPhotos: [
-        "https://images.unsplash.com/photo-1519741497674-611481863552?w=600",
-        "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600",
-        "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600",
-        "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=600",
-      ],
-      musicUrl: "",
-      videoUrl: "",
-      additionalNotes: "Mohon konfirmasi kehadiran Anda paling lambat 7 hari sebelum acara. Dresscode: Soft Pink & Navy Blue.",
-      isPublished: true,
-    });
+      const inv = await storage.createInvitation({
+        slug: demo.slug,
+        groomName: demo.groomName,
+        brideName: demo.brideName,
+        groomParents: demo.groomParents,
+        brideParents: demo.brideParents,
+        akadDate: demo.akadDate,
+        akadTime: demo.akadTime,
+        receptionDate: demo.receptionDate,
+        receptionTime: demo.receptionTime,
+        venueName: demo.venueName,
+        venueAddress: demo.venueAddress,
+        mapsUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.521260322283!2d106.8195613!3d-6.2087634!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMTInMzEuNiJTIDEwNsKwNDknMTAuNCJF!5e0!3m2!1sid!2sid!4v1600000000000!5m2!1sid!2sid",
+        openingQuote: demo.openingQuote,
+        coverPhotoUrl: demo.coverPhotoUrl,
+        galleryPhotos: demo.galleryPhotos,
+        musicUrl: "",
+        videoUrl: "",
+        additionalNotes: demo.additionalNotes,
+        isPublished: true,
+      });
 
-    await storage.replaceLoveStory(inv.id, [
-      { dateLabel: "Maret 2021", title: "Pertama Bertemu", description: "Kami pertama kali bertemu di sebuah acara seminar kampus. Satu tatapan penuh makna yang mengubah segalanya.", photoUrl: "", sortOrder: 0 },
-      { dateLabel: "Desember 2022", title: "Kencan Pertama", description: "Kencan pertama kami di tepi danau Situ Gintung. Berbagi cerita, tawa, dan harapan hingga larut malam.", photoUrl: "", sortOrder: 1 },
-      { dateLabel: "Juni 2024", title: "Lamaran", description: "Di bawah sinar bintang dan doa kedua keluarga, dia berlutut dan mengucapkan kata yang mengubah hidup kami selamanya.", photoUrl: "", sortOrder: 2 },
-      { dateLabel: "Agustus 2026", title: "Hari Bahagia", description: "Hari ini kami resmi mengikat janji suci di hadapan Allah SWT dan kedua keluarga yang kami cintai.", photoUrl: "", sortOrder: 3 },
-    ]);
+      await storage.replaceLoveStory(inv.id, demo.loveStory.map(item => ({
+        dateLabel: item.dateLabel,
+        title: item.title,
+        description: item.description,
+        photoUrl: "",
+        sortOrder: item.sortOrder,
+      })));
 
-    console.log("[seed] Demo invitation created: demo-wedding");
-  } catch (e) {
-    console.error("[seed] Failed to seed demo invitation:", e);
+      console.log(`[seed] Demo invitation created: ${demo.slug}`);
+    } catch (e) {
+      console.error(`[seed] Failed to seed ${demo.slug}:`, e);
+    }
   }
 }
 

@@ -1,0 +1,217 @@
+Tambahkan sistem authentication baru untuk project ini: daftar akun menggunakan email dan login menggunakan kode verifikasi yang dikirim ke email (OTP login).
+
+ATURAN PENTING
+- Jangan rewrite project dari nol.
+- Lanjutkan dari struktur backend dan frontend yang sudah ada.
+- Jangan merusak fitur admin, invitations, RSVP, atau landing page.
+- Tambahkan auth customer berbasis email OTP secara modular.
+
+==================================================
+1. USER REGISTRATION SYSTEM
+==================================================
+
+Buat sistem pendaftaran akun menggunakan email.
+
+Flow:
+1. User membuka halaman /register
+2. User memasukkan:
+   - email
+3. User klik tombol "Kirim Kode"
+4. Server membuat kode OTP 6 digit
+5. Kode dikirim ke email user
+6. User memasukkan kode OTP
+7. Jika kode benar → akun dibuat dan user login
+
+Tambahkan tabel database:
+
+users
+- id
+- email
+- created_at
+- is_verified
+
+email_verifications
+- id
+- email
+- code
+- expires_at
+- created_at
+
+==================================================
+2. EMAIL OTP GENERATION
+==================================================
+
+Saat user request kode:
+
+- generate kode 6 digit random
+- simpan di tabel email_verifications
+- expiry 5 menit
+
+Contoh:
+code: 482193
+
+==================================================
+3. EMAIL SENDING SYSTEM
+==================================================
+
+Gunakan salah satu metode:
+
+Option 1 (direkomendasikan):
+- Nodemailer + SMTP
+
+Option 2:
+- Resend API
+
+Isi email:
+
+Subject:
+Kode Login Undangan Pernikahan
+
+Body:
+Kode verifikasi Anda adalah: 482193
+
+Kode ini berlaku selama 5 menit.
+
+==================================================
+4. VERIFY OTP
+==================================================
+
+Endpoint:
+
+POST /api/auth/request-code
+body:
+{
+  email
+}
+
+POST /api/auth/verify-code
+body:
+{
+  email,
+  code
+}
+
+Logic verify:
+
+- cek email
+- cek code
+- cek expiry
+- jika valid → login user
+- buat session auth
+
+==================================================
+5. SESSION LOGIN
+==================================================
+
+Setelah kode benar:
+
+- buat session user
+- set cookie login
+- redirect ke dashboard user
+
+Route setelah login:
+ /dashboard
+
+==================================================
+6. FRONTEND PAGE
+==================================================
+
+Tambahkan halaman:
+
+/register
+/login
+
+UI flow:
+
+STEP 1
+Input email
+
+STEP 2
+Input OTP code
+
+Jika berhasil:
+redirect ke dashboard
+
+==================================================
+7. USER DASHBOARD
+==================================================
+
+Setelah login user melihat:
+
+/dashboard
+
+Menu minimal:
+
+- My Invitations
+- Create Invitation
+- RSVP List
+- Guest Wishes
+- Account Settings
+
+==================================================
+8. SECURITY
+==================================================
+
+Tambahkan proteksi:
+
+- OTP expiry 5 menit
+- rate limit request kode
+- maksimum 5 request per email / 10 menit
+- kode hanya bisa dipakai sekali
+
+==================================================
+9. DATABASE INTEGRATION
+==================================================
+
+Gunakan Drizzle ORM yang sudah ada.
+
+Tambahkan schema baru:
+
+users
+email_verifications
+
+Buat migration.
+
+==================================================
+10. API ROUTES
+==================================================
+
+Buat endpoint:
+
+POST /api/auth/request-code
+POST /api/auth/verify-code
+GET /api/auth/me
+POST /api/auth/logout
+
+==================================================
+11. UX IMPROVEMENTS
+==================================================
+
+Tambahkan:
+
+- loading state saat kirim email
+- countdown resend code (60 detik)
+- pesan error jika kode salah
+- pesan jika kode expired
+
+==================================================
+12. FINAL RESULT
+==================================================
+
+Setelah implementasi:
+
+User bisa:
+
+1. daftar dengan email
+2. menerima kode di email
+3. memasukkan kode
+4. login tanpa password
+5. masuk ke dashboard
+6. membuat undangan
+
+Admin login lama tetap bekerja.
+
+
+
+Kerjakan perubahan secara bertahap tanpa merusak fitur yang sudah berjalan. 
+Jika ada file auth sebelumnya, integrasikan sistem OTP ini tanpa konflik.

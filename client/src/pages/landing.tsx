@@ -118,6 +118,9 @@ export default function Landing() {
       accent: "bg-yellow-400/20",
       textColor: "text-yellow-100",
       pattern: "gold",
+      demoSlug: "demo-luxury-gold",
+      couple: "Ardhian & Nadya",
+      date: "12 Desember 2026",
     },
     {
       name: "Romantic Floral",
@@ -127,6 +130,9 @@ export default function Landing() {
       accent: "bg-rose-400/20",
       textColor: "text-rose-100",
       pattern: "floral",
+      demoSlug: "demo-romantic-floral",
+      couple: "Bagas & Kinanti",
+      date: "21 September 2026",
     },
     {
       name: "Minimal Modern",
@@ -136,6 +142,9 @@ export default function Landing() {
       accent: "bg-slate-400/20",
       textColor: "text-slate-100",
       pattern: "minimal",
+      demoSlug: "demo-minimal-modern",
+      couple: "Rizky & Dinda",
+      date: "17 Agustus 2026",
     },
     {
       name: "Classic Elegant",
@@ -145,6 +154,9 @@ export default function Landing() {
       accent: "bg-blue-400/20",
       textColor: "text-blue-100",
       pattern: "classic",
+      demoSlug: "demo-classic-elegant",
+      couple: "Farhan & Salsabila",
+      date: "7 November 2026",
     },
   ];
 
@@ -589,7 +601,8 @@ export default function Landing() {
               <div
                 key={i}
                 data-testid={`card-theme-${i}`}
-                className="group rounded-xl border border-slate-200 bg-white shadow-sm hover-elevate transition-all duration-200 overflow-visible"
+                className="group rounded-xl border border-slate-200 bg-white shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-visible cursor-pointer"
+                onClick={() => window.open(`/invite/${theme.demoSlug}`, "_blank")}
               >
                 {/* Theme preview image area */}
                 <div
@@ -610,8 +623,8 @@ export default function Landing() {
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-white px-4">
                     <Heart className="w-6 h-6 mb-2 fill-white/60 text-white/60" />
                     <div className="text-xs tracking-widest uppercase opacity-70 mb-1">Undangan</div>
-                    <div className="font-serif text-lg font-bold text-center">Ahmad & Rina</div>
-                    <div className="text-xs opacity-60 mt-1">12 Desember 2026</div>
+                    <div className="font-serif text-lg font-bold text-center">{theme.couple}</div>
+                    <div className="text-xs opacity-60 mt-1">{theme.date}</div>
                   </div>
                   {theme.badge && (
                     <div className="absolute top-3 right-3">
@@ -620,6 +633,11 @@ export default function Landing() {
                       </span>
                     </div>
                   )}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 rounded-t-xl flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <span className="bg-white/90 text-slate-900 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                      <Eye className="w-3 h-3" /> Buka Demo
+                    </span>
+                  </div>
                 </div>
 
                 {/* Card info */}
@@ -632,7 +650,13 @@ export default function Landing() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <a href="/invite/demo-wedding" target="_blank" rel="noopener noreferrer" className="flex-1">
+                    <a
+                      href={`/invite/${theme.demoSlug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1"
+                      onClick={e => e.stopPropagation()}
+                    >
                       <Button
                         variant="outline"
                         size="sm"
@@ -642,7 +666,11 @@ export default function Landing() {
                         Lihat Demo
                       </Button>
                     </a>
-                    <a href="/admin/new" className="flex-1">
+                    <a
+                      href="/admin/new"
+                      className="flex-1"
+                      onClick={e => e.stopPropagation()}
+                    >
                       <Button
                         size="sm"
                         data-testid={`button-use-theme-${i}`}
@@ -658,10 +686,12 @@ export default function Landing() {
           </div>
 
           <div className="text-center mt-10">
-            <Button variant="outline" size="lg" data-testid="button-lihat-semua-tema" className="gap-2">
-              Lihat Semua Tema
-              <ChevronRight className="w-4 h-4" />
-            </Button>
+            <a href="#tema">
+              <Button variant="outline" size="lg" data-testid="button-lihat-semua-tema" className="gap-2">
+                Lihat Semua Tema
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </a>
           </div>
         </div>
       </section>
