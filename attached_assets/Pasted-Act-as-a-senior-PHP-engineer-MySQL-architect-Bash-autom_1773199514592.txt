@@ -1,0 +1,435 @@
+Act as a senior PHP engineer, MySQL architect, Bash automation expert, QA engineer, security reviewer, and production deployment specialist.
+
+Generate ONE COMPLETE Bash script that creates a FULLY WORKING self-hosted digital wedding invitation platform.
+
+This is a REAL project requirement, not a mockup.
+
+Critical scope:
+This system is ONLY for DIGITAL WEDDING INVITATIONS.
+Do NOT add:
+- vendor marketplace
+- wedding organizer features
+- blog
+- affiliate
+- livestream
+- community
+- planner tools
+- unrelated SaaS modules
+
+Only build:
+- sales landing page
+- admin login
+- admin dashboard
+- order management
+- invitation page
+- RSVP
+- guestbook
+- database
+- WhatsApp lead/order flow
+
+Output rules:
+- Return ONLY one final Bash script
+- No explanations
+- No markdown notes
+- No pseudo code
+- No TODO comments
+- No unfinished files
+- No placeholder logic
+- No lorem ipsum
+- No dummy UI text
+- No incomplete integrations
+- No fake buttons
+- No broken navigation
+- No non-functional form actions
+
+The Bash script must be directly runnable with:
+bash build.sh
+
+When executed, it must generate this exact structure:
+
+wedding-invitation-platform/
+  public/
+    index.php
+    invitation.php
+    styles.css
+    script.js
+  admin/
+    login.php
+    dashboard.php
+    orders.php
+    rsvp.php
+    guestbook.php
+    logout.php
+  api/
+    create_order.php
+    save_rsvp.php
+    save_guestbook.php
+  config/
+    database.php
+    app.php
+    helpers.php
+    auth.php
+    csrf.php
+  database/
+    schema.sql
+    seed.sql
+  README.md
+
+Technology requirements:
+- PHP only
+- MySQL only
+- HTML, CSS, vanilla JavaScript only
+- No framework
+- No Laravel
+- No Node.js
+- No React
+- No Vue
+- No npm
+- No build tool
+- Must work on shared hosting, cPanel, Apache, Nginx with PHP, and VPS
+
+Use PHP 8 compatible syntax.
+Use MySQL compatible SQL.
+
+Important:
+The project must be self-hostable and lightweight.
+It must run after:
+1. upload files
+2. create database
+3. import schema.sql
+4. import seed.sql
+5. edit database credentials in config/database.php
+
+The generated code must be production-minded and connected end-to-end.
+
+Business requirements:
+This is a business website to sell digital wedding invitations.
+
+Use Indonesian only for all UI text.
+
+Business defaults:
+- Brand name: MomenNikah
+- WhatsApp number: 6281234567890
+- Website URL: https://momennikah.com
+
+Put these as editable variables in the Bash script:
+- APP_DIR
+- BRAND_NAME
+- WHATSAPP_NUMBER
+- WEBSITE_URL
+
+Functional requirements:
+
+A. PUBLIC LANDING PAGE
+Create public/index.php as a fully working landing page with:
+1. sticky navbar
+2. hero section
+3. features section
+4. why choose us section
+5. pricing section
+6. how to order section
+7. testimonials section
+8. FAQ accordion
+9. contact/order form
+10. footer
+
+The landing page must focus only on selling digital wedding invitations.
+
+Required features to present:
+- desain elegan
+- responsif di semua perangkat
+- detail akad dan resepsi
+- countdown acara
+- galeri foto
+- RSVP tamu
+- buku tamu digital
+- musik background
+- peta lokasi
+- link mudah dibagikan
+
+Pricing packages:
+- Basic
+- Premium
+- Eksklusif
+
+Premium must be marked as “Paling Populer”.
+
+The contact/order form fields:
+- nama
+- nama mempelai
+- tanggal acara
+- paket
+- catatan
+
+This form must:
+- validate required fields
+- save order data to MySQL through api/create_order.php
+- redirect to WhatsApp with formatted Indonesian message after successful save
+- show proper success/error feedback
+- use CSRF protection
+
+B. ADMIN AUTH
+Create a real admin login system:
+- admin/login.php
+- admin/logout.php
+- session-based authentication
+- protected admin pages
+- redirect unauthenticated users to login
+- hashed passwords using password_hash and password_verify
+- secure session handling
+
+C. ADMIN DASHBOARD
+Create admin/dashboard.php that shows:
+- total order count
+- total RSVP count
+- total guestbook message count
+- latest orders
+- latest RSVP entries
+
+D. ORDER MANAGEMENT
+Create admin/orders.php that shows:
+- order list from database
+- customer name
+- couple name
+- wedding date
+- selected package
+- notes
+- created timestamp
+
+E. RSVP MANAGEMENT
+Create admin/rsvp.php that shows RSVP records:
+- guest name
+- attendance status
+- message
+- invitation slug
+- created timestamp
+
+F. GUESTBOOK MANAGEMENT
+Create admin/guestbook.php that shows guestbook records:
+- guest name
+- message
+- invitation slug
+- created timestamp
+
+G. INVITATION PAGE SYSTEM
+Create public/invitation.php that loads invitation data by slug:
+example:
+invitation.php?slug=nama-mempelai
+
+This page must actually work and render invitation data from database.
+
+The invitation page must include:
+- couple names
+- wedding date
+- akad/resepsi info
+- venue/location
+- countdown timer
+- gallery section
+- RSVP form
+- guestbook form
+- guestbook list
+- background music player
+- map embed section
+- WhatsApp share button
+
+All invitation data must come from MySQL.
+
+H. RSVP SYSTEM
+Create api/save_rsvp.php
+It must:
+- validate input
+- sanitize input
+- verify invitation exists by slug
+- save guest RSVP to database
+- return JSON success/error response
+- be used by the invitation page form
+- prevent empty submissions
+- use CSRF protection
+
+RSVP fields:
+- guest_name
+- attendance_status
+- message
+- invitation_slug
+
+I. GUESTBOOK SYSTEM
+Create api/save_guestbook.php
+It must:
+- validate input
+- sanitize input
+- verify invitation exists
+- save guestbook message to database
+- return JSON success/error response
+- be used by invitation page
+- use CSRF protection
+
+Fields:
+- guest_name
+- message
+- invitation_slug
+
+J. DATABASE
+Create database/schema.sql with full working schema for these tables:
+
+1. admins
+- id
+- username
+- password_hash
+- created_at
+
+2. invitations
+- id
+- slug
+- bride_name
+- groom_name
+- wedding_date
+- akad_time
+- reception_time
+- venue_name
+- venue_address
+- map_embed_url
+- music_url
+- gallery_json
+- opening_message
+- package_name
+- created_at
+
+3. orders
+- id
+- customer_name
+- couple_name
+- wedding_date
+- package_name
+- notes
+- whatsapp_number optional if needed
+- created_at
+
+4. rsvp
+- id
+- invitation_id
+- guest_name
+- attendance_status
+- message
+- created_at
+
+5. guestbook_messages
+- id
+- invitation_id
+- guest_name
+- message
+- created_at
+
+Use proper foreign keys where practical.
+Use indexes where useful.
+
+K. SEED DATA
+Create database/seed.sql
+It must insert:
+- one default admin user
+- one sample invitation record that actually works with invitation.php
+- realistic Indonesian content
+- no lorem ipsum
+
+Important:
+The admin password must be documented in README.md.
+The password stored in seed.sql must already be a real password_hash result, not plain text.
+
+L. CONFIG FILES
+Create:
+config/database.php
+config/app.php
+config/helpers.php
+config/auth.php
+config/csrf.php
+
+Requirements:
+- database connection using PDO
+- error handling that does not expose sensitive details to users
+- helper functions for escaping output, redirecting, slug handling if needed
+- auth guard for admin pages
+- CSRF token generation and verification helpers
+
+M. FRONTEND REQUIREMENTS
+Create clean responsive UI with:
+- premium white + soft blue wedding aesthetic
+- sticky navbar
+- responsive cards
+- elegant typography
+- mobile friendly layout
+- lightweight CSS
+- no heavy dependencies
+- no broken responsive menu
+- functional FAQ accordion
+- functional WhatsApp CTA buttons
+- no image dependency required for base functionality
+
+N. JAVASCRIPT REQUIREMENTS
+Create public/script.js with fully working behavior:
+- mobile menu toggle
+- FAQ accordion
+- countdown timer on invitation page
+- AJAX RSVP submission
+- AJAX guestbook submission
+- form validation feedback
+- package button WhatsApp redirect
+- landing page order form handling
+- no console errors
+
+O. SECURITY REQUIREMENTS
+The generated code must include:
+- prepared statements everywhere
+- output escaping
+- CSRF protection for forms and API calls
+- session authentication
+- password hashing
+- basic input validation
+- no SQL injection-prone query building
+- no direct trust of query string without validation
+
+P. SELF-CHECK REQUIREMENT
+Before finalizing the Bash script, internally verify that:
+- all generated PHP files reference correct relative paths
+- all require/include paths are valid
+- forms submit to existing files
+- table names match SQL schema exactly
+- seed data matches code expectations
+- admin login works with seeded admin
+- invitation page works with seeded sample slug
+- dashboard queries match actual schema
+- no missing helper function calls
+- no broken variable names
+- no missing CSS or JS includes
+- all CSRF token usage is consistent
+- all JSON responses are valid
+- all redirects are valid
+
+Q. README REQUIREMENTS
+Create a practical README.md in Indonesian that explains:
+1. what this project is
+2. folder structure
+3. minimum hosting requirements
+4. how to create database
+5. how to import schema.sql
+6. how to import seed.sql
+7. where to edit database credentials
+8. default admin username and password
+9. sample invitation URL to test
+10. how to upload to shared hosting/cPanel
+11. which folders/files go into public_html if needed
+12. how to change brand name, WhatsApp number, and website URL inside the Bash script before generation
+
+R. QUALITY BAR
+The final generated project must feel like a real small production-ready PHP application.
+Do not generate a half-working demo.
+Do not generate disconnected pages.
+Do not create UI elements without backend support.
+Do not create admin pages that do not load real data.
+Do not create forms that only pretend to submit.
+Everything must be connected and functional.
+
+S. FINAL OUTPUT RULE
+Return ONLY the final complete Bash script.
+Do not explain anything.
+Do not ask questions.
+Do not split the answer.
+Generate the full script now.

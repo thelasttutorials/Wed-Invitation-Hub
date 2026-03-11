@@ -1,0 +1,201 @@
+Act as a senior QA engineer, PHP code reviewer, MySQL reviewer, Bash automation auditor, security reviewer, and deployment engineer.
+
+You previously generated a full PHP + MySQL digital wedding invitation platform as one Bash script.
+
+Now do a FULL TECHNICAL AUDIT of your own generated project.
+
+Your job is NOT to add random new features.
+Your job is to find and fix anything that could make the project fail, break, or behave inconsistently.
+
+Scope reminder:
+This project is ONLY for digital wedding invitations.
+Do NOT add vendor features.
+Do NOT add planner tools.
+Do NOT add unrelated modules.
+Only audit and fix the existing digital wedding invitation system.
+
+Audit goals:
+Make the project truly runnable, internally consistent, and safer for publishing.
+
+You must review the generated system as if you are preparing it for production on self-hosted PHP hosting.
+
+Check and verify all of the following carefully:
+
+1. FILE STRUCTURE CONSISTENCY
+- all generated files exist
+- all referenced files actually exist
+- all require/include paths are correct
+- all relative paths are correct from every file location
+- CSS and JS file references are valid
+- admin pages load the right config files
+- API files load the right config files
+
+2. PHP SYNTAX SAFETY
+- no parse errors
+- no undefined variables used in core flows
+- no missing semicolons
+- no invalid PHP 8 syntax
+- no incorrect array access
+- no missing functions
+- no duplicated function declarations
+
+3. DATABASE CONSISTENCY
+- every table referenced in PHP exists in schema.sql
+- every column referenced in PHP exists in schema.sql
+- foreign key usage is valid
+- indexes are reasonable
+- seed.sql matches actual schema
+- seed invitation data matches invitation.php expectations
+- seed admin data matches login flow expectations
+
+4. AUTHENTICATION FLOW
+- admin login works with seeded admin
+- password_verify is used correctly
+- sessions start properly
+- protected admin pages reject unauthenticated access
+- logout destroys session correctly
+- auth guard does not create redirect loops
+
+5. CSRF PROTECTION
+- all forms that need CSRF have tokens
+- token generation works
+- token verification works
+- token validation does not break AJAX forms
+- API endpoints correctly verify tokens where appropriate
+
+6. ORDER FORM FLOW
+- landing page order form submits to a real endpoint
+- validation works
+- data is saved to database
+- redirect or response works correctly
+- WhatsApp message formatting works
+- no mismatch between field names in HTML and PHP
+
+7. INVITATION PAGE FLOW
+- invitation.php can load invitation by slug
+- slug validation is safe
+- missing slug is handled gracefully
+- invalid slug is handled gracefully
+- invitation data is escaped properly for output
+- countdown renders correctly
+- gallery rendering logic matches gallery_json format
+- map embed output is safe
+- music URL handling does not break page rendering
+
+8. RSVP FLOW
+- RSVP form points to correct API
+- required fields match backend expectations
+- invitation lookup by slug works
+- response JSON is valid
+- AJAX handles success and error states correctly
+- admin/rsvp.php can display submitted RSVP data
+- no mismatch between attendance_status values in frontend and backend
+
+9. GUESTBOOK FLOW
+- guestbook form points to correct API
+- validation works
+- data is stored correctly
+- guestbook messages display correctly on invitation page
+- admin/guestbook.php loads the stored data correctly
+- no broken JSON response
+
+10. DASHBOARD FLOW
+- admin/dashboard.php queries match actual tables/columns
+- total order count query works
+- total RSVP count query works
+- total guestbook message count query works
+- latest orders query works
+- latest RSVP query works
+- no empty variable warnings
+
+11. SECURITY CHECK
+- prepared statements are used everywhere for DB writes/reads with user input
+- output escaping is used for visible user content
+- direct query string usage is validated
+- login is not storing plain text passwords
+- no dangerous SQL string concatenation
+- no exposed stack traces to end users
+- no trust of raw POST data without validation
+
+12. JAVASCRIPT FLOW
+- no console errors
+- mobile menu works
+- FAQ accordion works
+- countdown works
+- AJAX RSVP submission works
+- AJAX guestbook submission works
+- landing page form handling works
+- package buttons redirect correctly to WhatsApp
+- no references to missing DOM elements without null checks
+
+13. UI/UX CONSISTENCY
+- all visible buttons do something real
+- no dead links
+- no empty sections
+- no placeholder text
+- no broken responsive layout
+- forms have clear feedback messages
+- admin pages are usable and readable
+- mobile layout is usable
+
+14. HOSTING READINESS
+- suitable for shared hosting
+- no dependency on CLI runtime after generation
+- no dependency on composer or npm
+- database setup instructions match actual files
+- public and admin paths are practical for Apache/cPanel environments
+
+15. README CONSISTENCY
+- instructions match actual project structure
+- setup steps are correct
+- database import instructions are correct
+- sample login details match seed.sql
+- sample invitation URL matches seeded slug
+
+Important behavior:
+If you find any inconsistency, bug, broken path, schema mismatch, field mismatch, or risky implementation:
+FIX IT.
+
+Do not just list problems.
+Regenerate the FULL Bash script with all fixes applied.
+
+Important output rules:
+- return ONLY the corrected complete Bash script
+- do not explain what you found
+- do not summarize issues
+- do not output a checklist
+- do not output analysis
+- do not add commentary
+- do not add markdown explanation
+- do not split into phases
+
+Final instruction:
+Perform the full audit internally, fix every issue you detect, and then regenerate the COMPLETE corrected Bash script only.
+
+
+Now do a final pre-publish verification.
+
+Act as a production release engineer.
+
+Re-check your corrected project one more time for:
+- broken include paths
+- broken redirects
+- broken session flow
+- SQL/schema mismatch
+- wrong field names
+- wrong table names
+- broken AJAX endpoints
+- missing CSRF tokens
+- invalid JSON responses
+- invalid PHP syntax
+- invitation slug mismatch
+- admin login mismatch
+- dashboard query mismatch
+- broken README instructions
+
+If anything is still inconsistent, fix it and regenerate the FULL final Bash script again.
+
+Return ONLY the final corrected Bash script.
+No explanation.
+
+
