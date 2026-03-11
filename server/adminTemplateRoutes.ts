@@ -65,6 +65,17 @@ const DEFAULT_TEMPLATES: Omit<Template, "id" | "createdAt" | "updatedAt">[] = [
     themeConfig: null,
     isPublished: true,
   },
+  {
+    name: "Eternal Rose",
+    slug: "eternal-rose",
+    description: "Romantis delicate, rose pink premium, feminin & elegan",
+    badge: "Baru",
+    thumbnailUrl: "",
+    themeSlug: "eternal-rose",
+    sectionsConfig: defaultSectionsJson(),
+    themeConfig: null,
+    isPublished: true,
+  },
 ];
 
 export async function seedDefaultTemplates() {

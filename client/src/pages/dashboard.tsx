@@ -65,6 +65,7 @@ const ATTENDANCE_CONFIG: Record<string, { label: string; icon: any; class: strin
 const THEME_OPTIONS = [
   { value: "romantic-floral", label: "Romantic Floral" },
   { value: "luxury-gold", label: "Luxury Gold" },
+  { value: "eternal-rose", label: "Eternal Rose" },
   { value: "minimal-modern", label: "Minimal Modern" },
   { value: "classic-elegant", label: "Classic Elegant" },
 ];
