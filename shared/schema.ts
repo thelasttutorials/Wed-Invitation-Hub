@@ -8,19 +8,42 @@ import {
   boolean,
   date,
   timestamp,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+// ─────────────────────────────────────────────────────────────
+// admins
+// Super-admin accounts. Password stored as bcrypt hash.
+// ─────────────────────────────────────────────────────────────
+export const admins = pgTable("admins", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  name: text("name").notNull().default("Admin"),
+  createdAt: timestamp("created_at").notNull().default(sql`NOW()`),
 });
 
+// ─────────────────────────────────────────────────────────────
+// landing_settings
+// Key-value store for all editable landing page content.
+// One row per setting key (e.g. "hero_title", "hero_subtitle").
+// ─────────────────────────────────────────────────────────────
+export const landingSettings = pgTable("landing_settings", {
+  id: serial("id").primaryKey(),
+  key: varchar("key", { length: 100 }).notNull().unique(),
+  value: text("value").notNull().default(""),
+  updatedAt: timestamp("updated_at").notNull().default(sql`NOW()`),
+});
+
+// ─────────────────────────────────────────────────────────────
+// invitations
+// Core wedding invitation data.
+// ─────────────────────────────────────────────────────────────
 export const invitations = pgTable("invitations", {
   id: serial("id").primaryKey(),
-  slug: varchar("slug", { length: 120 }).unique().notNull(),
+  slug: varchar("slug", { length: 120 }).notNull(),
   groomName: text("groom_name").notNull(),
   brideName: text("bride_name").notNull(),
   groomParents: text("groom_parents").notNull().default(""),
@@ -41,8 +64,15 @@ export const invitations = pgTable("invitations", {
   isPublished: boolean("is_published").notNull().default(true),
   createdAt: timestamp("created_at").notNull().default(sql`NOW()`),
   updatedAt: timestamp("updated_at").notNull().default(sql`NOW()`),
-});
+}, (table) => ({
+  // Matches the existing DB constraint name to prevent Drizzle from renaming it
+  slugKey: uniqueIndex("invitations_slug_key").on(table.slug),
+}));
 
+// ─────────────────────────────────────────────────────────────
+// love_story_items
+// Timeline entries per invitation.
+// ─────────────────────────────────────────────────────────────
 export const loveStoryItems = pgTable("love_story_items", {
   id: serial("id").primaryKey(),
   invitationId: integer("invitation_id").notNull(),
@@ -54,7 +84,11 @@ export const loveStoryItems = pgTable("love_story_items", {
   createdAt: timestamp("created_at").notNull().default(sql`NOW()`),
 });
 
-export const rsvpEntries = pgTable("rsvp_entries", {
+// ─────────────────────────────────────────────────────────────
+// rsvps  (table name: rsvp_entries — kept for backward compat)
+// Guest attendance confirmations.
+// ─────────────────────────────────────────────────────────────
+export const rsvps = pgTable("rsvp_entries", {
   id: serial("id").primaryKey(),
   invitationId: integer("invitation_id").notNull(),
   guestName: text("guest_name").notNull(),
@@ -64,7 +98,11 @@ export const rsvpEntries = pgTable("rsvp_entries", {
   createdAt: timestamp("created_at").notNull().default(sql`NOW()`),
 });
 
-export const guestbookEntries = pgTable("guestbook_entries", {
+// ─────────────────────────────────────────────────────────────
+// wishes  (table name: guestbook_entries — kept for backward compat)
+// Guest messages and congratulations.
+// ─────────────────────────────────────────────────────────────
+export const wishes = pgTable("guestbook_entries", {
   id: serial("id").primaryKey(),
   invitationId: integer("invitation_id").notNull(),
   guestName: text("guest_name").notNull(),
@@ -72,9 +110,24 @@ export const guestbookEntries = pgTable("guestbook_entries", {
   createdAt: timestamp("created_at").notNull().default(sql`NOW()`),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+// ─────────────────────────────────────────────────────────────
+// Legacy alias — keeps existing server/storage.ts code working
+// without any changes.
+// ─────────────────────────────────────────────────────────────
+export const rsvpEntries = rsvps;
+export const guestbookEntries = wishes;
+
+// ─────────────────────────────────────────────────────────────
+// Insert schemas (Zod)
+// ─────────────────────────────────────────────────────────────
+export const insertAdminSchema = createInsertSchema(admins).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertLandingSettingSchema = createInsertSchema(landingSettings).omit({
+  id: true,
+  updatedAt: true,
 });
 
 export const insertInvitationSchema = createInsertSchema(invitations).omit({
@@ -90,23 +143,41 @@ export const insertLoveStoryItemSchema = createInsertSchema(loveStoryItems).omit
   createdAt: true,
 });
 
-export const insertRsvpSchema = createInsertSchema(rsvpEntries).omit({
+export const insertRsvpSchema = createInsertSchema(rsvps).omit({
   id: true,
   createdAt: true,
 });
 
-export const insertGuestbookSchema = createInsertSchema(guestbookEntries).omit({
+export const insertWishSchema = createInsertSchema(wishes).omit({
   id: true,
   createdAt: true,
 });
 
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
+// Legacy aliases — keeps existing code using old names working
+export const insertGuestbookSchema = insertWishSchema;
+
+// ─────────────────────────────────────────────────────────────
+// TypeScript types
+// ─────────────────────────────────────────────────────────────
+export type Admin = typeof admins.$inferSelect;
+export type InsertAdmin = z.infer<typeof insertAdminSchema>;
+
+export type LandingSetting = typeof landingSettings.$inferSelect;
+export type InsertLandingSetting = z.infer<typeof insertLandingSettingSchema>;
+
 export type Invitation = typeof invitations.$inferSelect;
 export type InsertInvitation = z.infer<typeof insertInvitationSchema>;
+
 export type LoveStoryItem = typeof loveStoryItems.$inferSelect;
 export type InsertLoveStoryItem = z.infer<typeof insertLoveStoryItemSchema>;
-export type RsvpEntry = typeof rsvpEntries.$inferSelect;
+
+export type Rsvp = typeof rsvps.$inferSelect;
 export type InsertRsvp = z.infer<typeof insertRsvpSchema>;
-export type GuestbookEntry = typeof guestbookEntries.$inferSelect;
-export type InsertGuestbook = z.infer<typeof insertGuestbookSchema>;
+
+export type Wish = typeof wishes.$inferSelect;
+export type InsertWish = z.infer<typeof insertWishSchema>;
+
+// Legacy type aliases
+export type RsvpEntry = Rsvp;
+export type GuestbookEntry = Wish;
+export type InsertGuestbook = InsertWish;

@@ -1,13 +1,12 @@
-import type { Express, Request, Response } from "express";
+import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import {
   insertInvitationSchema,
   updateInvitationSchema,
   insertRsvpSchema,
-  insertGuestbookSchema,
+  insertWishSchema,
 } from "@shared/schema";
-import { z } from "zod";
 
 function slugify(text: string): string {
   return text
@@ -21,17 +20,18 @@ function slugify(text: string): string {
 
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
 
-  // ── Invitations ──────────────────────────────────────────────────────────────
+  // ── Invitations ───────────────────────────────────────────────────────────────
 
   app.get("/api/invitations", async (_req, res) => {
     try {
       const invitations = await storage.getAllInvitations();
       res.json(invitations);
-    } catch (e) {
+    } catch {
       res.status(500).json({ error: "Gagal memuat data undangan." });
     }
   });
 
+  // Must come before /:slug to avoid "id" being treated as a slug
   app.get("/api/invitations/id/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -40,7 +40,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       if (!inv) return res.status(404).json({ error: "Undangan tidak ditemukan." });
       const loveStory = await storage.getLoveStoryByInvitation(inv.id);
       res.json({ invitation: inv, loveStory });
-    } catch (e) {
+    } catch {
       res.status(500).json({ error: "Gagal memuat undangan." });
     }
   });
@@ -49,11 +49,13 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     try {
       const inv = await storage.getInvitationBySlug(req.params.slug);
       if (!inv) return res.status(404).json({ error: "Undangan tidak ditemukan." });
-      const loveStory = await storage.getLoveStoryByInvitation(inv.id);
-      const rsvp = await storage.getRsvpByInvitation(inv.id);
-      const guestbook = await storage.getGuestbookByInvitation(inv.id);
+      const [loveStory, rsvp, guestbook] = await Promise.all([
+        storage.getLoveStoryByInvitation(inv.id),
+        storage.getRsvpsByInvitation(inv.id),
+        storage.getWishesByInvitation(inv.id),
+      ]);
       res.json({ invitation: inv, loveStory, rsvp, guestbook });
-    } catch (e) {
+    } catch {
       res.status(500).json({ error: "Gagal memuat undangan." });
     }
   });
@@ -61,14 +63,11 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   app.post("/api/invitations", async (req, res) => {
     try {
       const body = req.body;
-      // Auto-generate slug if not provided
       if (!body.slug) {
         const base = slugify(`${body.groomName || ""} ${body.brideName || ""}`);
         let slug = base;
         let i = 1;
-        while (await storage.slugExists(slug)) {
-          slug = `${base}-${i++}`;
-        }
+        while (await storage.slugExists(slug)) slug = `${base}-${i++}`;
         body.slug = slug;
       } else {
         body.slug = slugify(body.slug);
@@ -84,14 +83,13 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
 
       const inv = await storage.createInvitation(parsed.data);
 
-      // Save love story items if provided
       if (Array.isArray(body.loveStory) && body.loveStory.length > 0) {
         await storage.replaceLoveStory(inv.id, body.loveStory);
       }
 
       const loveStory = await storage.getLoveStoryByInvitation(inv.id);
       res.status(201).json({ invitation: inv, loveStory });
-    } catch (e: any) {
+    } catch (e) {
       console.error(e);
       res.status(500).json({ error: "Gagal membuat undangan." });
     }
@@ -119,7 +117,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
 
       const loveStory = await storage.getLoveStoryByInvitation(inv.id);
       res.json({ invitation: inv, loveStory });
-    } catch (e: any) {
+    } catch (e) {
       console.error(e);
       res.status(500).json({ error: "Gagal memperbarui undangan." });
     }
@@ -132,20 +130,20 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       const ok = await storage.deleteInvitation(id);
       if (!ok) return res.status(404).json({ error: "Undangan tidak ditemukan." });
       res.json({ success: true });
-    } catch (e) {
+    } catch {
       res.status(500).json({ error: "Gagal menghapus undangan." });
     }
   });
 
-  // ── RSVP ─────────────────────────────────────────────────────────────────────
+  // ── RSVP ──────────────────────────────────────────────────────────────────────
 
   app.get("/api/invitations/:id/rsvp", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) return res.status(400).json({ error: "ID tidak valid." });
-      const entries = await storage.getRsvpByInvitation(id);
+      const entries = await storage.getRsvpsByInvitation(id);
       res.json(entries);
-    } catch (e) {
+    } catch {
       res.status(500).json({ error: "Gagal memuat data RSVP." });
     }
   });
@@ -155,28 +153,27 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       const inv = await storage.getInvitationBySlug(req.params.slug);
       if (!inv) return res.status(404).json({ error: "Undangan tidak ditemukan." });
 
-      const data = { ...req.body, invitationId: inv.id };
-      const parsed = insertRsvpSchema.safeParse(data);
+      const parsed = insertRsvpSchema.safeParse({ ...req.body, invitationId: inv.id });
       if (!parsed.success) {
         return res.status(400).json({ error: "Data tidak lengkap.", details: parsed.error.flatten() });
       }
 
       const entry = await storage.createRsvp(parsed.data);
       res.status(201).json(entry);
-    } catch (e) {
+    } catch {
       res.status(500).json({ error: "Gagal menyimpan RSVP." });
     }
   });
 
-  // ── Guestbook ─────────────────────────────────────────────────────────────────
+  // ── Wishes (guestbook) ────────────────────────────────────────────────────────
 
   app.get("/api/invitations/:id/guestbook", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) return res.status(400).json({ error: "ID tidak valid." });
-      const entries = await storage.getGuestbookByInvitation(id);
+      const entries = await storage.getWishesByInvitation(id);
       res.json(entries);
-    } catch (e) {
+    } catch {
       res.status(500).json({ error: "Gagal memuat buku tamu." });
     }
   });
@@ -186,16 +183,29 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       const inv = await storage.getInvitationBySlug(req.params.slug);
       if (!inv) return res.status(404).json({ error: "Undangan tidak ditemukan." });
 
-      const data = { ...req.body, invitationId: inv.id };
-      const parsed = insertGuestbookSchema.safeParse(data);
+      const parsed = insertWishSchema.safeParse({ ...req.body, invitationId: inv.id });
       if (!parsed.success) {
         return res.status(400).json({ error: "Data tidak lengkap.", details: parsed.error.flatten() });
       }
 
-      const entry = await storage.createGuestbookEntry(parsed.data);
+      const entry = await storage.createWish(parsed.data);
       res.status(201).json(entry);
-    } catch (e) {
+    } catch {
       res.status(500).json({ error: "Gagal menyimpan ucapan." });
+    }
+  });
+
+  // ── Landing settings ──────────────────────────────────────────────────────────
+
+  app.get("/api/landing-settings", async (_req, res) => {
+    try {
+      const settings = await storage.getAllLandingSettings();
+      // Return as a key→value map for easy frontend consumption
+      const map: Record<string, string> = {};
+      for (const s of settings) map[s.key] = s.value;
+      res.json(map);
+    } catch {
+      res.status(500).json({ error: "Gagal memuat pengaturan landing page." });
     }
   });
 
@@ -205,20 +215,24 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     try {
       const invitations = await storage.getAllInvitations();
       let totalRsvp = 0;
-      let totalGuestbook = 0;
-      for (const inv of invitations) {
-        const rsvp = await storage.getRsvpByInvitation(inv.id);
-        const gb = await storage.getGuestbookByInvitation(inv.id);
-        totalRsvp += rsvp.length;
-        totalGuestbook += gb.length;
-      }
+      let totalWishes = 0;
+      await Promise.all(
+        invitations.map(async (inv) => {
+          const [r, w] = await Promise.all([
+            storage.getRsvpsByInvitation(inv.id),
+            storage.getWishesByInvitation(inv.id),
+          ]);
+          totalRsvp += r.length;
+          totalWishes += w.length;
+        }),
+      );
       res.json({
         totalInvitations: invitations.length,
         totalRsvp,
-        totalGuestbook,
+        totalGuestbook: totalWishes,
         recentInvitations: invitations.slice(0, 5),
       });
-    } catch (e) {
+    } catch {
       res.status(500).json({ error: "Gagal memuat statistik." });
     }
   });
