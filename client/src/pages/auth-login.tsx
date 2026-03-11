@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useLocation } from "wouter";
+import { useLocation, useSearch } from "wouter";
 import { useSEO } from "@/lib/seo";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -35,13 +35,22 @@ type EmailForm = z.infer<typeof emailSchema>;
 type CodeForm = z.infer<typeof codeSchema>;
 
 export default function AuthLogin() {
+  const [location, navigate] = useLocation();
+  const searchStr = useSearch();
+  const searchParams = new URLSearchParams(searchStr);
+  const planParam = searchParams.get("plan");
+
+  const isRegister = location === "/register";
+  const mode = isRegister ? "register" : "login";
+
   useSEO({
-    title: "Masuk — WedSaas",
-    description: "Masuk ke akun WedSaas Anda untuk membuat dan mengelola undangan pernikahan digital.",
+    title: isRegister ? "Daftar Akun — WedSaas" : "Masuk — WedSaas",
+    description: isRegister
+      ? "Buat akun WedSaas gratis untuk membuat undangan pernikahan digital yang elegan."
+      : "Masuk ke akun WedSaas Anda untuk membuat dan mengelola undangan pernikahan digital.",
     noIndex: true,
   });
 
-  const [, navigate] = useLocation();
   const { toast } = useToast();
   const [step, setStep] = useState<"email" | "code">("email");
   const [email, setEmail] = useState("");
@@ -53,11 +62,16 @@ export default function AuthLogin() {
     retry: false,
   });
 
+  function getPostAuthDestination() {
+    if (planParam) return `/pricing?autoselect=${planParam}`;
+    return "/dashboard";
+  }
+
   useEffect(() => {
     if (!meLoading && meData) {
-      navigate("/dashboard");
+      navigate(getPostAuthDestination());
     }
-  }, [meLoading, meData, navigate]);
+  }, [meLoading, meData]);
 
   useEffect(() => {
     return () => {
@@ -111,7 +125,7 @@ export default function AuthLogin() {
       apiRequest("POST", "/api/auth/verify-code", { email, code: data.code }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
-      navigate("/dashboard");
+      navigate(getPostAuthDestination());
     },
     onError: (err: any) => {
       const msg = err?.message || "Kode tidak valid atau sudah kadaluarsa.";
@@ -125,6 +139,11 @@ export default function AuthLogin() {
     requestCodeMutation.mutate({ email });
     codeForm.reset();
   };
+
+  function buildOppositeHref() {
+    const base = isRegister ? "/login" : "/register";
+    return planParam ? `${base}?plan=${planParam}` : base;
+  }
 
   if (meLoading) {
     return (
@@ -156,11 +175,24 @@ export default function AuthLogin() {
                   <div className="w-12 h-12 bg-rose-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <Mail className="w-6 h-6 text-rose-500" />
                   </div>
-                  <h1 className="text-xl font-bold text-slate-900">Masuk / Daftar</h1>
+                  <h1 className="text-xl font-bold text-slate-900">
+                    {isRegister ? "Buat Akun Baru" : "Masuk ke Akun"}
+                  </h1>
                   <p className="text-slate-500 text-sm mt-1.5">
-                    Masukkan email kamu, kami akan kirim kode verifikasi
+                    {isRegister
+                      ? "Daftar dengan email kamu, kami kirim kode verifikasi"
+                      : "Masukkan email kamu, kami akan kirim kode verifikasi"}
                   </p>
                 </div>
+
+                {/* Plan intent banner */}
+                {planParam && (
+                  <div className="mb-4 bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 text-sm text-rose-700 text-center">
+                    Setelah {isRegister ? "daftar" : "masuk"}, paket{" "}
+                    <span className="font-semibold capitalize">{planParam}</span>{" "}
+                    akan langsung diproses.
+                  </div>
+                )}
 
                 <Form {...emailForm}>
                   <form
@@ -200,6 +232,31 @@ export default function AuthLogin() {
                     </Button>
                   </form>
                 </Form>
+
+                {/* Toggle link */}
+                <p className="text-center text-sm text-slate-500 mt-5">
+                  {isRegister ? (
+                    <>Sudah punya akun?{" "}
+                      <a
+                        href={buildOppositeHref()}
+                        className="text-rose-500 hover:text-rose-600 font-medium"
+                        data-testid="link-to-login"
+                      >
+                        Masuk
+                      </a>
+                    </>
+                  ) : (
+                    <>Belum punya akun?{" "}
+                      <a
+                        href={buildOppositeHref()}
+                        className="text-rose-500 hover:text-rose-600 font-medium"
+                        data-testid="link-to-register"
+                      >
+                        Daftar
+                      </a>
+                    </>
+                  )}
+                </p>
               </>
             ) : (
               <>
@@ -291,10 +348,10 @@ export default function AuthLogin() {
           </div>
 
           <p className="text-center text-xs text-slate-400 mt-6">
-            Dengan masuk, kamu menyetujui{" "}
-            <a href="#" className="underline hover:text-slate-600">Syarat & Ketentuan</a>{" "}
+            Dengan {isRegister ? "mendaftar" : "masuk"}, kamu menyetujui{" "}
+            <a href="/terms" className="underline hover:text-slate-600">Syarat & Ketentuan</a>{" "}
             dan{" "}
-            <a href="#" className="underline hover:text-slate-600">Kebijakan Privasi</a>{" "}
+            <a href="/privacy" className="underline hover:text-slate-600">Kebijakan Privasi</a>{" "}
             kami.
           </p>
         </div>

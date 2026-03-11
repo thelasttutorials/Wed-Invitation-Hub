@@ -1,5 +1,6 @@
+import { useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useLocation } from "wouter";
+import { useLocation, useSearch } from "wouter";
 import { useSEO } from "@/lib/seo";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -48,6 +49,10 @@ export default function PricingPage() {
   });
 
   const [, navigate] = useLocation();
+  const searchStr = useSearch();
+  const searchParams = new URLSearchParams(searchStr);
+  const autoselect = searchParams.get("autoselect");
+
   const { toast } = useToast();
 
   const { data: plans, isLoading: plansLoading } = useQuery<PricingPlan[]>({ queryKey: ["/api/pricing"] });
@@ -66,20 +71,44 @@ export default function PricingPage() {
 
   const orderMutation = useMutation({
     mutationFn: (planId: number) => apiRequest("POST", "/api/orders", { planId }),
-    onSuccess: (_data, planId) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/orders/me"] });
+      toast({ title: "Order dibuat!", description: "Lanjutkan pembayaran melalui transfer bank." });
       navigate("/dashboard/billing");
     },
     onError: (e: any) => toast({ title: "Gagal", description: e?.message ?? "Coba lagi.", variant: "destructive" }),
   });
 
-  function handleChoosePlan(plan: PricingPlan) {
-    if (!me) { navigate("/login"); return; }
-    if (plan.slug === "gratis") { startFreeMutation.mutate(); return; }
-    orderMutation.mutate(plan.id);
+  function executePlan(plan: PricingPlan) {
+    if (plan.slug === "gratis") {
+      startFreeMutation.mutate();
+    } else {
+      orderMutation.mutate(plan.id);
+    }
   }
 
+  function handleChoosePlan(plan: PricingPlan) {
+    if (!me) {
+      navigate(`/login?plan=${plan.slug}`);
+      return;
+    }
+    executePlan(plan);
+  }
+
+  useEffect(() => {
+    if (!me || !autoselect || !plans || plansLoading) return;
+    const plan = plans.find((p) => p.slug === autoselect);
+    if (!plan) return;
+    const currentSlug = subData?.plan?.slug;
+    if (currentSlug === plan.slug) {
+      navigate("/dashboard");
+      return;
+    }
+    executePlan(plan);
+  }, [me, autoselect, plans, plansLoading]);
+
   const currentPlanSlug = subData?.plan?.slug;
+  const isPending = startFreeMutation.isPending || orderMutation.isPending;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
@@ -96,9 +125,14 @@ export default function PricingPage() {
               <Button variant="outline" size="sm">Dashboard</Button>
             </a>
           ) : (
-            <a href="/login">
-              <Button size="sm" className="bg-rose-500 hover:bg-rose-600 text-white">Masuk</Button>
-            </a>
+            <div className="flex items-center gap-2">
+              <a href="/login">
+                <Button variant="ghost" size="sm">Masuk</Button>
+              </a>
+              <a href="/register">
+                <Button size="sm" className="bg-rose-500 hover:bg-rose-600 text-white">Daftar</Button>
+              </a>
+            </div>
           )}
         </div>
       </header>
@@ -121,6 +155,7 @@ export default function PricingPage() {
               const Icon = PLAN_ICONS[plan.slug] ?? Star;
               const isCurrent = currentPlanSlug === plan.slug;
               const isPopular = plan.slug === "premium";
+              const isAutoselecting = !!autoselect && autoselect === plan.slug && isPending;
               return (
                 <div
                   key={plan.id}
@@ -163,11 +198,12 @@ export default function PricingPage() {
                   <Button
                     className={`w-full ${BTN_COLORS[plan.slug] ?? ""}`}
                     onClick={() => handleChoosePlan(plan)}
-                    disabled={isCurrent || startFreeMutation.isPending || orderMutation.isPending}
+                    disabled={isCurrent || isPending}
                     data-testid={`button-choose-${plan.slug}`}
                   >
-                    {startFreeMutation.isPending && plan.slug === "gratis" ? (
-                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Mengaktifkan...</>
+                    {isAutoselecting ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        {plan.slug === "gratis" ? "Mengaktifkan..." : "Membuat Order..."}</>
                     ) : isCurrent ? (
                       "Paket Aktif"
                     ) : plan.slug === "gratis" ? (
