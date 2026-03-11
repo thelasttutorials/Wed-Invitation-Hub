@@ -41,41 +41,57 @@ export default function Landing() {
   const features = [
     {
       icon: Palette,
-      title: "Builder Visual",
-      desc: "Desain undangan secara visual dengan drag & drop. Tidak perlu keahlian coding.",
+      title: "Mudah Dibuat, Langsung Cantik",
+      desc: "Cukup isi data pernikahan, pilih tema, dan undangan siap. Tidak perlu keahlian desain sama sekali.",
     },
     {
       icon: Smartphone,
-      title: "Responsif di Semua Device",
-      desc: "Tampil sempurna di HP, tablet, dan desktop. Tamu bisa membuka dari mana saja.",
+      title: "Tampil Sempurna di HP",
+      desc: "Tamu bisa membuka undangan langsung dari WhatsApp, tanpa perlu install aplikasi apapun.",
     },
     {
       icon: Link2,
-      title: "Link Khusus",
-      desc: "Dapatkan link undangan personal seperti wedsaas.com/namakalian yang mudah diingat.",
+      title: "Link Nama Tamu Personal",
+      desc: "Setiap tamu disambut namanya: undangan.com/rizky-dinda?to=Pak+Hendra — terasa eksklusif dan berkesan.",
     },
     {
       icon: ClipboardList,
-      title: "RSVP Online",
-      desc: "Konfirmasi kehadiran tamu secara online. Kelola daftar tamu dengan mudah.",
+      title: "RSVP Online Real-time",
+      desc: "Tamu konfirmasi kehadiran langsung dari undangan. Kamu bisa pantau siapa yang hadir kapan saja.",
     },
     {
       icon: Image,
-      title: "Galeri Foto",
-      desc: "Tampilkan momen berharga kalian dengan galeri foto yang elegan dan menarik.",
+      title: "Galeri & Love Story",
+      desc: "Tampilkan foto prewedding dan cerita perjalanan cinta kalian dalam tampilan elegan nan berkesan.",
     },
     {
       icon: Gift,
-      title: "Hadiah Digital",
-      desc: "Fitur amplop digital dan wishlist untuk mempermudah tamu memberikan hadiah.",
+      title: "Amplop Digital & Ucapan",
+      desc: "Tamu bisa kirim doa dan ucapan, serta melihat info rekening — semua dalam satu halaman undangan.",
     },
   ];
 
   const steps = [
-    { num: "01", title: "Daftar Akun", desc: "Buat akun gratis dalam hitungan detik. Tidak perlu kartu kredit." },
-    { num: "02", title: "Isi Data Pernikahan", desc: "Masukkan detail acara, nama mempelai, dan informasi pernikahan." },
-    { num: "03", title: "Pilih Tema", desc: "Pilih dari ratusan tema elegan yang bisa dikustomisasi sepenuhnya." },
-    { num: "04", title: "Bagikan & Rayakan", desc: "Bagikan link undangan ke seluruh tamu dan rayakan hari istimewamu." },
+    {
+      num: "01",
+      title: "Daftar Gratis",
+      desc: "Buat akun dalam hitungan detik. Tidak perlu kartu kredit, langsung bisa mulai.",
+    },
+    {
+      num: "02",
+      title: "Isi Data Pernikahan",
+      desc: "Masukkan nama mempelai, tanggal, lokasi akad dan resepsi, serta kisah cinta kalian.",
+    },
+    {
+      num: "03",
+      title: "Pilih Tema Favorit",
+      desc: "Pilih dari koleksi tema elegan — dari nuansa gold mewah hingga floral romantis.",
+    },
+    {
+      num: "04",
+      title: "Bagikan via WhatsApp",
+      desc: "Salin link undangan, kirim ke grup keluarga dan teman — hari istimewamu siap disambut.",
+    },
   ];
 
   const themes = [
@@ -124,11 +140,12 @@ export default function Landing() {
       period: "",
       highlight: false,
       features: [
-        "1 Undangan Aktif",
-        "3 Tema Dasar",
+        "1 Undangan Digital",
+        "3 Tema Pilihan",
         "RSVP Online",
-        "Link Undangan",
+        "Link Nama Tamu Personal",
         "Galeri 10 Foto",
+        "Aktif 1 Tahun",
       ],
       cta: "Mulai Gratis",
       variant: "outline" as const,
@@ -139,13 +156,13 @@ export default function Landing() {
       period: "/sekali bayar",
       highlight: true,
       features: [
-        "3 Undangan Aktif",
-        "50+ Tema Premium",
-        "RSVP + Export Excel",
-        "Link Custom",
-        "Galeri 100 Foto",
-        "Hadiah Digital",
-        "Musik Latar",
+        "1 Undangan Digital Lengkap",
+        "50+ Tema Elegan",
+        "RSVP + Export Data Tamu",
+        "Galeri 50 Foto",
+        "Musik Latar Romantis",
+        "Love Story Timeline",
+        "Aktif 2 Tahun",
       ],
       cta: "Pilih Premium",
       variant: "default" as const,
@@ -156,14 +173,13 @@ export default function Landing() {
       period: "/sekali bayar",
       highlight: false,
       features: [
-        "Undangan Tidak Terbatas",
+        "Undangan Tak Terbatas",
         "Semua Tema + Eksklusif",
-        "RSVP + Manajemen Tamu",
-        "Domain Custom",
-        "Galeri Tidak Terbatas",
-        "Hadiah Digital Lanjutan",
-        "Prioritas Support",
-        "Analitik Tamu",
+        "Manajemen Tamu Lengkap",
+        "Galeri Tak Terbatas",
+        "Semua Fitur Premium",
+        "Cocok untuk Wedding Organizer",
+        "Prioritas Layanan",
       ],
       cta: "Pilih Pro",
       variant: "outline" as const,
@@ -173,7 +189,7 @@ export default function Landing() {
   const testimonials = [
     {
       stars: 5,
-      text: "Undangan digital kami terlihat sangat memukau! Semua tamu memuji betapa elegannya tampilannya. Proses pembuatannya pun sangat mudah dan cepat.",
+      text: "Undangan digitalnya luar biasa cantik! Hampir semua tamu bertanya dibuat pakai apa. Prosesnya cepat dan hasilnya jauh melebihi ekspektasi kami.",
       name: "Rizky & Dinda",
       date: "Menikah 14 Feb 2025",
       initials: "RD",
@@ -181,7 +197,7 @@ export default function Landing() {
     },
     {
       stars: 5,
-      text: "WedSaas benar-benar memudahkan kami mengelola RSVP. Tidak perlu lagi repot menghitung tamu secara manual. Fitur hadiah digital-nya juga sangat membantu!",
+      text: "Fitur RSVP-nya sangat membantu. Tidak perlu tanya satu-satu ke tamu siapa yang hadir — semua terpantau otomatis. Love story timeline-nya juga bikin terharu.",
       name: "Budi & Sari",
       date: "Menikah 21 Jun 2025",
       initials: "BS",
@@ -189,7 +205,7 @@ export default function Landing() {
     },
     {
       stars: 5,
-      text: "Tema Luxury Gold yang kami pilih sangat sesuai dengan konsep pernikahan kami. Responsif di semua perangkat, dan link-nya mudah dibagikan ke keluarga.",
+      text: "Tema Luxury Gold-nya persis dengan konsep pernikahan kami. Tamu dari luar kota pun bisa buka undangan dengan mudah dari HP masing-masing.",
       name: "Fajar & Ayu",
       date: "Menikah 8 Mar 2025",
       initials: "FA",
@@ -199,28 +215,28 @@ export default function Landing() {
 
   const faqs = [
     {
-      q: "Apakah WedSaas benar-benar gratis?",
-      a: "Ya! Paket Gratis kami memungkinkan kamu membuat satu undangan digital tanpa biaya apapun. Untuk fitur lebih lengkap seperti tema premium, galeri lebih banyak, dan link custom, kamu bisa upgrade ke paket Premium atau Pro.",
+      q: "Apakah WedSaas benar-benar bisa dipakai gratis?",
+      a: "Ya! Paket Gratis memungkinkan kamu membuat undangan digital lengkap tanpa biaya apapun — termasuk RSVP dan galeri foto. Untuk fitur lebih seperti musik latar, love story timeline, dan lebih banyak foto, kamu bisa upgrade ke paket Premium.",
     },
     {
-      q: "Berapa lama undangan digital saya aktif?",
-      a: "Undangan digital kamu akan aktif selama 2 tahun sejak tanggal pembuatan. Kamu bisa memperpanjangnya kapan saja melalui dashboard akun.",
+      q: "Berapa lama undangan digital saya bisa diakses tamu?",
+      a: "Paket Gratis aktif selama 1 tahun, sedangkan paket Premium dan Pro aktif selama 2 tahun sejak tanggal pembuatan — jauh melewati hari pernikahanmu, sehingga kenangan tetap bisa dilihat kapan saja.",
     },
     {
-      q: "Bisakah saya mengubah tema setelah undangan dibuat?",
-      a: "Tentu saja! Kamu bisa mengganti tema kapan saja tanpa kehilangan data undangan yang sudah diisi. Semua informasi pernikahan akan otomatis menyesuaikan dengan tema baru.",
+      q: "Bagaimana cara membagikan undangan ke tamu?",
+      a: "Setelah undangan selesai, kamu mendapat link seperti wedsaas.com/nama-kalian. Tinggal salin dan kirim via WhatsApp, Instagram, atau SMS. Kamu juga bisa menambahkan nama tamu di link agar sambutan terasa personal.",
     },
     {
       q: "Bagaimana cara kerja fitur RSVP?",
-      a: "Tamu kamu cukup membuka link undangan dan mengisi formulir konfirmasi kehadiran. Semua data RSVP akan tersimpan di dashboard kamu dan bisa diekspor ke Excel (paket Premium/Pro).",
+      a: "Tamu membuka link undangan dan mengisi formulir konfirmasi kehadiran langsung dari halaman undangan. Semua data RSVP langsung masuk ke dashboardmu secara real-time, dan bisa diekspor ke Excel untuk paket Premium/Pro.",
     },
     {
       q: "Apakah ada batasan jumlah tamu yang bisa RSVP?",
-      a: "Tidak ada batasan! Semua paket mendukung jumlah tamu RSVP yang tidak terbatas. Kamu bisa mengundang sebanyak mungkin tamu tanpa khawatir.",
+      a: "Tidak ada! Semua paket mendukung RSVP tamu tak terbatas. Undang 50 atau 500 tamu — sistemnya tetap berjalan lancar.",
     },
     {
-      q: "Bisakah saya menambahkan musik latar di undangan?",
-      a: "Fitur musik latar tersedia di paket Premium dan Pro. Kamu bisa upload file MP3 atau pilih dari koleksi musik romantis yang sudah kami sediakan.",
+      q: "Bisakah saya mengubah isi undangan setelah dibagikan?",
+      a: "Tentu bisa. Kamu bisa mengedit informasi acara, foto, dan konten kapan saja dari dashboard. Perubahan langsung terlihat oleh tamu yang membuka link tanpa perlu kirim ulang.",
     },
   ];
 
@@ -267,7 +283,7 @@ export default function Landing() {
                 Masuk
               </Button>
               <Button size="sm" data-testid="button-mulai-gratis">
-                Mulai Gratis
+                Buat Undangan
               </Button>
             </div>
 
@@ -297,7 +313,7 @@ export default function Landing() {
             ))}
             <div className="flex flex-col gap-2 pt-2 border-t border-slate-100">
               <Button variant="outline" size="sm" data-testid="button-masuk-mobile">Masuk</Button>
-              <Button size="sm" data-testid="button-mulai-gratis-mobile">Mulai Gratis</Button>
+              <Button size="sm" data-testid="button-mulai-gratis-mobile">Buat Undangan</Button>
             </div>
           </div>
         )}
@@ -320,7 +336,7 @@ export default function Landing() {
           {/* Pill badge */}
           <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 text-blue-700 text-xs font-semibold px-4 py-1.5 rounded-full mb-6">
             <Sparkles className="w-3.5 h-3.5" />
-            Platform Undangan Digital #1 di Indonesia
+            Undangan Digital Pernikahan Terpercaya di Indonesia
           </div>
 
           {/* Heading */}
@@ -333,7 +349,7 @@ export default function Landing() {
               <span className="relative z-10 text-primary">Digital</span>
               <span className="absolute bottom-1 left-0 right-0 h-3 bg-blue-100 rounded-sm -z-0 opacity-70" />
             </span>{" "}
-            yang Elegan & Modern
+            yang Elegan & Berkesan
           </h1>
 
           <p
@@ -341,13 +357,13 @@ export default function Landing() {
             className="mt-6 text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed"
           >
             Buat undangan pernikahan digital yang memukau dalam hitungan menit.
-            Tanpa keahlian desain, tanpa ribet — cukup pilih tema, isi data, dan bagikan ke semua tamu.
+            Isi data, pilih tema, kirim via WhatsApp — tanpa biaya cetak, tanpa repot.
           </p>
 
           {/* CTA Buttons */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button size="lg" data-testid="button-hero-buat-undangan" className="gap-2 px-8 text-base">
-              Buat Undangan Gratis
+              Buat Undangan Sekarang
               <ChevronRight className="w-4 h-4" />
             </Button>
             <Button
@@ -357,20 +373,20 @@ export default function Landing() {
               className="gap-2 px-8 text-base"
             >
               <Eye className="w-4 h-4" />
-              Lihat Tema
+              Lihat Contoh Undangan
             </Button>
           </div>
 
           {/* Stats */}
           <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-12">
             {[
-              { icon: Users, value: "10.000+", label: "Pasangan" },
-              { icon: Star, value: "4.9/5", label: "Rating" },
-              { icon: Zap, value: "100%", label: "Gratis Mulai" },
+              { icon: Users, value: "10.000+", label: "Pasangan Bahagia" },
+              { icon: Star, value: "4.9/5", label: "Rating dari Pengguna" },
+              { icon: Zap, value: "5 Menit", label: "Siap Dibagikan" },
             ].map((stat) => (
               <div
                 key={stat.label}
-                data-testid={`stat-${stat.label.toLowerCase()}`}
+                data-testid={`stat-${stat.label.toLowerCase().replace(/\s/g, "-")}`}
                 className="flex items-center gap-3"
               >
                 <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
@@ -395,7 +411,7 @@ export default function Landing() {
                   <div className="w-3 h-3 rounded-full bg-green-400" />
                 </div>
                 <div className="flex-1 mx-4 bg-white rounded-md px-3 py-1 text-xs text-slate-400 border border-slate-200 text-center">
-                  wedsaas.com/rizky-dinda
+                  wedsaas.com/rizky-dinda?to=Pak+Hendra
                 </div>
               </div>
               {/* Mock invitation preview */}
@@ -412,6 +428,7 @@ export default function Landing() {
                   ))}
                 </div>
                 <div className="text-center text-white z-10 px-8">
+                  <p className="text-blue-200 text-xs tracking-widest uppercase mb-1">Kepada Yth. Pak Hendra</p>
                   <p className="text-blue-200 text-sm tracking-widest uppercase mb-2">Undangan Pernikahan</p>
                   <div className="flex items-center justify-center gap-4 mb-2">
                     <div className="h-px w-16 bg-blue-300/50" />
@@ -434,7 +451,7 @@ export default function Landing() {
               </div>
               <div>
                 <div className="text-xs font-semibold text-slate-900">RSVP Baru!</div>
-                <div className="text-xs text-slate-500">+3 tamu hadir</div>
+                <div className="text-xs text-slate-500">+3 tamu konfirmasi hadir</div>
               </div>
             </div>
             <div className="absolute -top-4 -left-4 sm:-left-6 bg-white rounded-xl shadow-lg border border-slate-100 px-4 py-3 flex items-center gap-3">
@@ -442,7 +459,7 @@ export default function Landing() {
                 <Award className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <div className="text-xs font-semibold text-slate-900">Rating 5 Bintang</div>
+                <div className="text-xs font-semibold text-slate-900">Disukai Tamu</div>
                 <div className="flex gap-0.5 mt-0.5">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star key={i} className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
@@ -467,7 +484,7 @@ export default function Landing() {
               Semua yang Kamu Butuhkan
             </h2>
             <p className="mt-4 text-slate-500 max-w-xl mx-auto">
-              Fitur lengkap untuk menciptakan undangan pernikahan digital yang tak terlupakan
+              Dari undangan hingga ucapan tamu — semua tersedia dalam satu link yang bisa langsung dibagikan
             </p>
           </div>
 
@@ -501,10 +518,10 @@ export default function Landing() {
           <div className="text-center mb-16">
             <Badge variant="secondary" className="mb-4">Cara Kerja</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
-              Mudah dalam 4 Langkah
+              Undangan Siap dalam 4 Langkah
             </h2>
             <p className="mt-4 text-slate-500 max-w-xl mx-auto">
-              Dari daftar hingga undangan siap dibagikan, hanya butuh beberapa menit
+              Tidak perlu desainer, tidak perlu nunggu lama — dari daftar hingga siap kirim hanya butuh beberapa menit
             </p>
           </div>
 
@@ -539,10 +556,10 @@ export default function Landing() {
           <div className="text-center mb-16">
             <Badge variant="secondary" className="mb-4">Koleksi Tema</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
-              Desain yang Memukau
+              Desain yang Memukau Tamu
             </h2>
             <p className="mt-4 text-slate-500 max-w-xl mx-auto">
-              Pilih dari ratusan tema elegan yang dirancang khusus untuk hari spesialmu
+              Pilih tema yang mencerminkan kepribadian dan cerita cinta kalian — dari nuansa mewah hingga simpel elegan
             </p>
           </div>
 
@@ -600,14 +617,14 @@ export default function Landing() {
                       data-testid={`button-preview-theme-${i}`}
                       className="flex-1 text-xs"
                     >
-                      Preview Demo
+                      Lihat Demo
                     </Button>
                     <Button
                       size="sm"
                       data-testid={`button-use-theme-${i}`}
                       className="flex-1 text-xs"
                     >
-                      Gunakan
+                      Pakai Tema
                     </Button>
                   </div>
                 </div>
@@ -634,10 +651,10 @@ export default function Landing() {
           <div className="text-center mb-16">
             <Badge variant="secondary" className="mb-4">Harga</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
-              Pilihan yang Sesuai Budget
+              Harga Terjangkau, Kenangan Selamanya
             </h2>
             <p className="mt-4 text-slate-500 max-w-xl mx-auto">
-              Mulai gratis, upgrade kapan saja. Tanpa biaya langganan tersembunyi.
+              Bayar sekali, undangan aktif bertahun-tahun. Tidak ada biaya bulanan, tidak ada biaya cetak.
             </p>
           </div>
 
@@ -722,10 +739,10 @@ export default function Landing() {
           <div className="text-center mb-16">
             <Badge variant="secondary" className="mb-4">Testimoni</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
-              Kata Mereka
+              Kata Pasangan yang Sudah Merasakan
             </h2>
             <p className="mt-4 text-slate-500 max-w-xl mx-auto">
-              Ribuan pasangan telah mempercayai WedSaas untuk hari spesial mereka
+              Ribuan pasangan telah mempercayai WedSaas untuk mengundang tamu di hari paling spesial mereka
             </p>
           </div>
 
@@ -773,10 +790,10 @@ export default function Landing() {
           <div className="text-center mb-16">
             <Badge variant="secondary" className="mb-4">FAQ</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
-              Pertanyaan Umum
+              Pertanyaan yang Sering Ditanya
             </h2>
             <p className="mt-4 text-slate-500">
-              Tidak menemukan jawaban? Hubungi kami di support@wedsaas.com
+              Masih ada pertanyaan? Hubungi kami via WhatsApp atau email ke support@wedsaas.com
             </p>
           </div>
 
@@ -816,15 +833,15 @@ export default function Landing() {
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white text-xs font-medium px-4 py-1.5 rounded-full mb-6 backdrop-blur-sm">
             <Heart className="w-3.5 h-3.5 fill-rose-300 text-rose-300" />
-            Bergabung dengan 10.000+ Pasangan Bahagia
+            Dipercaya 10.000+ Pasangan di Seluruh Indonesia
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight tracking-tight">
-            Siap Membuat Undangan Impianmu?
+            Wujudkan Undangan Impian Kalian
           </h2>
           <p className="mt-5 text-blue-100 text-lg max-w-2xl mx-auto leading-relaxed">
-            Mulai gratis sekarang. Tidak perlu kartu kredit, tidak ada syarat tersembunyi.
-            Buat undangan elegan dalam hitungan menit.
+            Undangan digital yang elegan, mudah dibagikan, dan dikenang tamu.
+            Mulai gratis sekarang — siap dalam 5 menit.
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -833,8 +850,8 @@ export default function Landing() {
               data-testid="button-cta-mulai"
               className="bg-white text-primary font-semibold gap-2 px-8 text-base"
             >
-              <Zap className="w-4 h-4" />
-              Mulai Sekarang — Gratis
+              <Heart className="w-4 h-4 fill-current" />
+              Buat Undangan Sekarang
             </Button>
             <Button
               variant="outline"
@@ -843,16 +860,16 @@ export default function Landing() {
               className="border-white/40 text-white bg-white/10 backdrop-blur-sm gap-2 px-8 text-base"
             >
               <Eye className="w-4 h-4" />
-              Lihat Koleksi Tema
+              Lihat Contoh Undangan
             </Button>
           </div>
 
           {/* Trust indicators */}
           <div className="mt-10 flex flex-wrap items-center justify-center gap-6">
             {[
-              { icon: Check, text: "Gratis selamanya" },
-              { icon: Check, text: "Tanpa kartu kredit" },
-              { icon: Check, text: "Setup dalam 5 menit" },
+              { icon: Check, text: "Tampil cantik di HP" },
+              { icon: Check, text: "Bebas biaya cetak" },
+              { icon: Check, text: "Selesai dalam 5 menit" },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-2 text-blue-100">
                 <div className="w-4 h-4 rounded-full bg-blue-400/40 flex items-center justify-center">
@@ -901,7 +918,7 @@ export default function Landing() {
 
             {/* Copyright */}
             <p data-testid="footer-copyright" className="text-sm text-slate-500">
-              © 2025 WedSaas. All rights reserved.
+              © 2026 WedSaas. Dibuat dengan cinta untuk pasangan Indonesia.
             </p>
           </div>
         </div>
