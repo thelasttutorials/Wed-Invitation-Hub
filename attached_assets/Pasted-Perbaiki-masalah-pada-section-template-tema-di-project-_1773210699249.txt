@@ -1,0 +1,213 @@
+Perbaiki masalah pada section template / tema di project Wed Invitation Hub.
+
+Masalah utama saat ini:
+- semua kartu tema tidak bisa diklik
+- tombol "Lihat Demo" tidak bekerja
+- tombol "Pakai Tema" tidak bekerja
+- preview / route template kemungkinan belum terhubung
+- ada elemen template yang hanya tampil sebagai UI statis
+
+Jangan rewrite project dari nol.
+Jangan ubah fitur lain yang tidak berkaitan.
+Fokus hanya memperbaiki sistem klik template, route demo, dan action "Pakai Tema".
+
+==================================================
+TARGET HASIL
+==================================================
+
+Setelah selesai:
+1. semua kartu tema bisa diklik
+2. tombol "Lihat Demo" aktif
+3. tombol "Pakai Tema" aktif
+4. tidak ada blank page
+5. tidak ada 404
+6. route template/demo benar-benar bekerja
+7. template bisa dipreview dan dipakai
+
+==================================================
+STEP 1 — AUDIT SEMUA CARD TEMPLATE
+==================================================
+
+Periksa semua card template yang tampil di landing page / halaman daftar template.
+
+Pastikan template ini aktif:
+- Luxury Gold
+- Romantic Floral
+- Minimal Modern
+- Classic Elegant
+
+Cek:
+- apakah card dibungkus Link
+- apakah onClick ada
+- apakah href / navigate target valid
+- apakah slug template benar
+- apakah route tujuan memang ada
+
+Jika card masih berupa div statis tanpa Link/action, ubah menjadi clickable card.
+
+==================================================
+STEP 2 — AKTIFKAN SELURUH CARD
+==================================================
+
+Seluruh card template harus:
+- punya cursor pointer
+- punya hover effect
+- punya Link atau onClick valid
+- saat diklik membuka halaman demo template
+
+Klik card harus membuka route seperti:
+- /demo/luxury-gold
+- /demo/romantic-floral
+- /demo/minimal-modern
+- /demo/classic-elegant
+
+Jika route /demo/:slug belum ada, buat route tersebut.
+
+==================================================
+STEP 3 — PERBAIKI TOMBOL "LIHAT DEMO"
+==================================================
+
+Semua tombol "Lihat Demo" harus aktif dan membuka preview template yang sesuai.
+
+Contoh:
+- Luxury Gold -> /demo/luxury-gold
+- Romantic Floral -> /demo/romantic-floral
+- Minimal Modern -> /demo/minimal-modern
+- Classic Elegant -> /demo/classic-elegant
+
+Halaman demo harus menampilkan contoh undangan sesuai style template.
+
+==================================================
+STEP 4 — PERBAIKI TOMBOL "PAKAI TEMA"
+==================================================
+
+Semua tombol "Pakai Tema" harus benar-benar bekerja.
+
+Flow yang diinginkan:
+- klik "Pakai Tema"
+- template dipilih
+- pilihan template disimpan
+- user diarahkan ke halaman berikutnya yang sesuai
+
+Jika admin:
+- buka builder/edit template itu
+
+Jika user/customer:
+- pilih template itu untuk invitation
+
+Jika belum login:
+- arahkan ke login atau flow yang sesuai
+
+Jangan biarkan tombol "Pakai Tema" hanya UI palsu.
+
+==================================================
+STEP 5 — PASTIKAN ROUTE INI AKTIF
+==================================================
+
+Pastikan route berikut benar-benar ada dan bekerja:
+- /templates
+- /demo/:slug
+- /admin/templates
+- /admin/templates/:id/edit
+- /admin/templates/:id/preview
+- /invite/:slug
+
+Jika route berbeda, rapikan secara konsisten.
+Jangan buat route duplikat yang membingungkan.
+
+==================================================
+STEP 6 — BUAT DATA TEMPLATE DEFAULT YANG VALID
+==================================================
+
+Pastikan minimal ada 4 template aktif di database / seed:
+
+1. Luxury Gold
+   slug: luxury-gold
+
+2. Romantic Floral
+   slug: romantic-floral
+
+3. Minimal Modern
+   slug: minimal-modern
+
+4. Classic Elegant
+   slug: classic-elegant
+
+Masing-masing harus punya:
+- slug unik
+- nama template
+- thumbnail / preview image
+- status published
+- style preset
+- data demo untuk preview
+
+Kalau data belum ada, seed template default.
+
+==================================================
+STEP 7 — HALAMAN DEMO HARUS BENAR-BENAR TAMPIL
+==================================================
+
+Route /demo/:slug harus menampilkan preview template nyata.
+
+Minimal tampilkan:
+- cover
+- nama pasangan contoh
+- tanggal
+- lokasi
+- countdown
+- section contoh
+- style sesuai template
+
+Gunakan sample data stabil bila perlu.
+
+==================================================
+STEP 8 — HUBUNGKAN KE BUILDER
+==================================================
+
+Pastikan dari daftar template admin:
+- klik edit membuka builder
+- klik preview membuka preview template
+- template yang dipilih dapat diedit
+
+Builder harus bisa memuat:
+- section template
+- style preset
+- config template
+
+==================================================
+STEP 9 — HUBUNGKAN KE INVITATION
+==================================================
+
+Saat template dipilih untuk invitation:
+- /invite/:slug harus menggunakan template itu
+- render mengikuti style template
+- data invitation masuk ke placeholder template
+
+==================================================
+STEP 10 — VALIDASI FINAL
+==================================================
+
+Sebelum selesai, pastikan:
+- semua card template bisa diklik
+- semua tombol "Lihat Demo" aktif
+- semua tombol "Pakai Tema" aktif
+- semua route demo aktif
+- semua route template tidak blank
+- tidak ada tombol mati
+- tidak ada 404 untuk 4 template utama
+- builder dan invitation tetap stabil
+
+==================================================
+OUTPUT SETELAH SELESAI
+==================================================
+
+Berikan ringkasan singkat:
+1. file yang diubah
+2. route yang diperbaiki
+3. template yang sudah aktif
+4. tombol/action yang sekarang sudah bekerja
+
+
+Kerjakan hanya scope ini.
+Jangan refactor fitur lain.
+Pastikan project tetap bisa dijalankan setelah perubahan.

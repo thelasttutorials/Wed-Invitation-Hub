@@ -22,6 +22,8 @@ import type {
   Order,
   PaymentConfirmation,
   BankSetting,
+  Template,
+  InsertTemplate,
 } from "@shared/schema";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -115,6 +117,15 @@ export interface IStorage {
   // Bank settings
   getBankSettings(): Promise<BankSetting | undefined>;
   upsertBankSettings(data: { bankName: string; accountNumber: string; accountHolder: string; paymentNote: string }): Promise<BankSetting>;
+
+  // Templates
+  getAllTemplates(): Promise<Template[]>;
+  getTemplateById(id: number): Promise<Template | undefined>;
+  getTemplateBySlug(slug: string): Promise<Template | undefined>;
+  createTemplate(data: InsertTemplate): Promise<Template>;
+  updateTemplate(id: number, data: Partial<InsertTemplate>): Promise<Template | undefined>;
+  deleteTemplate(id: number): Promise<boolean>;
+  upsertTemplate(slug: string, data: Omit<Template, "id" | "createdAt" | "updatedAt">): Promise<Template>;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -466,6 +477,53 @@ class DatabaseStorage implements IStorage {
       return result[0];
     }
     const result = await db.insert(schema.bankSettings).values(data).returning();
+    return result[0];
+  }
+
+  // ── Templates ────────────────────────────────────────────────
+
+  async getAllTemplates(): Promise<Template[]> {
+    return db.select().from(schema.templates).orderBy(asc(schema.templates.id));
+  }
+
+  async getTemplateById(id: number): Promise<Template | undefined> {
+    const result = await db.select().from(schema.templates).where(eq(schema.templates.id, id));
+    return result[0];
+  }
+
+  async getTemplateBySlug(slug: string): Promise<Template | undefined> {
+    const result = await db.select().from(schema.templates).where(eq(schema.templates.slug, slug));
+    return result[0];
+  }
+
+  async createTemplate(data: InsertTemplate): Promise<Template> {
+    const result = await db.insert(schema.templates).values(data).returning();
+    return result[0];
+  }
+
+  async updateTemplate(id: number, data: Partial<InsertTemplate>): Promise<Template | undefined> {
+    const result = await db.update(schema.templates)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(schema.templates.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deleteTemplate(id: number): Promise<boolean> {
+    const result = await db.delete(schema.templates).where(eq(schema.templates.id, id)).returning();
+    return result.length > 0;
+  }
+
+  async upsertTemplate(slug: string, data: Omit<Template, "id" | "createdAt" | "updatedAt">): Promise<Template> {
+    const existing = await this.getTemplateBySlug(slug);
+    if (existing) {
+      const result = await db.update(schema.templates)
+        .set({ ...data, updatedAt: new Date() })
+        .where(eq(schema.templates.slug, slug))
+        .returning();
+      return result[0];
+    }
+    const result = await db.insert(schema.templates).values(data).returning();
     return result[0];
   }
 }

@@ -68,6 +68,8 @@ A full-stack SaaS platform for digital wedding invitations in Indonesian. Built 
 - `/admin/pricing` → Edit plan prices and limits
 - `/admin/orders` → Approve/reject payments, view transfer proofs
 - `/admin/bank-settings` → Edit bank account info
+- `/admin/templates` → Template list (4 themed templates)
+- `/admin/templates/:id/builder` → Drag & drop Template Builder (3-panel: palette / canvas / properties)
 
 ### Backend API
 
@@ -92,6 +94,13 @@ A full-stack SaaS platform for digital wedding invitations in Indonesian. Built 
 - `GET /api/orders/me` — My order history
 - `POST /api/orders/:id/upload-proof` — Upload transfer proof (base64 image)
 
+**Admin Templates (`server/adminTemplateRoutes.ts`):**
+- `GET /api/admin/templates` — All templates
+- `GET /api/admin/templates/:id` — Single template
+- `POST /api/admin/templates` — Create template
+- `PATCH /api/admin/templates/:id` — Update template (sections_config, theme_config)
+- `DELETE /api/admin/templates/:id` — Delete template
+
 **Admin (`server/routes.ts` + `server/adminBillingRoutes.ts`):**
 - Standard CRUD for invitations, RSVP, wishes, landing
 - `GET /api/admin/pricing` — All plans
@@ -103,6 +112,17 @@ A full-stack SaaS platform for digital wedding invitations in Indonesian. Built 
 - `PATCH /api/admin/bank-settings` — Update bank info
 
 ## Key Implementation Notes
+
+### Theme System & Template Builder
+- **4 Themes**: `romantic-floral` (rose/pink), `luxury-gold` (gold/champagne), `minimal-modern` (charcoal/grey), `classic-elegant` (navy/blue)
+- Theme presets in `client/src/lib/themes.ts` — each has colors, fonts, CSS vars, overlay colors
+- Section definitions in `client/src/lib/sectionDefs.ts` — 12 sections with visibility toggles
+- `invitations` table has `theme_slug` (default: `romantic-floral`) and `section_config` (JSON text)
+- `templates` table stores saved builder configs with sections_config and theme_config
+- Public invite page (`invite.tsx`) applies theme via `getTheme(themeSlug)` — CSS vars injected on root div, inline styles on each section
+- Section visibility controlled via `isSectionVisible(id)` from `parseSectionConfig(sectionConfig)`
+- Template Builder uses `@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities` for drag & drop
+- Admin template routes in `server/adminTemplateRoutes.ts`; 4 default templates seeded on startup
 
 ### Subscription System
 - New users auto-assigned free plan on first OTP verification

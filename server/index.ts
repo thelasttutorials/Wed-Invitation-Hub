@@ -5,6 +5,7 @@ import { registerAuthRoutes, seedDefaultAdmin, seedDemoInvitation, seedPricingPl
 import { registerUserAuthRoutes } from "./userAuth";
 import { registerBillingRoutes } from "./billingRoutes";
 import { registerAdminBillingRoutes } from "./adminBillingRoutes";
+import { registerAdminTemplateRoutes, seedDefaultTemplates } from "./adminTemplateRoutes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
@@ -82,11 +83,13 @@ app.use((req, res, next) => {
   registerUserAuthRoutes(app);
   registerBillingRoutes(app);
   registerAdminBillingRoutes(app);
+  registerAdminTemplateRoutes(app);
   await registerRoutes(httpServer, app);
   await seedDefaultAdmin();
   await seedDemoInvitation();
   await seedPricingPlans();
   await seedBankSettings();
+  await seedDefaultTemplates();
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

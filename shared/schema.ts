@@ -62,6 +62,8 @@ export const invitations = pgTable("invitations", {
   galleryPhotos: text("gallery_photos").array().notNull().default(sql`'{}'`),
   additionalNotes: text("additional_notes").notNull().default(""),
   isPublished: boolean("is_published").notNull().default(true),
+  themeSlug: text("theme_slug").notNull().default("romantic-floral"),
+  sectionConfig: text("section_config"),
   createdAt: timestamp("created_at").notNull().default(sql`NOW()`),
   updatedAt: timestamp("updated_at").notNull().default(sql`NOW()`),
 }, (table) => ({
@@ -305,6 +307,29 @@ export type PaymentConfirmation = typeof paymentConfirmations.$inferSelect;
 export type InsertPaymentConfirmation = z.infer<typeof insertPaymentConfirmationSchema>;
 export type BankSetting = typeof bankSettings.$inferSelect;
 export type InsertBankSetting = z.infer<typeof insertBankSettingSchema>;
+
+// ─────────────────────────────────────────────────────────────
+// templates
+// Wedding invitation design templates.
+// ─────────────────────────────────────────────────────────────
+export const templates = pgTable("templates", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  slug: varchar("slug", { length: 80 }).notNull().unique(),
+  description: text("description").notNull().default(""),
+  badge: text("badge").notNull().default(""),
+  thumbnailUrl: text("thumbnail_url").notNull().default(""),
+  themeSlug: text("theme_slug").notNull().default("romantic-floral"),
+  sectionsConfig: text("sections_config"),
+  themeConfig: text("theme_config"),
+  isPublished: boolean("is_published").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().default(sql`NOW()`),
+  updatedAt: timestamp("updated_at").notNull().default(sql`NOW()`),
+});
+
+export const insertTemplateSchema = createInsertSchema(templates).omit({ id: true, createdAt: true, updatedAt: true });
+export type Template = typeof templates.$inferSelect;
+export type InsertTemplate = z.infer<typeof insertTemplateSchema>;
 
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,

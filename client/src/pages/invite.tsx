@@ -12,6 +12,8 @@ import {
   Share2, ExternalLink, Music2, Pause, ArrowUp, Users, Send, CheckCircle2,
 } from "lucide-react";
 import type { Invitation, LoveStoryItem, Wish } from "@shared/schema";
+import { getTheme } from "@/lib/themes";
+import { parseSectionConfig } from "@/lib/sectionDefs";
 
 interface InvitationData {
   invitation: Invitation;
@@ -189,21 +191,28 @@ export default function InvitePage() {
   const coverBg = invitation.coverPhotoUrl ||
     "https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=80";
 
+  const t = getTheme((invitation as any).themeSlug ?? "romantic-floral");
+  const activeSections = parseSectionConfig((invitation as any).sectionConfig);
+  const isSectionVisible = (id: string) => {
+    const s = activeSections.find(s => s.id === id);
+    return s ? s.visible : true;
+  };
+
   return (
-    <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+    <div style={{ fontFamily: t.fontBody, ...t.cssVars as React.CSSProperties }}>
 
       {/* ── Cover Screen ──────────────────────────────────────────── */}
       <div
         data-testid="section-cover"
         className={`fixed inset-0 z-50 flex flex-col items-center justify-center transition-all duration-700 ${opened ? "opacity-0 pointer-events-none -translate-y-5" : "opacity-100"}`}
         style={{
-          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.72) 100%), url(${coverBg})`,
+          backgroundImage: `linear-gradient(to bottom, ${t.coverOverlayStart} 0%, ${t.coverOverlayEnd} 100%), url(${coverBg})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
         <div className="text-center px-8 max-w-lg">
-          <p className="text-rose-300 text-xs uppercase tracking-[0.3em] mb-6">Undangan Pernikahan</p>
+          <p className="text-xs uppercase tracking-[0.3em] mb-6" style={{ color: t.accentColor }}>Undangan Pernikahan</p>
 
           <h1
             data-testid="text-groom-name-cover"
@@ -256,13 +265,13 @@ export default function InvitePage() {
           data-testid="section-hero"
           className="relative min-h-screen flex flex-col items-center justify-center text-center px-6"
           style={{
-            backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.65) 100%), url(${coverBg})`,
+            backgroundImage: `linear-gradient(to bottom, ${t.coverOverlayStart} 0%, ${t.coverOverlayEnd} 100%), url(${coverBg})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundAttachment: "fixed",
           }}
         >
-          <p className="text-rose-300 text-xs uppercase tracking-[0.35em] mb-4">Bismillahirrahmanirrahim</p>
+          <p className="text-xs uppercase tracking-[0.35em] mb-4" style={{ color: t.accentColor }}>Bismillahirrahmanirrahim</p>
 
           <h2
             data-testid="text-groom-name"
@@ -304,48 +313,48 @@ export default function InvitePage() {
         </section>
 
         {/* Mempelai */}
-        <section data-testid="section-couple" className="py-16 px-6 bg-[#fefaf7]">
+        {isSectionVisible("couple") && <section data-testid="section-couple" className="py-16 px-6" style={{ background: t.backgroundColor }}>
           <div className="max-w-2xl mx-auto text-center">
-            <p className="text-rose-400 text-xs uppercase tracking-widest mb-2">Mempelai</p>
-            <h3 className="text-gray-800 text-2xl font-semibold mb-8" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <p className="text-xs uppercase tracking-widest mb-2" style={{ color: t.primaryColor }}>Mempelai</p>
+            <h3 className="text-2xl font-semibold mb-8" style={{ fontFamily: t.fontHeading, color: t.textColor }}>
               Perkenalkan Kami
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-rose-100 text-center">
-                <div className="w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-8 h-8 text-rose-400" />
+              <div className="bg-white rounded-2xl p-6 shadow-sm text-center" style={{ border: `1px solid ${t.cardBorder}` }}>
+                <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: t.secondaryColor }}>
+                  <Heart className="w-8 h-8" style={{ color: t.primaryColor }} />
                 </div>
-                <h4 className="text-xl font-bold text-gray-800 mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <h4 className="text-xl font-bold mb-1" style={{ fontFamily: t.fontHeading, color: t.textColor }}>
                   {invitation.groomName}
                 </h4>
                 {invitation.groomParents && (
-                  <p className="text-gray-500 text-sm">{invitation.groomParents}</p>
+                  <p className="text-sm" style={{ color: t.textMutedColor }}>{invitation.groomParents}</p>
                 )}
               </div>
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-rose-100 text-center">
-                <div className="w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-8 h-8 text-rose-400" />
+              <div className="bg-white rounded-2xl p-6 shadow-sm text-center" style={{ border: `1px solid ${t.cardBorder}` }}>
+                <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: t.secondaryColor }}>
+                  <Heart className="w-8 h-8" style={{ color: t.primaryColor }} />
                 </div>
-                <h4 className="text-xl font-bold text-gray-800 mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <h4 className="text-xl font-bold mb-1" style={{ fontFamily: t.fontHeading, color: t.textColor }}>
                   {invitation.brideName}
                 </h4>
                 {invitation.brideParents && (
-                  <p className="text-gray-500 text-sm">{invitation.brideParents}</p>
+                  <p className="text-sm" style={{ color: t.textMutedColor }}>{invitation.brideParents}</p>
                 )}
               </div>
             </div>
           </div>
-        </section>
+        </section>}
 
         {/* Countdown */}
-        <section
+        {isSectionVisible("countdown") && <section
           data-testid="section-countdown"
           className="py-16 px-6"
-          style={{ background: "linear-gradient(135deg, #1a0a0a 0%, #2d1515 100%)" }}
+          style={{ background: `linear-gradient(135deg, ${t.coverOverlayEnd} 0%, ${t.coverOverlayStart} 100%)` }}
         >
           <div className="max-w-xl mx-auto text-center">
-            <p className="text-rose-400 text-xs uppercase tracking-widest mb-2">Menghitung Hari</p>
-            <h3 className="text-white text-2xl font-semibold mb-8" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <p className="text-xs uppercase tracking-widest mb-2" style={{ color: t.accentColor }}>Menghitung Hari</p>
+            <h3 className="text-white text-2xl font-semibold mb-8" style={{ fontFamily: t.fontHeading }}>
               Hari Bahagia Kami
             </h3>
             <div className="flex justify-center gap-4 flex-wrap">
@@ -355,34 +364,34 @@ export default function InvitePage() {
               <CountdownBox value={countdown.seconds} label="Detik" />
             </div>
           </div>
-        </section>
+        </section>}
 
         {/* Acara */}
-        <section data-testid="section-events" className="py-16 px-6 bg-[#fefaf7]">
+        {isSectionVisible("event") && <section data-testid="section-events" className="py-16 px-6" style={{ background: t.sectionAltBg }}>
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-10">
-              <p className="text-rose-400 text-xs uppercase tracking-widest mb-2">Waktu &amp; Tempat</p>
-              <h3 className="text-gray-800 text-2xl font-semibold" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: t.primaryColor }}>Waktu &amp; Tempat</p>
+              <h3 className="text-2xl font-semibold" style={{ fontFamily: t.fontHeading, color: t.textColor }}>
                 Detail Acara
               </h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Akad */}
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-rose-100">
+              <div className="bg-white rounded-2xl p-6 shadow-sm" style={{ border: `1px solid ${t.cardBorder}` }}>
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 bg-rose-100 rounded-full flex items-center justify-center">
-                    <Heart className="w-4 h-4 text-rose-500" />
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: t.secondaryColor }}>
+                    <Heart className="w-4 h-4" style={{ color: t.primaryColor }} />
                   </div>
-                  <h4 className="font-bold text-gray-800">Akad Nikah</h4>
+                  <h4 className="font-bold" style={{ color: t.textColor }}>Akad Nikah</h4>
                 </div>
-                <div className="space-y-2 text-sm text-gray-600">
+                <div className="space-y-2 text-sm" style={{ color: t.textMutedColor }}>
                   <div className="flex items-start gap-2">
-                    <Calendar className="w-4 h-4 text-rose-400 mt-0.5 shrink-0" />
+                    <Calendar className="w-4 h-4 mt-0.5 shrink-0" style={{ color: t.primaryColor }} />
                     <span data-testid="text-akad-date">{formatDate(invitation.akadDate)}</span>
                   </div>
                   {invitation.akadTime && (
                     <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-rose-400 shrink-0" />
+                      <Clock className="w-4 h-4 shrink-0" style={{ color: t.primaryColor }} />
                       <span data-testid="text-akad-time">{invitation.akadTime}</span>
                     </div>
                   )}
@@ -390,21 +399,21 @@ export default function InvitePage() {
               </div>
 
               {/* Resepsi */}
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-rose-100">
+              <div className="bg-white rounded-2xl p-6 shadow-sm" style={{ border: `1px solid ${t.cardBorder}` }}>
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 bg-rose-100 rounded-full flex items-center justify-center">
-                    <Users className="w-4 h-4 text-rose-500" />
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: t.secondaryColor }}>
+                    <Users className="w-4 h-4" style={{ color: t.primaryColor }} />
                   </div>
-                  <h4 className="font-bold text-gray-800">Resepsi</h4>
+                  <h4 className="font-bold" style={{ color: t.textColor }}>Resepsi</h4>
                 </div>
-                <div className="space-y-2 text-sm text-gray-600">
+                <div className="space-y-2 text-sm" style={{ color: t.textMutedColor }}>
                   <div className="flex items-start gap-2">
-                    <Calendar className="w-4 h-4 text-rose-400 mt-0.5 shrink-0" />
+                    <Calendar className="w-4 h-4 mt-0.5 shrink-0" style={{ color: t.primaryColor }} />
                     <span data-testid="text-reception-date">{formatDate(invitation.receptionDate)}</span>
                   </div>
                   {invitation.receptionTime && (
                     <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-rose-400 shrink-0" />
+                      <Clock className="w-4 h-4 shrink-0" style={{ color: t.primaryColor }} />
                       <span data-testid="text-reception-time">{invitation.receptionTime}</span>
                     </div>
                   )}
@@ -414,9 +423,9 @@ export default function InvitePage() {
 
             {/* Venue */}
             {invitation.venueName && (
-              <div data-testid="section-venue" className="mt-6 bg-white rounded-2xl p-6 shadow-sm border border-rose-100">
+              <div data-testid="section-venue" className="mt-6 bg-white rounded-2xl p-6 shadow-sm" style={{ border: `1px solid ${t.cardBorder}` }}>
                 <div className="flex items-start gap-3 mb-4">
-                  <MapPin className="w-5 h-5 text-rose-500 mt-0.5 shrink-0" />
+                  <MapPin className="w-5 h-5 mt-0.5 shrink-0" style={{ color: t.primaryColor }} />
                   <div>
                     <h4 className="font-bold text-gray-800 mb-1" data-testid="text-venue-name">
                       {invitation.venueName}
@@ -448,7 +457,8 @@ export default function InvitePage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       data-testid="button-open-maps"
-                      className="inline-flex items-center gap-2 bg-rose-50 hover:bg-rose-100 text-rose-600 font-medium text-sm px-4 py-2 rounded-xl border border-rose-100 transition-colors"
+                      className="inline-flex items-center gap-2 font-medium text-sm px-4 py-2 rounded-xl transition-colors"
+                      style={{ background: t.secondaryColor, color: t.primaryColor, border: `1px solid ${t.cardBorder}` }}
                     >
                       <ExternalLink className="w-4 h-4" />
                       Buka di Google Maps
@@ -458,32 +468,32 @@ export default function InvitePage() {
               </div>
             )}
           </div>
-        </section>
+        </section>}
 
         {/* Love Story */}
-        {loveStory && loveStory.length > 0 && (
-          <section data-testid="section-love-story" className="py-16 px-6 bg-rose-50">
+        {isSectionVisible("love_story") && loveStory && loveStory.length > 0 && (
+          <section data-testid="section-love-story" className="py-16 px-6" style={{ background: t.sectionAltBg }}>
             <div className="max-w-2xl mx-auto">
               <div className="text-center mb-10">
-                <p className="text-rose-400 text-xs uppercase tracking-widest mb-2">Perjalanan Cinta</p>
-                <h3 className="text-gray-800 text-2xl font-semibold" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <p className="text-xs uppercase tracking-widest mb-2" style={{ color: t.primaryColor }}>Perjalanan Cinta</p>
+                <h3 className="text-2xl font-semibold" style={{ fontFamily: t.fontHeading, color: t.textColor }}>
                   Our Love Story
                 </h3>
               </div>
               <div className="relative">
-                <div className="absolute left-6 top-0 bottom-0 w-px bg-rose-200" />
+                <div className="absolute left-6 top-0 bottom-0 w-px" style={{ background: t.dividerColor }} />
                 <div className="space-y-8">
                   {loveStory.map((item) => (
                     <div key={item.id} className="relative flex gap-6 pl-16" data-testid={`love-story-item-${item.id}`}>
-                      <div className="absolute left-3.5 top-3 w-5 h-5 rounded-full bg-rose-400 border-4 border-rose-50 flex items-center justify-center">
+                      <div className="absolute left-3.5 top-3 w-5 h-5 rounded-full flex items-center justify-center border-4" style={{ background: t.primaryColor, borderColor: t.sectionAltBg }}>
                         <Heart className="w-2 h-2 text-white fill-white" />
                       </div>
-                      <div className="bg-white rounded-2xl p-5 shadow-sm border border-rose-100 flex-1">
-                        <span className="text-rose-400 text-xs font-medium uppercase tracking-widest">{item.dateLabel}</span>
-                        <h4 className="text-gray-800 font-bold mt-1 mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+                      <div className="bg-white rounded-2xl p-5 shadow-sm flex-1" style={{ border: `1px solid ${t.cardBorder}` }}>
+                        <span className="text-xs font-medium uppercase tracking-widest" style={{ color: t.primaryColor }}>{item.dateLabel}</span>
+                        <h4 className="font-bold mt-1 mb-2" style={{ fontFamily: t.fontHeading, color: t.textColor }}>
                           {item.title}
                         </h4>
-                        <p className="text-gray-500 text-sm leading-relaxed">{item.description}</p>
+                        <p className="text-sm leading-relaxed" style={{ color: t.textMutedColor }}>{item.description}</p>
                         {item.photoUrl && (
                           <img src={item.photoUrl} alt={item.title} className="mt-3 rounded-xl w-full object-cover h-40" />
                         )}
@@ -497,12 +507,12 @@ export default function InvitePage() {
         )}
 
         {/* Gallery */}
-        {invitation.galleryPhotos && invitation.galleryPhotos.length > 0 && (
-          <section data-testid="section-gallery" className="py-16 px-6 bg-[#fefaf7]">
+        {isSectionVisible("gallery") && invitation.galleryPhotos && invitation.galleryPhotos.length > 0 && (
+          <section data-testid="section-gallery" className="py-16 px-6" style={{ background: t.backgroundColor }}>
             <div className="max-w-2xl mx-auto">
               <div className="text-center mb-10">
-                <p className="text-rose-400 text-xs uppercase tracking-widest mb-2">Kenangan Indah</p>
-                <h3 className="text-gray-800 text-2xl font-semibold" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <p className="text-xs uppercase tracking-widest mb-2" style={{ color: t.primaryColor }}>Kenangan Indah</p>
+                <h3 className="text-2xl font-semibold" style={{ fontFamily: t.fontHeading, color: t.textColor }}>
                   Galeri Foto
                 </h3>
               </div>
@@ -519,11 +529,11 @@ export default function InvitePage() {
 
         {/* Video */}
         {invitation.videoUrl && (
-          <section data-testid="section-video" className="py-16 px-6 bg-rose-50">
+          <section data-testid="section-video" className="py-16 px-6" style={{ background: t.sectionAltBg }}>
             <div className="max-w-2xl mx-auto">
               <div className="text-center mb-8">
-                <p className="text-rose-400 text-xs uppercase tracking-widest mb-2">Momen Spesial</p>
-                <h3 className="text-gray-800 text-2xl font-semibold" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <p className="text-xs uppercase tracking-widest mb-2" style={{ color: t.primaryColor }}>Momen Spesial</p>
+                <h3 className="text-2xl font-semibold" style={{ fontFamily: t.fontHeading, color: t.textColor }}>
                   Video Kami
                 </h3>
               </div>
@@ -541,39 +551,40 @@ export default function InvitePage() {
         )}
 
         {/* RSVP */}
-        <section data-testid="section-rsvp" className="py-16 px-6 bg-[#fefaf7]" id="rsvp">
+        {isSectionVisible("rsvp") && <section data-testid="section-rsvp" className="py-16 px-6" style={{ background: t.sectionAltBg }} id="rsvp">
           <div className="max-w-md mx-auto">
             <div className="text-center mb-8">
-              <p className="text-rose-400 text-xs uppercase tracking-widest mb-2">Konfirmasi Kehadiran</p>
-              <h3 className="text-gray-800 text-2xl font-semibold" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: t.primaryColor }}>Konfirmasi Kehadiran</p>
+              <h3 className="text-2xl font-semibold" style={{ fontFamily: t.fontHeading, color: t.textColor }}>
                 RSVP
               </h3>
-              <p className="text-gray-500 text-sm mt-2">
+              <p className="text-sm mt-2" style={{ color: t.textMutedColor }}>
                 Mohon konfirmasi kehadiranmu sebelum acara dimulai.
               </p>
             </div>
 
             {rsvpDone ? (
-              <div className="bg-white rounded-2xl p-8 shadow-sm border border-rose-100 text-center space-y-4" data-testid="rsvp-success">
+              <div className="bg-white rounded-2xl p-8 shadow-sm text-center space-y-4" style={{ border: `1px solid ${t.cardBorder}` }} data-testid="rsvp-success">
                 <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto">
                   <CheckCircle2 className="w-7 h-7 text-emerald-500" />
                 </div>
-                <h4 className="text-gray-800 font-bold text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <h4 className="font-bold text-lg" style={{ fontFamily: t.fontHeading, color: t.textColor }}>
                   Terima kasih!
                 </h4>
-                <p className="text-gray-500 text-sm leading-relaxed">
+                <p className="text-sm leading-relaxed" style={{ color: t.textMutedColor }}>
                   RSVP kamu sudah kami terima. Sampai jumpa di hari bahagia kami!
                 </p>
                 <button
                   onClick={() => setRsvpDone(false)}
-                  className="text-rose-400 hover:text-rose-500 text-sm underline underline-offset-2"
+                  className="text-sm underline underline-offset-2"
+                  style={{ color: t.primaryColor }}
                   data-testid="button-rsvp-again"
                 >
                   Ubah konfirmasi
                 </button>
               </div>
             ) : (
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-rose-100 space-y-5">
+              <div className="bg-white rounded-2xl p-6 shadow-sm space-y-5" style={{ border: `1px solid ${t.cardBorder}` }}>
                 <div>
                   <Label htmlFor="rsvp-name" className="text-sm font-medium text-gray-700">
                     Nama Lengkap
@@ -601,11 +612,10 @@ export default function InvitePage() {
                         type="button"
                         data-testid={`button-attendance-${val}`}
                         onClick={() => setRsvpForm(f => ({ ...f, attendance_status: val }))}
-                        className={`py-2 px-2 rounded-xl text-xs font-medium border transition-all ${
-                          rsvpForm.attendance_status === val
-                            ? "bg-rose-500 text-white border-rose-500"
-                            : "bg-white text-gray-600 border-gray-200 hover:border-rose-300"
-                        }`}
+                        className="py-2 px-2 rounded-xl text-xs font-medium border transition-all"
+                        style={rsvpForm.attendance_status === val
+                          ? { background: t.buttonBg, color: t.buttonText, borderColor: t.buttonBg }
+                          : { background: "white", color: "#6b7280", borderColor: "#e5e7eb" }}
                       >
                         {label}
                       </button>
@@ -653,7 +663,8 @@ export default function InvitePage() {
                     rsvpMutation.mutate(rsvpForm);
                   }}
                   disabled={rsvpMutation.isPending}
-                  className="w-full bg-rose-500 hover:bg-rose-600 text-white rounded-xl"
+                  className="w-full rounded-xl"
+                  style={{ background: t.buttonBg, color: t.buttonText }}
                   data-testid="button-submit-rsvp"
                 >
                   {rsvpMutation.isPending ? "Mengirim..." : (
@@ -663,19 +674,19 @@ export default function InvitePage() {
               </div>
             )}
           </div>
-        </section>
+        </section>}
 
         {/* Ucapan & Doa */}
-        <section data-testid="section-wishes" className="py-16 px-6 bg-white" id="ucapan">
+        {isSectionVisible("wishes") && <section data-testid="section-wishes" className="py-16 px-6" style={{ background: t.backgroundColor }} id="ucapan">
           <div className="max-w-md mx-auto space-y-8">
             <div className="text-center">
-              <p className="text-rose-400 text-sm font-medium tracking-widest uppercase mb-1">Doa &amp; Harapan</p>
-              <h2 className="font-serif text-2xl font-bold text-gray-800">Ucapan Tamu</h2>
-              <p className="text-gray-500 text-sm mt-2">Sampaikan doa dan ucapan tulus untuk pasangan</p>
+              <p className="text-sm font-medium tracking-widest uppercase mb-1" style={{ color: t.primaryColor }}>Doa &amp; Harapan</p>
+              <h2 className="text-2xl font-bold" style={{ fontFamily: t.fontHeading, color: t.textColor }}>Ucapan Tamu</h2>
+              <p className="text-sm mt-2" style={{ color: t.textMutedColor }}>Sampaikan doa dan ucapan tulus untuk pasangan</p>
             </div>
 
             {/* Form ucapan */}
-            <div className="bg-[#fefaf7] rounded-2xl p-6 border border-rose-100 space-y-4">
+            <div className="rounded-2xl p-6 space-y-4" style={{ background: t.sectionAltBg, border: `1px solid ${t.cardBorder}` }}>
               <div>
                 <Label htmlFor="wish-name" className="text-sm font-medium text-gray-700">
                   Nama Lengkap
@@ -716,7 +727,8 @@ export default function InvitePage() {
                   wishesMutation.mutate(wishForm);
                 }}
                 disabled={wishesMutation.isPending}
-                className="w-full bg-rose-500 hover:bg-rose-600 text-white rounded-xl"
+                className="w-full rounded-xl"
+                style={{ background: t.buttonBg, color: t.buttonText }}
                 data-testid="button-submit-wish"
               >
                 {wishesMutation.isPending ? "Mengirim..." : (
@@ -732,32 +744,33 @@ export default function InvitePage() {
                   <div
                     key={wish.id}
                     data-testid={`wish-item-${wish.id}`}
-                    className="bg-[#fefaf7] rounded-xl px-5 py-4 border border-rose-50"
+                    className="rounded-xl px-5 py-4"
+                    style={{ background: t.sectionAltBg, border: `1px solid ${t.dividerColor}` }}
                   >
                     <div className="flex items-center gap-2 mb-1.5">
-                      <div className="w-7 h-7 rounded-full bg-rose-100 flex items-center justify-center text-xs font-bold text-rose-500 uppercase shrink-0">
+                      <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold uppercase shrink-0" style={{ background: t.secondaryColor, color: t.primaryColor }}>
                         {wish.guestName.charAt(0)}
                       </div>
-                      <span className="text-sm font-semibold text-gray-800">{wish.guestName}</span>
-                      <span className="ml-auto text-xs text-gray-400">
+                      <span className="text-sm font-semibold" style={{ color: t.textColor }}>{wish.guestName}</span>
+                      <span className="ml-auto text-xs" style={{ color: t.textMutedColor }}>
                         {new Date(wish.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 leading-relaxed pl-9">{wish.message}</p>
+                    <p className="text-sm leading-relaxed pl-9" style={{ color: t.textMutedColor }}>{wish.message}</p>
                   </div>
                 ))}
               </div>
             )}
           </div>
-        </section>
+        </section>}
 
         {/* Additional Notes */}
         {invitation.additionalNotes && (
-          <section className="py-12 px-6 bg-[#fefaf7]">
+          <section className="py-12 px-6" style={{ background: t.sectionAltBg }}>
             <div className="max-w-md mx-auto text-center">
-              <div className="bg-rose-50 border border-rose-100 rounded-2xl p-6">
-                <Heart className="w-5 h-5 text-rose-400 mx-auto mb-3" />
-                <p className="text-gray-600 text-sm leading-relaxed">{invitation.additionalNotes}</p>
+              <div className="rounded-2xl p-6" style={{ background: t.secondaryColor, border: `1px solid ${t.cardBorder}` }}>
+                <Heart className="w-5 h-5 mx-auto mb-3" style={{ color: t.primaryColor }} />
+                <p className="text-sm leading-relaxed" style={{ color: t.textMutedColor }}>{invitation.additionalNotes}</p>
               </div>
             </div>
           </section>
@@ -767,11 +780,11 @@ export default function InvitePage() {
         <section
           data-testid="section-footer"
           className="py-16 px-6"
-          style={{ background: "linear-gradient(135deg, #1a0a0a 0%, #2d1515 100%)" }}
+          style={{ background: `linear-gradient(135deg, ${t.coverOverlayEnd} 0%, ${t.coverOverlayStart} 100%)` }}
         >
           <div className="max-w-sm mx-auto text-center">
-            <Heart className="w-10 h-10 text-rose-400 mx-auto mb-4" />
-            <h3 className="text-white text-2xl font-semibold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <Heart className="w-10 h-10 mx-auto mb-4" style={{ color: t.accentColor }} />
+            <h3 className="text-white text-2xl font-semibold mb-2" style={{ fontFamily: t.fontHeading }}>
               {invitation.groomName} &amp; {invitation.brideName}
             </h3>
             <p className="text-white/60 text-sm mb-6">Berbagi momen bahagia ini dengan orang-orang terkasih</p>
@@ -794,7 +807,8 @@ export default function InvitePage() {
         <button
           onClick={toggleMusic}
           data-testid="button-music-toggle"
-          className="fixed bottom-6 right-6 z-40 w-12 h-12 bg-rose-500 hover:bg-rose-600 text-white rounded-full shadow-lg shadow-rose-900/40 flex items-center justify-center transition-all"
+          className="fixed bottom-6 right-6 z-40 w-12 h-12 text-white rounded-full shadow-lg flex items-center justify-center transition-all"
+          style={{ background: t.buttonBg }}
         >
           {isPlaying ? <Pause className="w-5 h-5" /> : <Music2 className="w-5 h-5" />}
         </button>

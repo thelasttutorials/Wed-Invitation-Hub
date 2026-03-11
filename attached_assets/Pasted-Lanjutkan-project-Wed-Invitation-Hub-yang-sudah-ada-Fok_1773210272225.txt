@@ -1,0 +1,374 @@
+Lanjutkan project Wed Invitation Hub yang sudah ada. Fokus sekarang hanya pada peningkatan Admin Template Builder drag & drop agar benar-benar bagus, stabil, premium, dan sesuai dengan tema template yang sudah dibuat.
+
+KONTEKS
+Saat ini sudah ada daftar tema template seperti:
+- Luxury Gold
+- Romantic Floral
+- Minimal Modern
+- Classic Elegant
+
+Tampilan kartu template sudah ada, tetapi sekarang saya ingin builder drag & drop dan hasil desain template dibuat jauh lebih bagus, konsisten, dan benar-benar usable sesuai identitas masing-masing tema.
+
+TUJUAN UTAMA
+1. Rapikan dan tingkatkan Admin Builder drag & drop
+2. Pastikan builder benar-benar stabil dan nyaman dipakai
+3. Pastikan setiap tema punya style system yang jelas
+4. Pastikan hasil template yang dibuat dari builder terlihat premium, elegan, dan mobile-friendly
+5. Pastikan builder bisa membuat template yang sesuai dengan tema yang dipilih
+6. Pastikan tidak ada bagian yang terasa asal jadi, rusak, atau tidak konsisten
+
+ATURAN PENTING
+- Jangan rewrite project dari nol
+- Jangan merusak fitur yang sudah ada
+- Jangan membuat UI dummy
+- Jangan hanya memperbaiki tampilan luar, tapi pastikan builder, preview, save, publish, dan render template benar-benar berjalan
+- Fokus pada kualitas builder dan kualitas desain template
+- Semua perubahan harus modular, rapi, dan mudah dikembangkan
+
+==================================================
+1. TINGKATKAN TEMPLATE BUILDER DRAG & DROP
+==================================================
+
+Perbaiki builder admin agar tampil seperti visual page builder yang modern dan premium.
+
+Builder harus memiliki layout seperti ini:
+- Sidebar kiri: daftar section yang bisa di-drag
+- Area tengah: canvas builder / live preview
+- Sidebar kanan: property editor / style editor
+
+Fitur builder wajib:
+- drag section dari sidebar ke canvas
+- reorder section dengan drag & drop
+- pilih section untuk edit
+- duplicate section
+- delete section
+- toggle hide/show section
+- save draft
+- publish template
+- preview desktop
+- preview mobile
+
+Pastikan drag & drop halus, stabil, dan tidak glitch.
+Gunakan library drag and drop yang stabil seperti dnd-kit jika belum.
+
+==================================================
+2. SESUAIKAN BUILDER DENGAN 4 TEMA UTAMA
+==================================================
+
+Builder harus mendukung style system per tema, bukan satu style untuk semua.
+
+Buat style preset khusus untuk masing-masing tema berikut:
+
+A. Luxury Gold
+Karakter:
+- mewah
+- elegan
+- warna gold, champagne, ivory, brown hangat
+- aksen glow halus
+- tipografi classy
+- ornamen bintang / sparkle lembut
+- cocok untuk wedding premium
+
+B. Romantic Floral
+Karakter:
+- romantis
+- feminin
+- warna dusty pink, rose, magenta lembut, cream
+- ornamen floral ringan
+- tipografi anggun
+- kesan hangat dan manis
+
+C. Minimal Modern
+Karakter:
+- bersih
+- modern
+- simple
+- warna abu-abu lembut, putih, charcoal, soft blue grey
+- banyak whitespace
+- tipografi modern
+- fokus ke keterbacaan dan layout rapi
+
+D. Classic Elegant
+Karakter:
+- formal
+- elegan
+- classy
+- warna navy, royal blue, white, silver
+- pola dekoratif halus
+- tipografi formal premium
+- kesan timeless
+
+Builder harus bisa menerapkan preset tema ini ke template yang dipilih.
+
+==================================================
+3. BUAT GLOBAL THEME STYLE SYSTEM
+==================================================
+
+Buat global theme settings agar tiap template memiliki identitas visual yang konsisten.
+
+Untuk setiap template, simpan:
+- primary color
+- secondary color
+- text color
+- background color
+- accent color
+- font heading
+- font body
+- button style
+- card style
+- ornament style
+- border radius
+- shadow style
+- spacing scale
+- animation preset
+
+Global style ini harus otomatis diterapkan ke semua section, tetapi admin tetap bisa override per section jika diperlukan.
+
+==================================================
+4. TINGKATKAN KUALITAS DESAIN SECTION
+==================================================
+
+Perbaiki tampilan semua section agar lebih bagus, proporsional, dan premium.
+
+Section yang harus diperbagus:
+- Cover / Opening
+- Couple Section
+- Event Detail
+- Countdown
+- Love Story
+- Gallery
+- RSVP
+- Wishes
+- Gift
+- Map
+- Closing
+- Bismillah / Quran Verse untuk tema Islamic jika tersedia
+
+Setiap section harus:
+- spacing rapi
+- tipografi jelas
+- hirarki visual bagus
+- tombol proporsional
+- card dan block konsisten
+- aman untuk mobile
+- tidak terlalu sempit atau terlalu padat
+- enak dilihat di layar HP
+
+==================================================
+5. TINGKATKAN PROPERTY EDITOR
+==================================================
+
+Saat section dipilih, panel editor harus bagus dan lengkap.
+
+Admin bisa edit:
+CONTENT
+- title
+- subtitle
+- description
+- quote
+- nama pasangan
+- tanggal
+- waktu
+- lokasi
+- CTA text
+- doa / ayat / penutup
+- gallery image list
+
+STYLE
+- warna background
+- warna text
+- warna tombol
+- alignment
+- font family
+- font size
+- section padding
+- margin
+- border radius
+- shadow
+- ornament visibility
+
+MEDIA
+- background image
+- cover image
+- gallery image
+- video
+- audio/music
+
+ADVANCED
+- hide/show section
+- animate on view
+- section max width
+- divider style
+
+==================================================
+6. BUAT TEMPLATE AWAL YANG SUDAH JADI DAN BAGUS
+==================================================
+
+Perbaiki / buat ulang template default agar benar-benar terlihat premium, bukan sekadar placeholder.
+
+Buat minimal template berikut:
+
+1. Luxury Gold
+Desain:
+- gradient gold hangat
+- kartu elegan
+- heading serif premium
+- tombol mewah tapi tetap sederhana
+- decorative sparkles halus
+
+2. Romantic Floral
+Desain:
+- warna pink romantis dan floral accents
+- section lembut
+- nuansa manis tapi tetap elegan
+- cocok untuk undangan modern romantis
+
+3. Minimal Modern
+Desain:
+- clean white/grey layout
+- banyak whitespace
+- komponen modern
+- tipografi simple premium
+- fokus pada estetika minimal
+
+4. Classic Elegant
+Desain:
+- navy / blue elegant
+- formal, classy, premium
+- desain timeless
+- cocok untuk undangan formal
+
+Pastikan keempat template:
+- bisa dipreview
+- bisa dipilih
+- bisa diedit di builder
+- punya thumbnail bagus
+- punya layout section bawaan
+- punya style preset sendiri
+
+==================================================
+7. RENDER TEMPLATE HARUS SESUAI DENGAN BUILDER
+==================================================
+
+Halaman undangan publik harus benar-benar merender template sesuai builder.
+
+Pastikan:
+- urutan section mengikuti builder
+- konten mengikuti config builder
+- style mengikuti theme preset dan override section
+- preview di builder konsisten dengan hasil halaman invitation publik
+- data invitation mengisi placeholder template dengan benar
+
+Contoh placeholder:
+- {{bride_name}}
+- {{groom_name}}
+- {{wedding_date}}
+- {{wedding_time}}
+- {{venue_name}}
+- {{venue_address}}
+- {{opening_quote}}
+- {{love_story}}
+- {{gallery}}
+- {{maps_link}}
+
+==================================================
+8. TINGKATKAN UI ADMIN BUILDER AGAR TERLIHAT BAGUS
+==================================================
+
+Perbaiki tampilan builder admin menjadi:
+- modern
+- clean
+- premium
+- nyaman digunakan
+- mudah dipahami
+
+Tambahkan:
+- top toolbar
+- save indicator
+- preview switch desktop/mobile
+- undo/redo sederhana jika memungkinkan
+- tab content/style/settings
+- search section
+- icon section yang rapi
+- thumbnail template list yang bagus
+
+==================================================
+9. MOBILE-FIRST OUTPUT
+==================================================
+
+Hasil template wajib sangat bagus di mobile karena mayoritas tamu membuka dari HP.
+
+Pastikan:
+- section tidak pecah di layar kecil
+- ukuran font masih nyaman
+- tombol mudah ditekan
+- jarak antar elemen cukup
+- gallery tidak berantakan
+- countdown tetap proporsional
+- map dan gift section tetap rapi
+- cover tetap menarik
+
+==================================================
+10. PERFORMANCE DAN STABILITAS
+==================================================
+
+Pastikan builder dan template:
+- tidak lag parah
+- tidak error saat drag
+- tidak crash saat save
+- tidak blank saat preview
+- tidak merusak route lain
+- validasi data berjalan
+- config JSON aman
+- tidak ada broken import
+- tidak ada TypeScript error besar
+
+Jika ada builder logic yang setengah jadi, rapikan sampai benar-benar aktif.
+
+==================================================
+11. FITUR TAMBAHAN AGAR BUILDER TERASA BAGUS
+==================================================
+
+Tambahkan fitur berikut jika memungkinkan dan tetap stabil:
+- duplicate template
+- duplicate section
+- reset style ke preset tema
+- copy section style
+- autosave draft ringan
+- publish/unpublish
+- preview dengan sample data
+- theme badge: Populer, Baru, Premium
+- template category filter
+- search template
+- quick apply preset colors
+
+==================================================
+12. HASIL AKHIR YANG DIINGINKAN
+==================================================
+
+Saya ingin hasil akhir seperti ini:
+- builder drag & drop benar-benar aktif dan nyaman dipakai
+- semua template terlihat bagus dan tidak murahan
+- desain sesuai tema Luxury Gold, Romantic Floral, Minimal Modern, dan Classic Elegant
+- hasil template konsisten antara builder, preview, dan invitation publik
+- section rapi, premium, elegan, dan mobile-friendly
+- property editor lengkap
+- admin bisa membuat template dengan benar tanpa kendala besar
+- template default sudah jadi dan bagus
+- project tetap stabil
+
+OUTPUT SETELAH SELESAI
+Berikan ringkasan singkat:
+1. file apa saja yang diubah
+2. route apa saja yang aktif
+3. builder feature apa saja yang aktif
+4. bagaimana implementasi style system per tema
+5. template apa saja yang sudah diperbaiki / dibuat
+6. bagian apa yang masih perlu dites jika ada
+
+INSTRUKSI TAMBAHAN
+Kerjakan perubahan secara bertahap.
+Jangan merusak fitur yang sudah jalan.
+Jangan berhenti di UI.
+Pastikan frontend, backend, preview, save, publish, dan render template benar-benar terhubung end-to-end.
+Prioritaskan kualitas desain, konsistensi tema, dan stabilitas builder.

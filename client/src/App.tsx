@@ -22,6 +22,8 @@ import PricingPage from "@/pages/pricing";
 import AdminPricing from "@/pages/admin/pricing";
 import AdminOrders from "@/pages/admin/orders";
 import AdminBankSettings from "@/pages/admin/bank-settings";
+import AdminTemplates from "@/pages/admin/templates";
+import TemplateBuilder from "@/pages/admin/template-builder";
 
 function Router() {
   return (
@@ -147,6 +149,17 @@ function Router() {
           </AdminGuard>
         )}
       </Route>
+
+      <Route path="/admin/templates">
+        {() => (
+          <AdminGuard pageTitle="Templates">
+            <AdminTemplates />
+          </AdminGuard>
+        )}
+      </Route>
+
+      {/* Template builder has its own full-screen layout */}
+      <Route path="/admin/templates/:id/builder" component={TemplateBuilder} />
 
       <Route component={NotFound} />
     </Switch>

@@ -1,0 +1,367 @@
+Upgrade fitur Guest Management dan RSVP pada project Wed Invitation Hub agar menjadi sistem RSVP profesional untuk undangan digital pernikahan.
+
+Jangan rewrite project dari nol.
+Jangan merusak fitur lain seperti auth, template builder, payment, invitations, admin dashboard, pricing, billing, dan halaman publik.
+
+Fokus hanya pada:
+- guest management
+- RSVP
+- import tamu
+- link undangan per tamu
+- WhatsApp share
+- QR check-in
+
+==================================================
+TUJUAN
+==================================================
+
+Pemilik undangan harus bisa:
+
+1. tambah tamu manual
+2. import tamu dari Excel / CSV
+3. generate link undangan unik untuk tiap tamu
+4. nama tamu otomatis muncul di link undangan
+5. kirim link undangan ke WhatsApp
+6. lihat RSVP per tamu
+7. export RSVP
+8. scan/check-in tamu saat acara dengan QR code
+
+Tamu undangan harus bisa:
+
+9. membuka link undangan personal
+10. melihat namanya di undangan
+11. mengisi RSVP
+12. mengirim ucapan
+13. menerima QR code/check-in code jika diperlukan
+
+==================================================
+STEP 1 — DATABASE GUEST MANAGEMENT
+==================================================
+
+Pastikan ada schema/tabel:
+
+guests
+- id
+- invitation_id
+- name
+- phone
+- email
+- guest_code
+- guest_slug
+- max_guest
+- qr_code_value
+- checkin_status
+- checked_in_at
+- created_at
+- updated_at
+
+Keterangan:
+- guest_code unik untuk tamu
+- guest_slug opsional untuk personal link
+- qr_code_value unik untuk check-in
+- checkin_status: pending / checked_in
+
+==================================================
+STEP 2 — DATABASE RSVP
+==================================================
+
+Pastikan tabel RSVP lengkap:
+
+rsvps
+- id
+- invitation_id
+- guest_id
+- name
+- phone
+- attendance_status
+- guest_count
+- message
+- submitted_at
+- updated_at
+
+attendance_status:
+- attending
+- not_attending
+- maybe
+
+==================================================
+STEP 3 — DASHBOARD GUESTS
+==================================================
+
+Buat / rapikan halaman:
+
+/dashboard/guests
+
+Pemilik undangan bisa:
+- lihat daftar tamu
+- tambah tamu manual
+- edit tamu
+- hapus tamu
+- import tamu dari Excel / CSV
+- export tamu
+- generate link undangan per tamu
+- copy link undangan
+- kirim via WhatsApp
+- lihat status RSVP
+- lihat status check-in
+
+Tabel minimal:
+- Name
+- Phone
+- Email
+- Max Guest
+- RSVP Status
+- Check-in Status
+- Invitation Link
+- Actions
+
+==================================================
+STEP 4 — IMPORT EXCEL / CSV
+==================================================
+
+Tambahkan fitur import file Excel / CSV.
+
+Format file:
+Name | Phone | Email | Max Guest
+
+Gunakan library seperti:
+- xlsx
+- papaparse
+
+Flow:
+1. user upload file
+2. parse file
+3. validasi data
+4. tampilkan preview sebelum import jika memungkinkan
+5. simpan ke database guests
+6. generate guest_code dan qr_code_value otomatis
+
+Validasi:
+- name wajib
+- invitation_id valid
+- max_guest angka valid
+- duplikasi tamu dicegah atau ditangani dengan aman
+
+Tambahkan tombol:
+- Download Template Excel
+
+==================================================
+STEP 5 — GENERATE LINK UNDANGAN PER TAMU
+==================================================
+
+Setiap tamu harus punya link undangan unik.
+
+Contoh format:
+- /invite/:slug?to=Ahmad
+atau lebih rapi:
+- /invite/:slug?guest=GUESTCODE123
+
+Lebih baik jika mendukung keduanya:
+- nama tamu untuk tampilan
+- guest_code untuk identifikasi sistem
+
+Saat tamu membuka link:
+- nama tamu muncul di cover undangan
+- guest terkait bisa dikenali oleh sistem
+- RSVP bisa otomatis dikaitkan ke guest_id
+
+==================================================
+STEP 6 — WHATSAPP SHARE
+==================================================
+
+Tambahkan tombol share WhatsApp untuk tiap tamu.
+
+Format pesan WhatsApp:
+- sapaan tamu
+- nama pasangan
+- link undangan personal
+- ajakan untuk mengisi RSVP
+
+Contoh:
+Halo Bapak/Ibu {{guest_name}}, kami mengundang Anda ke acara pernikahan kami. Berikut link undangannya: {{guest_link}}
+
+Tombol:
+- Kirim WhatsApp
+- Copy Link
+
+Gunakan URL WhatsApp yang valid agar langsung terbuka.
+
+==================================================
+STEP 7 — RSVP DI HALAMAN UNDANGAN
+==================================================
+
+Pada halaman publik:
+/invite/:slug
+
+Form RSVP harus:
+- mengisi guest_id otomatis jika link personal dipakai
+- menampilkan nama tamu jika tersedia
+- tetap bisa manual jika tamu datang dari link umum
+
+Field:
+- Nama
+- Nomor WhatsApp
+- Status Kehadiran
+- Jumlah Tamu
+- Pesan / Ucapan
+
+Validasi:
+- guest_count tidak boleh melebihi max_guest jika guest dikenali
+- invitation harus valid
+- data harus tersimpan ke RSVP
+- jika tamu yang sama RSVP ulang, bisa update atau cegah duplikasi sesuai keputusan implementasi yang paling aman
+
+==================================================
+STEP 8 — DASHBOARD RSVP
+==================================================
+
+Buat / rapikan:
+/dashboard/rsvp
+
+Tampilkan:
+- Nama
+- Phone
+- RSVP Status
+- Guest Count
+- Message
+- Submitted At
+- Linked Guest
+- Check-in Status
+
+Tambahkan statistik:
+- Total Guests
+- Total RSVP
+- Total Attending
+- Total Not Attending
+- Total Maybe
+- Total Checked In
+
+Tambahkan filter:
+- attending
+- not_attending
+- maybe
+- checked_in
+- not_checked_in
+
+==================================================
+STEP 9 — EXPORT DATA RSVP
+==================================================
+
+Tambahkan export RSVP ke:
+- Excel
+- CSV
+
+Kolom export:
+- Guest Name
+- Phone
+- Email
+- RSVP Status
+- Guest Count
+- Message
+- Submitted At
+- Check-in Status
+- Checked In At
+
+==================================================
+STEP 10 — QR CODE CHECK-IN
+==================================================
+
+Tambahkan sistem QR check-in tamu.
+
+Untuk setiap guest:
+- generate qr_code_value unik
+- generate QR code image atau data URL jika perlu
+
+Tambahkan halaman check-in:
+- /checkin
+atau
+- /admin/checkin
+
+Flow:
+1. admin/staff scan QR code tamu
+2. sistem cari guest berdasarkan qr_code_value
+3. tandai tamu sebagai checked_in
+4. simpan checked_in_at
+
+Tambahkan juga fallback check-in manual:
+- cari tamu berdasarkan nama / phone / guest_code
+- klik tombol Check-in
+
+Validasi:
+- tamu yang sudah checked-in tidak boleh dicatat dua kali tanpa peringatan
+- tampilkan status jika QR code tidak valid
+
+==================================================
+STEP 11 — API ROUTES
+==================================================
+
+GUESTS
+- GET /api/guests
+- POST /api/guests
+- PATCH /api/guests/:id
+- DELETE /api/guests/:id
+- POST /api/guests/import
+- GET /api/guests/export
+
+RSVP
+- POST /api/rsvp
+- GET /api/rsvp
+- GET /api/rsvp/export
+
+CHECK-IN
+- POST /api/checkin/scan
+- POST /api/checkin/manual
+- GET /api/checkin/guest/:id
+
+==================================================
+STEP 12 — UX YANG HARUS BAGUS
+==================================================
+
+Tambahkan:
+- loading state
+- success/error message
+- preview sebelum import
+- copy link button
+- WhatsApp send button
+- QR preview jika perlu
+- status badge RSVP
+- status badge check-in
+- empty state yang rapi
+
+==================================================
+STEP 13 — FINAL VALIDATION
+==================================================
+
+Sebelum selesai, pastikan:
+- import Excel / CSV bekerja
+- tamu tersimpan di database
+- link undangan per tamu tergenerate
+- nama tamu muncul di undangan
+- RSVP tersimpan dan terkait ke guest
+- WhatsApp share bekerja
+- export RSVP bekerja
+- QR check-in bekerja
+- check-in manual bekerja
+- tidak ada tombol mati
+- tidak ada route error
+- tidak ada blank page
+
+==================================================
+HASIL AKHIR
+==================================================
+
+Pemilik undangan bisa:
+- import tamu
+- generate link per tamu
+- kirim via WhatsApp
+- melihat RSVP
+- export RSVP
+- check-in tamu via QR
+
+Tamu undangan bisa:
+- buka link personal
+- lihat namanya di undangan
+- isi RSVP
+- datang ke acara dan check-in
+
+Semua data harus tersimpan permanen di database dan tampil di dashboard.

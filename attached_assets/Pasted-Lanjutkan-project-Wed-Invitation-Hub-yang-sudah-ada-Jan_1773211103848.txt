@@ -1,0 +1,448 @@
+Lanjutkan project Wed Invitation Hub yang sudah ada. Jangan rewrite project dari nol. Jangan merusak fitur yang sudah berjalan seperti auth, invitations, template builder, RSVP, wishes, pricing, billing, dan admin dashboard.
+
+Fokus sekarang hanya pada penyempurnaan sistem pembayaran transfer manual agar benar-benar profesional, stabil, dan berjalan end-to-end.
+
+TUJUAN UTAMA
+Sistem pembayaran harus mendukung flow lengkap berikut:
+
+USER:
+1. memilih paket Premium atau Pro
+2. sistem membuat order
+3. user melihat instruksi transfer
+4. user upload bukti transfer
+5. status pembayaran menjadi menunggu konfirmasi
+6. user menerima notifikasi status pembayaran
+7. jika pembayaran disetujui, paket user aktif otomatis
+8. user menerima email konfirmasi dan invoice / ringkasan pembayaran
+
+ADMIN:
+9. admin melihat daftar pembayaran masuk
+10. admin melihat detail pembayaran dan bukti transfer
+11. admin bisa approve / reject
+12. admin bisa menandai pembayaran selesai atau belum selesai
+13. admin bisa mengatur rekening tujuan transfer
+14. admin bisa mengatur catatan pembayaran
+
+Jangan buat UI dummy.
+Semua tombol, form, route, status, email, dan perubahan paket harus benar-benar aktif.
+
+==================================================
+1. PASTIKAN FLOW PEMBAYARAN BERJALAN
+==================================================
+
+Saat user memilih paket berbayar:
+- buat order baru
+- payment_method = bank_transfer
+- payment_status = pending
+- order_number unik
+- amount sesuai harga paket
+- subscription user dibuat / diupdate menjadi pending_payment
+
+Saat user upload bukti transfer:
+- simpan data konfirmasi transfer
+- simpan gambar bukti transfer
+- ubah payment_status menjadi waiting_confirmation
+
+Saat admin approve:
+- ubah payment_status menjadi paid
+- ubah subscription user menjadi active
+- aktifkan plan user sesuai paket yang dibeli
+- isi started_at
+- nonaktifkan paket aktif lama jika perlu
+
+Saat admin reject:
+- ubah payment_status menjadi rejected
+- subscription jangan aktif
+- user dapat informasi bahwa pembayaran ditolak
+
+==================================================
+2. TAMBAHKAN STATUS "SELESAI ATAU BELUM"
+==================================================
+
+Selain payment_status, tambahkan status progress admin yang jelas.
+
+Gunakan salah satu pendekatan yang rapi:
+
+Option A:
+Tambahkan field order_fulfillment_status:
+- not_reviewed
+- reviewing
+- completed
+- rejected
+
+Option B:
+Gunakan order_status terpisah:
+- pending
+- waiting_confirmation
+- under_review
+- completed
+- rejected
+
+Yang penting:
+- admin bisa menandai pembayaran sudah selesai / belum selesai
+- user bisa melihat status yang jelas
+- status ini tersimpan di database dan tampil di dashboard
+
+==================================================
+3. DATABASE YANG HARUS LENGKAP
+==================================================
+
+Pastikan tabel berikut benar-benar dipakai dan saling terhubung dengan benar:
+
+pricing_plans
+- id
+- name
+- slug
+- price
+- description
+- is_active
+- created_at
+- updated_at
+
+orders
+- id
+- user_id
+- plan_id
+- order_number
+- amount
+- payment_method
+- payment_status
+- order_status
+- admin_note
+- created_at
+- updated_at
+
+payment_confirmations
+- id
+- order_id
+- sender_name
+- sender_bank
+- transfer_date
+- transfer_amount
+- proof_image_url
+- note
+- created_at
+- updated_at
+
+user_subscriptions
+- id
+- user_id
+- plan_id
+- status
+- started_at
+- expires_at
+- created_at
+- updated_at
+
+bank_settings
+- id
+- bank_name
+- account_number
+- account_holder
+- payment_note
+- updated_at
+
+Optional jika perlu:
+payment_logs
+- id
+- order_id
+- action
+- status_before
+- status_after
+- actor_type
+- actor_id
+- note
+- created_at
+
+==================================================
+4. ADMIN BANK SETTINGS
+==================================================
+
+Admin harus bisa mengatur rekening transfer dari dashboard.
+
+Halaman:
+- /admin/bank-settings
+
+Admin bisa edit:
+- bank_name
+- account_number
+- account_holder
+- payment_note
+
+Pastikan data ini dipakai langsung di halaman pembayaran user.
+
+==================================================
+5. ADMIN HALAMAN ORDER / PEMBAYARAN
+==================================================
+
+Buat / rapikan halaman:
+- /admin/orders
+
+Admin harus bisa melihat:
+- order number
+- nama user
+- email user
+- paket yang dibeli
+- nominal
+- payment status
+- status selesai / belum
+- sender_name
+- sender_bank
+- transfer_date
+- transfer_amount
+- bukti transfer
+- note dari user
+- admin_note
+- tanggal dibuat
+- tanggal upload bukti
+
+Admin action:
+- lihat detail
+- approve pembayaran
+- reject pembayaran
+- tandai sedang direview
+- tandai selesai
+- isi catatan admin
+
+==================================================
+6. USER HALAMAN BILLING
+==================================================
+
+Buat / rapikan halaman:
+- /dashboard/billing
+- /dashboard/orders
+
+User harus bisa melihat:
+- paket aktif saat ini
+- status subscription
+- order terbaru
+- status pembayaran
+- status selesai / belum
+- rekening tujuan transfer
+- nominal transfer
+- bukti transfer yang sudah diupload
+- catatan admin jika pembayaran ditolak
+- tombol upload bukti transfer jika belum upload
+
+Tambahkan badge status yang jelas:
+- Pending Payment
+- Waiting Confirmation
+- Under Review
+- Approved
+- Rejected
+- Completed
+
+==================================================
+7. UPLOAD BUKTI TRANSFER HARUS KUAT
+==================================================
+
+Form upload bukti transfer harus berfungsi penuh.
+
+Field:
+- sender_name
+- sender_bank
+- transfer_date
+- transfer_amount
+- note
+- proof_image
+
+Validasi:
+- order harus milik user
+- order harus valid
+- order belum paid/completed
+- file upload valid
+- nominal transfer masuk akal
+- field wajib tidak boleh kosong
+
+Setelah upload:
+- payment_status jadi waiting_confirmation
+- order_status jadi under_review atau waiting_confirmation sesuai implementasi
+- user melihat pesan sukses
+
+==================================================
+8. EMAIL NOTIFIKASI KE USER
+==================================================
+
+Tambahkan email notification yang benar-benar aktif.
+
+Gunakan salah satu:
+- Nodemailer + SMTP
+atau
+- Resend API
+
+Kirim email untuk kondisi berikut:
+
+A. setelah user upload bukti transfer
+Subject:
+Bukti Transfer Diterima
+
+Isi:
+- order number
+- paket
+- nominal
+- status: menunggu konfirmasi admin
+
+B. setelah admin approve
+Subject:
+Pembayaran Disetujui
+
+Isi:
+- order number
+- paket aktif
+- status pembayaran berhasil
+- akun / paket sudah aktif
+
+C. setelah admin reject
+Subject:
+Pembayaran Ditolak
+
+Isi:
+- order number
+- alasan / catatan admin jika ada
+- instruksi untuk upload ulang atau hubungi admin
+
+==================================================
+9. INVOICE / RINGKASAN PEMBAYARAN
+==================================================
+
+Setelah admin approve, buat ringkasan pembayaran yang bisa dilihat user.
+
+Minimal tampilkan:
+- invoice number atau order number
+- nama user
+- email
+- paket yang dibeli
+- nominal
+- metode pembayaran: bank transfer
+- tanggal pembayaran
+- status: paid/completed
+
+Tidak harus PDF jika belum siap.
+Minimal ada halaman/detail invoice yang rapi dan bisa dilihat user dari dashboard.
+
+Jika memungkinkan, tambahkan:
+- tombol download invoice
+atau
+- tombol print invoice
+
+==================================================
+10. API ROUTE YANG WAJIB
+==================================================
+
+USER
+- GET /api/pricing
+- GET /api/subscription/me
+- GET /api/orders/me
+- GET /api/orders/:id
+- POST /api/orders
+- POST /api/orders/:id/upload-proof
+
+ADMIN
+- GET /api/admin/orders
+- GET /api/admin/orders/:id
+- PATCH /api/admin/orders/:id/approve
+- PATCH /api/admin/orders/:id/reject
+- PATCH /api/admin/orders/:id/review
+- PATCH /api/admin/orders/:id/complete
+- GET /api/admin/bank-settings
+- PATCH /api/admin/bank-settings
+
+==================================================
+11. VALIDASI DAN HAK AKSES
+==================================================
+
+Pastikan:
+- hanya user login yang bisa melihat order miliknya
+- hanya admin yang bisa melihat semua order
+- hanya admin yang bisa approve/reject/complete
+- order paid tidak bisa diapprove ulang
+- order completed tidak bisa diubah sembarangan
+- order rejected tidak dianggap aktif
+- subscription aktif hanya jika pembayaran disetujui
+
+==================================================
+12. UI DAN UX HARUS JELAS
+==================================================
+
+Tambahkan:
+- loading state
+- success message
+- error message
+- status badge berwarna
+- preview bukti transfer
+- tabel order yang rapi
+- detail order modal/page yang rapi
+- admin note field
+- empty state jika belum ada pembayaran
+
+Jangan biarkan user bingung antara:
+- pending
+- menunggu konfirmasi
+- ditolak
+- selesai
+
+==================================================
+13. SEED DAN DEFAULT DATA
+==================================================
+
+Pastikan ada seed awal:
+- pricing plans default
+- bank settings default
+
+Contoh:
+Bank BCA
+1234567890
+Wed Invitation Hub
+Transfer sesuai nominal lalu upload bukti pembayaran
+
+==================================================
+14. FINAL VALIDATION
+==================================================
+
+Sebelum selesai, pastikan:
+- user bisa pilih paket
+- order tercipta
+- instruksi transfer tampil
+- user bisa upload bukti transfer
+- status berubah benar
+- admin bisa lihat pembayaran
+- admin bisa review
+- admin bisa approve
+- admin bisa reject
+- admin bisa tandai selesai
+- paket user aktif otomatis setelah approve
+- user menerima email notifikasi
+- user bisa melihat invoice / ringkasan pembayaran
+- semua data tersimpan permanen di database
+- tidak ada tombol mati
+- tidak ada route error
+- tidak ada blank page
+
+==================================================
+HASIL AKHIR YANG SAYA INGINKAN
+==================================================
+
+Saya ingin hasil akhirnya seperti ini:
+- pembayaran transfer manual benar-benar berjalan
+- admin bisa atur pembayaran selesai atau belum
+- status user dan admin sinkron
+- paket aktif otomatis setelah pembayaran disetujui
+- email notifikasi berjalan
+- invoice / ringkasan pembayaran tersedia
+- semua route, form, dan tombol aktif
+- project stabil tanpa kendala
+
+OUTPUT SETELAH SELESAI
+Berikan ringkasan singkat:
+1. file apa saja yang diubah
+2. route apa saja yang aktif
+3. status apa saja yang dipakai
+4. flow approve/reject/complete seperti apa
+5. apakah email notifikasi dan invoice sudah aktif
+6. bagian apa yang masih perlu dites jika ada
+
+INSTRUKSI TAMBAHAN
+Kerjakan perubahan bertahap tanpa merusak fitur lain.
+Jangan refactor file yang tidak berkaitan.
+Pastikan project tetap bisa dijalankan setelah perubahan.
+Jangan berhenti di UI saja, selesaikan backend, database, dan integrasi end-to-end.

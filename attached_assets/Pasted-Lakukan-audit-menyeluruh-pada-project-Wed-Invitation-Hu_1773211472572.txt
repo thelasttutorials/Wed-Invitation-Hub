@@ -1,0 +1,395 @@
+Lakukan audit menyeluruh pada project Wed Invitation Hub yang sudah ada, lalu perbaiki semua bagian yang belum berjalan, belum tersambung, atau script-nya belum lengkap.
+
+Jangan rewrite project dari nol.
+Jangan hapus fitur yang sudah bekerja.
+Jangan membuat UI dummy.
+Fokus pada audit teknis penuh lalu perbaikan end-to-end sampai project stabil.
+
+TUJUAN UTAMA
+1. cek seluruh project
+2. temukan semua script yang belum ada atau belum lengkap
+3. temukan semua route yang mati
+4. temukan semua tombol yang tidak bekerja
+5. temukan semua integrasi frontend-backend-database yang putus
+6. perbaiki semuanya secara bertahap
+7. pastikan project bisa dijalankan tanpa kendala besar
+
+==================================================
+STEP 1 — AUDIT MENYELURUH
+==================================================
+
+Audit semua bagian project:
+
+FRONTEND
+- routing
+- pages
+- components
+- form submit
+- button actions
+- template cards
+- builder
+- pricing
+- billing
+- RSVP
+- guest import
+- contact
+- privacy
+- terms
+
+BACKEND
+- server startup
+- routes
+- controllers / handlers
+- auth
+- middleware
+- upload handler
+- payment logic
+- RSVP logic
+- guest import logic
+- template logic
+
+DATABASE
+- schema
+- relasi
+- migration
+- seed data
+- query integration
+
+INTEGRASI
+- frontend ke backend
+- backend ke database
+- admin ke user flow
+- invitation ke template
+- payment ke subscription
+- guest ke RSVP
+- contact form ke database/email
+
+==================================================
+STEP 2 — IDENTIFIKASI MASALAH
+==================================================
+
+Temukan dan kelompokkan semua masalah ke kategori ini:
+
+WORKING
+- bagian yang sudah benar-benar berjalan
+
+BROKEN
+- ada tetapi error / tidak jalan
+
+MISSING
+- dibutuhkan tetapi belum ada implementasi
+
+HALF-DONE
+- sudah ada UI atau route tapi backend/script belum lengkap
+
+UNUSED / DEAD CODE
+- kode tidak terpakai, import rusak, route tidak dipakai, komponen yatim
+
+==================================================
+STEP 3 — FILE DAN SCRIPT YANG HARUS DICEK
+==================================================
+
+Periksa minimal bagian berikut:
+
+- client routing utama
+- halaman landing
+- halaman templates
+- halaman demo
+- halaman invite
+- halaman login / register
+- dashboard user
+- dashboard admin
+- pages pricing / billing / orders
+- pages RSVP / guests / contact
+- admin template builder
+
+Di backend cek:
+- server/index
+- server/routes
+- auth routes
+- admin routes
+- pricing routes
+- payment routes
+- RSVP routes
+- guest routes
+- template routes
+- contact routes
+
+Di database cek:
+- users
+- admins
+- pricing_plans
+- user_subscriptions
+- orders
+- payment_confirmations
+- bank_settings
+- invitations
+- templates
+- template_sections
+- guests
+- rsvps
+- wishes
+- contact_messages
+
+==================================================
+STEP 4 — PERBAIKI ERROR DASAR DULU
+==================================================
+
+Sebelum menambah atau merapikan fitur lain, perbaiki dulu:
+
+- TypeScript errors
+- broken imports
+- undefined variables
+- server startup errors
+- route path errors
+- build errors
+- missing handlers
+- null/undefined data crash
+- mismatched schema fields
+- API/frontend field name mismatch
+
+==================================================
+STEP 5 — PERBAIKI ROUTE DAN TOMBOL MATI
+==================================================
+
+Audit semua tombol, link, dan navigasi.
+
+Pastikan tidak ada:
+- card template yang tidak clickable
+- tombol demo mati
+- tombol pakai tema mati
+- link privacy / terms / contact mati
+- menu dashboard yang blank
+- submit form yang tidak memanggil API
+- action approve/reject yang tidak mengubah status
+
+Setiap tombol harus:
+- punya action valid
+- tersambung ke route atau API yang benar
+- ada feedback sukses/gagal
+
+==================================================
+STEP 6 — PERBAIKI INTEGRASI FRONTEND-BACKEND
+==================================================
+
+Pastikan semua halaman yang seharusnya dinamis benar-benar mengambil data dari API/database.
+
+Jangan biarkan halaman penting memakai mock data sebagai sumber utama.
+
+Cek dan perbaiki integrasi untuk:
+- pricing
+- orders
+- bank settings
+- subscription status
+- template list
+- template preview
+- builder save
+- invitation public page
+- RSVP submit
+- guest import
+- contact form
+- privacy/terms links
+- admin orders
+- admin templates
+- admin contact messages
+
+==================================================
+STEP 7 — PERBAIKI INTEGRASI PEMBAYARAN
+==================================================
+
+Audit dan perbaiki flow pembayaran transfer manual:
+
+- user pilih paket
+- order tercipta
+- instruksi transfer tampil
+- upload bukti transfer
+- status berubah
+- admin melihat pembayaran
+- admin approve / reject
+- subscription user aktif setelah approve
+- status selesai / belum selesai sinkron
+
+Jika ada bagian yang missing, lengkapi.
+Jika ada UI tanpa backend, sambungkan.
+Jika ada backend tanpa UI, hubungkan.
+
+==================================================
+STEP 8 — PERBAIKI RSVP DAN GUEST MANAGEMENT
+==================================================
+
+Audit dan perbaiki:
+- tambah tamu manual
+- import tamu dari Excel / CSV
+- generate link undangan per tamu
+- RSVP submit
+- dashboard RSVP
+- export RSVP
+- WhatsApp share
+- QR check-in jika sudah ada
+
+Jika fitur belum selesai, selesaikan sampai usable.
+
+==================================================
+STEP 9 — PERBAIKI TEMPLATE DAN BUILDER
+==================================================
+
+Audit dan perbaiki:
+- template list
+- semua tema clickable
+- demo template
+- pakai tema
+- admin template list
+- builder drag & drop
+- save template
+- preview template
+- publish template
+- render invitation dari template
+
+Jika ada builder logic setengah jadi, rapikan dan sambungkan end-to-end.
+
+==================================================
+STEP 10 — PERBAIKI HALAMAN LEGAL DAN KONTAK
+==================================================
+
+Pastikan:
+- privacy aktif
+- terms aktif
+- contact aktif
+- semua link footer/nav bekerja
+- form kontak benar-benar submit
+- admin bisa melihat pesan jika fitur itu sudah dirancang
+
+==================================================
+STEP 11 — PERBAIKI VALIDASI DAN HAK AKSES
+==================================================
+
+Pastikan:
+- hanya admin bisa akses admin routes
+- user hanya bisa akses data miliknya
+- order user lain tidak bisa dibuka
+- approve/reject hanya admin
+- upload bukti hanya untuk order milik sendiri
+- template builder admin aman
+- plan restrictions di backend benar-benar divalidasi
+
+==================================================
+STEP 12 — TAMBAHKAN FEEDBACK UI
+==================================================
+
+Pastikan semua proses penting punya:
+- loading state
+- success message
+- error message
+- empty state
+- status badge jelas
+
+Cakup:
+- login
+- OTP
+- pricing
+- upload payment proof
+- template save/publish
+- guest import
+- RSVP submit
+- contact form
+- approve/reject payment
+
+==================================================
+STEP 13 — HAPUS / RAPIIKAN DEAD CODE
+==================================================
+
+Rapikan:
+- import tidak terpakai
+- komponen mati
+- route lama yang bentrok
+- mock data yang tidak lagi relevan
+- helper duplikat
+- fungsi yang tidak dipakai
+- script setengah jadi yang membingungkan
+
+Tapi jangan hapus fitur aktif.
+
+==================================================
+STEP 14 — TEST FLOW UTAMA
+==================================================
+
+Pastikan flow utama berikut benar-benar bisa berjalan:
+
+PUBLIC
+- buka landing page
+- buka privacy
+- buka terms
+- buka contact
+- buka templates/demo
+- buka undangan publik
+- isi RSVP
+
+USER
+- login/register
+- lihat pricing
+- pilih paket
+- buat order
+- upload bukti transfer
+- lihat status subscription
+- buat / edit invitation
+- kelola guests
+- import Excel
+- lihat RSVP
+
+ADMIN
+- login
+- buka dashboard
+- buka templates
+- buka builder
+- buka orders
+- approve / reject payment
+- atur bank settings
+- lihat contact messages
+
+==================================================
+STEP 15 — FINAL CLEANUP
+==================================================
+
+Sebelum selesai, pastikan:
+- project bisa run
+- server tidak crash
+- tidak ada TypeScript error besar
+- tidak ada broken route
+- tidak ada blank page
+- tidak ada tombol mati
+- tidak ada integrasi utama yang putus
+- data utama tersimpan permanen di database
+- UI dan backend sinkron
+
+==================================================
+OUTPUT YANG WAJIB DIBERIKAN SETELAH SELESAI
+==================================================
+
+Berikan laporan akhir yang ringkas dan jelas:
+
+1. WORKING
+- fitur apa saja yang sudah benar-benar aktif
+
+2. FIXED
+- bug / route / script apa saja yang diperbaiki
+
+3. ADDED
+- script / handler / route / page apa saja yang ditambahkan karena sebelumnya belum ada
+
+4. STILL NEEDS TEST
+- bagian mana yang masih perlu dites manual jika ada
+
+5. FILES CHANGED
+- sebutkan file utama yang diubah
+
+INSTRUKSI TAMBAHAN
+- Kerjakan audit dulu, lalu perbaiki bertahap
+- Jangan merusak fitur lain
+- Jangan berhenti di UI saja
+- Pastikan backend, database, dan integrasi ikut diperbaiki
+- Prioritas utama adalah stabilitas project dan semua fitur utama berjalan end-to-end
+
+
+Kerjakan hanya berdasarkan hasil audit nyata pada project ini.
+Jangan asumsi fitur sudah jalan jika belum terbukti terhubung.
+Pastikan setiap perbaikan bisa dijalankan tanpa merusak bagian lain.

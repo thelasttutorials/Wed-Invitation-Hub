@@ -1,0 +1,368 @@
+Upgrade sistem template pada project Wed Invitation Hub menjadi visual builder drag & drop yang powerful seperti Canva / Framer / Webflow, tetapi khusus untuk membuat template undangan digital.
+
+Jangan rewrite project dari nol.
+Jangan merusak fitur yang sudah berjalan seperti auth, pricing, billing, RSVP, wishes, dan invitation.
+
+Fokus pada peningkatan sistem builder template.
+
+==================================================
+TUJUAN
+==================================================
+
+Membuat Admin Template Builder visual yang memungkinkan admin membuat template undangan digital dengan drag & drop.
+
+Admin harus bisa:
+
+- drag section
+- reorder section
+- edit content
+- edit style
+- preview realtime
+- save template
+- publish template
+- duplicate template
+
+Template yang dibuat harus benar-benar bisa digunakan oleh invitation publik.
+
+==================================================
+BUILDER LAYOUT
+==================================================
+
+Buat layout builder seperti page builder modern.
+
+Struktur UI:
+
+Left Sidebar
+- daftar section yang bisa ditambahkan
+
+Center Canvas
+- live preview template
+- area drag & drop
+
+Right Sidebar
+- property editor
+- style editor
+
+Top Toolbar
+- save
+- publish
+- preview desktop/mobile
+- undo/redo jika memungkinkan
+
+==================================================
+DRAG & DROP SYSTEM
+==================================================
+
+Gunakan library drag & drop stabil seperti:
+
+dnd-kit
+
+Admin harus bisa:
+
+drag section dari sidebar
+drop ke canvas
+reorder section
+duplicate section
+delete section
+
+Drag harus smooth dan tidak glitch.
+
+==================================================
+SECTION COMPONENT SYSTEM
+==================================================
+
+Builder harus memiliki section modular.
+
+Minimal section:
+
+CoverSection
+CoupleSection
+EventSection
+CountdownSection
+StorySection
+GallerySection
+VideoSection
+RsvpSection
+WishesSection
+GiftSection
+MapSection
+ClosingSection
+DividerSection
+TextBlockSection
+
+Setiap section harus memiliki:
+
+renderer
+default config
+editor form
+style config
+
+==================================================
+PROPERTY EDITOR
+==================================================
+
+Saat section dipilih, tampilkan editor panel.
+
+Admin bisa edit:
+
+CONTENT
+- title
+- subtitle
+- description
+- couple name
+- date
+- venue
+- quote
+- love story
+- gallery images
+- CTA text
+
+STYLE
+- background color
+- text color
+- font family
+- font size
+- alignment
+- padding
+- margin
+- border radius
+- shadow
+
+MEDIA
+- background image
+- gallery
+- video
+- audio/music
+
+==================================================
+GLOBAL THEME STYLE SYSTEM
+==================================================
+
+Template harus memiliki theme settings.
+
+Admin bisa mengatur:
+
+primary color
+secondary color
+text color
+background color
+accent color
+heading font
+body font
+button style
+section spacing
+animation style
+
+Global style harus otomatis diterapkan ke semua section.
+
+==================================================
+TEMPLATE THEMES
+==================================================
+
+Buat preset tema berikut:
+
+Luxury Gold
+Romantic Floral
+Minimal Modern
+Classic Elegant
+
+Setiap tema harus memiliki style preset:
+
+Luxury Gold
+- gold
+- champagne
+- ivory
+- elegant typography
+
+Romantic Floral
+- dusty pink
+- floral decoration
+- romantic typography
+
+Minimal Modern
+- clean layout
+- grey
+- white
+- modern typography
+
+Classic Elegant
+- navy
+- white
+- formal typography
+
+==================================================
+LIVE PREVIEW
+==================================================
+
+Builder harus memiliki live preview realtime.
+
+Jika admin:
+
+mengubah text
+mengubah warna
+mengubah urutan section
+
+preview harus langsung berubah.
+
+Tambahkan preview mode:
+
+desktop
+mobile
+
+==================================================
+TEMPLATE DATA STRUCTURE
+==================================================
+
+Template harus disimpan dengan struktur rapi.
+
+Schema minimal:
+
+templates
+id
+name
+slug
+category
+thumbnail
+preview_image
+is_published
+
+template_sections
+id
+template_id
+section_type
+sort_order
+config_json
+style_json
+
+==================================================
+TEMPLATE DEMO
+==================================================
+
+Buat template default berikut:
+
+Luxury Gold
+Romantic Floral
+Minimal Modern
+Classic Elegant
+
+Setiap template harus memiliki:
+
+thumbnail
+section layout
+style preset
+preview demo
+
+==================================================
+PLACEHOLDER SYSTEM
+==================================================
+
+Template harus menggunakan placeholder.
+
+Contoh:
+
+{{bride_name}}
+{{groom_name}}
+{{wedding_date}}
+{{venue_name}}
+{{love_story}}
+{{gallery}}
+
+Invitation publik harus mengganti placeholder dengan data sebenarnya.
+
+==================================================
+TEMPLATE PREVIEW
+==================================================
+
+Route preview:
+
+/demo/:slug
+
+Preview harus menampilkan:
+
+cover
+couple
+event detail
+gallery
+RSVP
+wishes
+
+==================================================
+INTEGRATION WITH INVITATION
+==================================================
+
+Halaman undangan publik:
+
+/invite/:slug
+
+harus merender template builder.
+
+Section order harus mengikuti template builder.
+
+==================================================
+ADMIN TEMPLATE MANAGEMENT
+==================================================
+
+Admin harus bisa:
+
+lihat daftar template
+buat template
+edit template
+duplicate template
+delete template
+publish template
+
+Route admin:
+
+/admin/templates
+/admin/templates/new
+/admin/templates/:id/edit
+
+==================================================
+UX BUILDER
+==================================================
+
+Builder harus terasa profesional.
+
+Tambahkan:
+
+search section
+section icon
+template thumbnail
+draft status
+publish status
+duplicate template
+preview sample data
+
+==================================================
+FINAL VALIDATION
+==================================================
+
+Pastikan:
+
+drag drop bekerja
+section editor bekerja
+template save bekerja
+template preview bekerja
+template publish bekerja
+template digunakan invitation
+
+Tidak boleh ada:
+
+broken route
+blank page
+button mati
+UI statis
+
+==================================================
+HASIL AKHIR
+==================================================
+
+Admin dapat membuat template undangan digital dengan drag & drop secara visual.
+
+Template yang dibuat dapat:
+
+dipreview
+dipublish
+dipakai oleh invitation
+
+Builder harus stabil, modern, dan usable seperti page builder profesional.

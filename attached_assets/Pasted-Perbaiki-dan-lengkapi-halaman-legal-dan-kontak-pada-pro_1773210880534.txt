@@ -1,0 +1,288 @@
+Perbaiki dan lengkapi halaman legal dan kontak pada project Wed Invitation Hub agar semuanya benar-benar aktif, memiliki isi yang layak, dan berjalan tanpa kendala.
+
+Fokus hanya pada:
+- Privasi
+- Syarat & Ketentuan
+- Kontak
+
+Jangan rewrite project dari nol.
+Jangan merusak fitur lain seperti auth, pricing, billing, templates, invitations, RSVP, wishes, dan admin.
+Jangan buat UI dummy.
+Semua link, route, form, dan isi halaman harus benar-benar aktif.
+
+==================================================
+TUJUAN
+==================================================
+
+Pastikan fitur berikut benar-benar berjalan:
+
+1. halaman Privasi aktif
+2. halaman Syarat & Ketentuan aktif
+3. halaman Kontak aktif
+4. semua link footer/header ke halaman ini bekerja
+5. isi halaman lengkap, rapi, dan relevan untuk platform undangan digital pernikahan
+6. form kontak benar-benar bisa dikirim
+7. tidak ada 404
+8. tidak ada halaman kosong
+9. tidak ada tombol/link mati
+
+==================================================
+STEP 1 — AKTIFKAN ROUTE HALAMAN
+==================================================
+
+Pastikan route berikut ada dan bisa dibuka:
+
+- /privacy
+- /terms
+- /contact
+
+Jika project memakai route bahasa Indonesia, boleh juga:
+- /kebijakan-privasi
+- /syarat-ketentuan
+- /kontak
+
+Tetapi tetap pastikan route yang dipakai konsisten dan benar-benar aktif.
+
+==================================================
+STEP 2 — PERBAIKI LINK FOOTER DAN NAVBAR
+==================================================
+
+Audit semua link yang menuju:
+- Privasi
+- Syarat
+- Kontak
+
+Periksa link di:
+- footer
+- navbar
+- landing page
+- CTA legal section
+- halaman auth jika ada
+- halaman pricing/footer jika ada
+
+Pastikan semua link tersebut mengarah ke route yang valid dan bukan placeholder.
+
+==================================================
+STEP 3 — HALAMAN PRIVASI
+==================================================
+
+Buat halaman Privasi yang rapi dan relevan untuk platform undangan digital pernikahan.
+
+Isi minimal halaman privasi:
+
+1. Pendahuluan
+Jelaskan bahwa platform mengumpulkan data pengguna untuk layanan undangan digital.
+
+2. Data yang Dikumpulkan
+Contoh:
+- nama
+- email
+- nomor WhatsApp
+- data undangan
+- data RSVP
+- ucapan tamu
+- bukti pembayaran
+- data penggunaan situs
+
+3. Cara Penggunaan Data
+Contoh:
+- membuat dan menampilkan undangan
+- mengelola RSVP
+- menghubungi pengguna terkait layanan
+- verifikasi pembayaran
+- peningkatan layanan
+
+4. Penyimpanan dan Keamanan
+Jelaskan data disimpan dengan wajar dan dijaga keamanannya.
+
+5. Pembagian Data
+Jelaskan data tidak dijual dan hanya digunakan untuk kebutuhan layanan, kecuali diwajibkan hukum.
+
+6. Cookie / Tracking jika relevan
+Jelaskan penggunaan cookie dasar bila ada.
+
+7. Hak Pengguna
+Contoh:
+- meminta perubahan data
+- meminta penghapusan akun jika memungkinkan
+- menghubungi tim support
+
+8. Perubahan Kebijakan
+Jelaskan kebijakan dapat diperbarui sewaktu-waktu.
+
+9. Kontak
+Arahkan ke halaman kontak.
+
+Tampilkan halaman dengan layout rapi, mudah dibaca, dan mobile-friendly.
+
+==================================================
+STEP 4 — HALAMAN SYARAT & KETENTUAN
+==================================================
+
+Buat halaman Syarat & Ketentuan yang rapi dan relevan.
+
+Isi minimal:
+
+1. Pendahuluan
+2. Definisi layanan
+3. Ketentuan penggunaan platform
+4. Tanggung jawab pengguna
+5. Larangan penggunaan yang melanggar hukum
+6. Ketentuan pembayaran paket Premium/Pro
+7. Ketentuan aktivasi setelah konfirmasi pembayaran
+8. Ketentuan template, builder, dan konten undangan
+9. Batas tanggung jawab platform
+10. Perubahan layanan
+11. Penutupan akun / penghentian layanan jika melanggar
+12. Kontak bantuan
+
+Pastikan isinya sesuai konteks platform undangan digital pernikahan dan pembayaran transfer manual.
+
+==================================================
+STEP 5 — HALAMAN KONTAK
+==================================================
+
+Buat halaman Kontak yang aktif dan benar-benar berguna.
+
+Tampilkan informasi kontak:
+- email support
+- WhatsApp business
+- jam operasional
+- alamat/cakupan layanan jika relevan
+- link Instagram/TikTok jika ada
+
+Tambahkan form kontak dengan field:
+- nama
+- email
+- subjek
+- pesan
+
+Tombol:
+- Kirim Pesan
+
+==================================================
+STEP 6 — FORM KONTAK HARUS BERFUNGSI
+==================================================
+
+Form kontak tidak boleh dummy.
+
+Buat salah satu implementasi yang benar-benar aktif:
+
+Option A:
+- simpan pesan ke database
+- admin bisa melihat pesan dari dashboard admin
+
+Option B:
+- kirim email ke admin/support
+- simpan log pesan jika perlu
+
+Schema minimal jika memakai database:
+contact_messages
+- id
+- name
+- email
+- subject
+- message
+- created_at
+- status
+
+Endpoint minimal:
+- POST /api/contact
+- GET /api/admin/contact-messages
+
+Validasi:
+- nama wajib
+- email valid
+- subjek wajib
+- pesan wajib
+
+Tambahkan:
+- loading state
+- success message
+- error message
+
+==================================================
+STEP 7 — ADMIN BISA MELIHAT PESAN KONTAK
+==================================================
+
+Jika project sudah punya admin dashboard, tambahkan halaman admin sederhana untuk melihat pesan kontak.
+
+Route admin:
+- /admin/contact-messages
+
+Admin bisa melihat:
+- nama
+- email
+- subjek
+- pesan
+- tanggal kirim
+
+Jika belum ingin membuat halaman penuh, minimal buat endpoint dan halaman list sederhana yang stabil.
+
+==================================================
+STEP 8 — KONTEN HARUS PROFESIONAL DAN RAPI
+==================================================
+
+Semua halaman harus:
+- desain rapi
+- mudah dibaca
+- konsisten dengan brand wedding invitation
+- mobile-friendly
+- tidak terlalu singkat
+- tidak berupa lorem ipsum
+- tidak berupa placeholder kosong
+
+Gunakan desain yang elegan dan konsisten dengan Wed Invitation Hub.
+
+==================================================
+STEP 9 — SEO DAN META DASAR
+==================================================
+
+Tambahkan title dan description yang sesuai untuk:
+- Privacy Policy
+- Terms & Conditions
+- Contact
+
+Jangan biarkan title generik atau kosong.
+
+==================================================
+STEP 10 — VALIDASI FINAL
+==================================================
+
+Sebelum selesai, pastikan:
+
+- /privacy aktif
+- /terms aktif
+- /contact aktif
+- semua link footer/nav ke halaman tersebut aktif
+- isi halaman lengkap
+- form kontak bisa dikirim
+- tidak ada 404
+- tidak ada blank page
+- tidak ada tombol mati
+- jika admin message list dibuat, halaman admin juga aktif
+
+==================================================
+HASIL AKHIR
+==================================================
+
+Saya ingin hasil akhir seperti ini:
+- Privasi aktif dan lengkap
+- Syarat aktif dan lengkap
+- Kontak aktif dan lengkap
+- Form kontak benar-benar bekerja
+- Link footer dan navbar semuanya aktif
+- Tidak ada kendala route, link, atau halaman kosong
+- Project tetap stabil
+
+OUTPUT SETELAH SELESAI
+Berikan ringkasan singkat:
+1. file apa saja yang diubah
+2. route apa saja yang aktif
+3. apakah form kontak disimpan ke database atau dikirim email
+4. bagian apa saja yang sudah diperbaiki
+
+
+Kerjakan hanya scope ini.
+Jangan refactor fitur lain yang tidak berkaitan.
+Pastikan project tetap bisa dijalankan setelah perubahan.

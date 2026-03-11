@@ -26,6 +26,7 @@ import {
   Tag,
   ShoppingBag,
   Building2,
+  LayoutTemplate,
 } from "lucide-react";
 
 const navItems = [
@@ -34,6 +35,7 @@ const navItems = [
   { label: "Undangan",     href: "/admin/invitations",     icon: FileText },
   { label: "RSVP",         href: "/admin/rsvp",            icon: Users },
   { label: "Ucapan",       href: "/admin/wishes",          icon: MessageSquare },
+  { label: "Templates",    href: "/admin/templates",        icon: LayoutTemplate },
   { label: "Paket",        href: "/admin/pricing",         icon: Tag },
   { label: "Orders",       href: "/admin/orders",          icon: ShoppingBag },
   { label: "Rekening Bank",href: "/admin/bank-settings",   icon: Building2 },

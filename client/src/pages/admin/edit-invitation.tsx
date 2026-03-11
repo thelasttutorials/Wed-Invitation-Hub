@@ -9,8 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Heart, Plus, Trash2, ArrowLeft, Save, Eye } from "lucide-react";
+import { Heart, Plus, Trash2, ArrowLeft, Save, Eye, Check } from "lucide-react";
 import type { Invitation, LoveStoryItem } from "@shared/schema";
+import { ALL_THEMES } from "@/lib/themes";
 
 interface InvitationData {
   invitation: Invitation;
@@ -67,6 +68,7 @@ export default function AdminEditInvitation() {
     galleryPhotos: "",
     additionalNotes: "",
     isPublished: true,
+    themeSlug: "romantic-floral",
   });
 
   const [loveStory, setLoveStory] = useState<LoveStoryDraft[]>([{ ...emptyStoryItem }]);
@@ -94,6 +96,7 @@ export default function AdminEditInvitation() {
       galleryPhotos: (inv.galleryPhotos ?? []).join("\n"),
       additionalNotes: inv.additionalNotes,
       isPublished: inv.isPublished,
+      themeSlug: (inv as any).themeSlug ?? "romantic-floral",
     });
     if (data.loveStory && data.loveStory.length > 0) {
       setLoveStory(data.loveStory.map(item => ({
@@ -356,6 +359,46 @@ export default function AdminEditInvitation() {
                   data-testid="switch-published"
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Tema Undangan */}
+          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+            <SectionHeading>Tema Undangan</SectionHeading>
+            <p className="text-sm text-gray-500 mb-4">Pilih tema visual untuk undangan kamu</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {ALL_THEMES.map(theme => (
+                <button
+                  key={theme.slug}
+                  type="button"
+                  data-testid={`theme-card-${theme.slug}`}
+                  onClick={() => setForm(f => ({ ...f, themeSlug: theme.slug }))}
+                  className={`relative rounded-xl overflow-hidden border-2 transition-all text-left ${
+                    form.themeSlug === theme.slug ? "border-blue-500 shadow-md" : "border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  <div className="h-20 relative" style={{ background: `linear-gradient(135deg, ${theme.coverOverlayEnd} 0%, ${theme.primaryColor} 100%)` }}>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 p-2">
+                      <div className="w-5 h-5 rounded-full border-2 border-white/70" style={{ background: theme.accentColor }} />
+                      <div className="h-0.5 w-8 rounded" style={{ background: theme.dividerColor }} />
+                      <div className="h-0.5 w-5 rounded" style={{ background: theme.dividerColor + "99" }} />
+                    </div>
+                    {form.themeSlug === theme.slug && (
+                      <div className="absolute top-1.5 right-1.5 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                        <Check className="w-3 h-3 text-white" />
+                      </div>
+                    )}
+                    {theme.badge && (
+                      <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded text-[10px] font-semibold text-white" style={{ background: "rgba(0,0,0,0.4)" }}>
+                        {theme.badge}
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-2" style={{ background: theme.backgroundColor }}>
+                    <p className="text-xs font-semibold truncate" style={{ color: theme.textColor }}>{theme.name}</p>
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
 
