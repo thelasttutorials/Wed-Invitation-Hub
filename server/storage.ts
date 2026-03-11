@@ -17,6 +17,11 @@ import type {
   InsertWish,
   User,
   EmailVerification,
+  PricingPlan,
+  UserSubscription,
+  Order,
+  PaymentConfirmation,
+  BankSetting,
 } from "@shared/schema";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -73,6 +78,43 @@ export interface IStorage {
   findValidVerification(email: string, code: string): Promise<EmailVerification | undefined>;
   markVerificationUsed(id: number): Promise<void>;
   countRecentVerifications(email: string, since: Date): Promise<number>;
+
+  // Pricing plans
+  getAllPricingPlans(): Promise<PricingPlan[]>;
+  getPricingPlanById(id: number): Promise<PricingPlan | undefined>;
+  getPricingPlanBySlug(slug: string): Promise<PricingPlan | undefined>;
+  updatePricingPlan(id: number, data: Partial<PricingPlan>): Promise<PricingPlan | undefined>;
+  upsertPricingPlan(slug: string, data: Omit<PricingPlan, "id" | "createdAt" | "updatedAt">): Promise<PricingPlan>;
+
+  // Subscriptions
+  getActiveSubscription(userId: number): Promise<(UserSubscription & { plan: PricingPlan }) | undefined>;
+  createSubscription(userId: number, planId: number, status?: string): Promise<UserSubscription>;
+  deactivateUserSubscriptions(userId: number): Promise<void>;
+  activateSubscription(subscriptionId: number): Promise<void>;
+
+  // Orders
+  createOrder(data: { userId: number; planId: number; orderNumber: string; amount: number }): Promise<Order>;
+  getOrderById(id: number): Promise<Order | undefined>;
+  getOrdersByUser(userId: number): Promise<Order[]>;
+  getAllOrders(): Promise<(Order & { user: User; plan: PricingPlan; confirmation?: PaymentConfirmation })[]>;
+  updateOrderStatus(id: number, status: string): Promise<void>;
+  getPendingOrderByUser(userId: number): Promise<Order | undefined>;
+
+  // Payment confirmations
+  createPaymentConfirmation(data: {
+    orderId: number;
+    senderName: string;
+    senderBank: string;
+    transferDate: string;
+    transferAmount: number;
+    proofImageUrl: string;
+    note: string;
+  }): Promise<PaymentConfirmation>;
+  getConfirmationByOrder(orderId: number): Promise<PaymentConfirmation | undefined>;
+
+  // Bank settings
+  getBankSettings(): Promise<BankSetting | undefined>;
+  upsertBankSettings(data: { bankName: string; accountNumber: string; accountHolder: string; paymentNote: string }): Promise<BankSetting>;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -296,6 +338,135 @@ class DatabaseStorage implements IStorage {
         ),
       );
     return result.length;
+  }
+
+  // ── Pricing plans ────────────────────────────────────────────
+
+  async getAllPricingPlans(): Promise<PricingPlan[]> {
+    return db.select().from(schema.pricingPlans).where(eq(schema.pricingPlans.isActive, true)).orderBy(asc(schema.pricingPlans.price));
+  }
+
+  async getPricingPlanById(id: number): Promise<PricingPlan | undefined> {
+    const result = await db.select().from(schema.pricingPlans).where(eq(schema.pricingPlans.id, id));
+    return result[0];
+  }
+
+  async getPricingPlanBySlug(slug: string): Promise<PricingPlan | undefined> {
+    const result = await db.select().from(schema.pricingPlans).where(eq(schema.pricingPlans.slug, slug));
+    return result[0];
+  }
+
+  async updatePricingPlan(id: number, data: Partial<PricingPlan>): Promise<PricingPlan | undefined> {
+    const result = await db.update(schema.pricingPlans).set({ ...data, updatedAt: new Date() }).where(eq(schema.pricingPlans.id, id)).returning();
+    return result[0];
+  }
+
+  async upsertPricingPlan(slug: string, data: Omit<PricingPlan, "id" | "createdAt" | "updatedAt">): Promise<PricingPlan> {
+    const result = await db.insert(schema.pricingPlans)
+      .values({ ...data, slug })
+      .onConflictDoUpdate({ target: schema.pricingPlans.slug, set: { ...data, updatedAt: new Date() } })
+      .returning();
+    return result[0];
+  }
+
+  // ── Subscriptions ────────────────────────────────────────────
+
+  async getActiveSubscription(userId: number): Promise<(UserSubscription & { plan: PricingPlan }) | undefined> {
+    const result = await db
+      .select({ sub: schema.userSubscriptions, plan: schema.pricingPlans })
+      .from(schema.userSubscriptions)
+      .innerJoin(schema.pricingPlans, eq(schema.userSubscriptions.planId, schema.pricingPlans.id))
+      .where(and(eq(schema.userSubscriptions.userId, userId), eq(schema.userSubscriptions.status, "active")))
+      .orderBy(desc(schema.userSubscriptions.createdAt));
+    if (!result[0]) return undefined;
+    return { ...result[0].sub, plan: result[0].plan };
+  }
+
+  async createSubscription(userId: number, planId: number, status = "active"): Promise<UserSubscription> {
+    const result = await db.insert(schema.userSubscriptions).values({ userId, planId, status }).returning();
+    return result[0];
+  }
+
+  async deactivateUserSubscriptions(userId: number): Promise<void> {
+    await db.update(schema.userSubscriptions).set({ status: "cancelled", updatedAt: new Date() }).where(eq(schema.userSubscriptions.userId, userId));
+  }
+
+  async activateSubscription(subscriptionId: number): Promise<void> {
+    await db.update(schema.userSubscriptions).set({ status: "active", startedAt: new Date(), updatedAt: new Date() }).where(eq(schema.userSubscriptions.id, subscriptionId));
+  }
+
+  // ── Orders ───────────────────────────────────────────────────
+
+  async createOrder(data: { userId: number; planId: number; orderNumber: string; amount: number }): Promise<Order> {
+    const result = await db.insert(schema.orders).values({ ...data, paymentMethod: "bank_transfer", paymentStatus: "pending" }).returning();
+    return result[0];
+  }
+
+  async getOrderById(id: number): Promise<Order | undefined> {
+    const result = await db.select().from(schema.orders).where(eq(schema.orders.id, id));
+    return result[0];
+  }
+
+  async getOrdersByUser(userId: number): Promise<Order[]> {
+    return db.select().from(schema.orders).where(eq(schema.orders.userId, userId)).orderBy(desc(schema.orders.createdAt));
+  }
+
+  async getAllOrders(): Promise<(Order & { user: User; plan: PricingPlan; confirmation?: PaymentConfirmation })[]> {
+    const rows = await db
+      .select({ order: schema.orders, user: schema.users, plan: schema.pricingPlans })
+      .from(schema.orders)
+      .innerJoin(schema.users, eq(schema.orders.userId, schema.users.id))
+      .innerJoin(schema.pricingPlans, eq(schema.orders.planId, schema.pricingPlans.id))
+      .orderBy(desc(schema.orders.createdAt));
+
+    const results = await Promise.all(rows.map(async (row) => {
+      const confirmation = await this.getConfirmationByOrder(row.order.id);
+      return { ...row.order, user: row.user, plan: row.plan, confirmation };
+    }));
+    return results;
+  }
+
+  async updateOrderStatus(id: number, status: string): Promise<void> {
+    await db.update(schema.orders).set({ paymentStatus: status, updatedAt: new Date() }).where(eq(schema.orders.id, id));
+  }
+
+  async getPendingOrderByUser(userId: number): Promise<Order | undefined> {
+    const result = await db.select().from(schema.orders)
+      .where(and(eq(schema.orders.userId, userId), eq(schema.orders.paymentStatus, "pending")))
+      .orderBy(desc(schema.orders.createdAt));
+    return result[0];
+  }
+
+  // ── Payment confirmations ────────────────────────────────────
+
+  async createPaymentConfirmation(data: {
+    orderId: number; senderName: string; senderBank: string; transferDate: string;
+    transferAmount: number; proofImageUrl: string; note: string;
+  }): Promise<PaymentConfirmation> {
+    const result = await db.insert(schema.paymentConfirmations).values(data).returning();
+    return result[0];
+  }
+
+  async getConfirmationByOrder(orderId: number): Promise<PaymentConfirmation | undefined> {
+    const result = await db.select().from(schema.paymentConfirmations).where(eq(schema.paymentConfirmations.orderId, orderId));
+    return result[0];
+  }
+
+  // ── Bank settings ────────────────────────────────────────────
+
+  async getBankSettings(): Promise<BankSetting | undefined> {
+    const result = await db.select().from(schema.bankSettings).orderBy(desc(schema.bankSettings.id));
+    return result[0];
+  }
+
+  async upsertBankSettings(data: { bankName: string; accountNumber: string; accountHolder: string; paymentNote: string }): Promise<BankSetting> {
+    const existing = await this.getBankSettings();
+    if (existing) {
+      const result = await db.update(schema.bankSettings).set({ ...data, updatedAt: new Date() }).where(eq(schema.bankSettings.id, existing.id)).returning();
+      return result[0];
+    }
+    const result = await db.insert(schema.bankSettings).values(data).returning();
+    return result[0];
   }
 }
 

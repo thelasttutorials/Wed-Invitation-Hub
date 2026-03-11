@@ -18,6 +18,10 @@ import AdminWishes from "@/pages/admin/wishes";
 import AdminGuard from "@/components/admin-guard";
 import AuthLogin from "@/pages/auth-login";
 import Dashboard from "@/pages/dashboard";
+import PricingPage from "@/pages/pricing";
+import AdminPricing from "@/pages/admin/pricing";
+import AdminOrders from "@/pages/admin/orders";
+import AdminBankSettings from "@/pages/admin/bank-settings";
 
 function Router() {
   return (
@@ -50,6 +54,15 @@ function Router() {
       <Route path="/dashboard/settings">
         {() => <Dashboard section="settings" />}
       </Route>
+      <Route path="/dashboard/billing">
+        {() => <Dashboard section="billing" />}
+      </Route>
+      <Route path="/dashboard/orders">
+        {() => <Dashboard section="orders" />}
+      </Route>
+
+      {/* Pricing page — public */}
+      <Route path="/pricing" component={PricingPage} />
 
       {/* Admin login — no guard */}
       <Route path="/admin/login" component={AdminLogin} />
@@ -107,6 +120,30 @@ function Router() {
         {() => (
           <AdminGuard pageTitle="Edit Undangan">
             <AdminEditInvitation />
+          </AdminGuard>
+        )}
+      </Route>
+
+      <Route path="/admin/pricing">
+        {() => (
+          <AdminGuard pageTitle="Paket">
+            <AdminPricing />
+          </AdminGuard>
+        )}
+      </Route>
+
+      <Route path="/admin/orders">
+        {() => (
+          <AdminGuard pageTitle="Orders">
+            <AdminOrders />
+          </AdminGuard>
+        )}
+      </Route>
+
+      <Route path="/admin/bank-settings">
+        {() => (
+          <AdminGuard pageTitle="Rekening Bank">
+            <AdminBankSettings />
           </AdminGuard>
         )}
       </Route>

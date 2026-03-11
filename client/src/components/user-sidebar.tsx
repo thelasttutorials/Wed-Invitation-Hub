@@ -22,6 +22,8 @@ import {
   MessageSquare,
   Settings,
   LogOut,
+  CreditCard,
+  ClipboardList,
 } from "lucide-react";
 
 const menuItems = [
@@ -54,6 +56,18 @@ const menuItems = [
     href: "/dashboard/wishes",
     icon: MessageSquare,
     testId: "nav-wishes",
+  },
+  {
+    label: "Paket & Tagihan",
+    href: "/dashboard/billing",
+    icon: CreditCard,
+    testId: "nav-billing",
+  },
+  {
+    label: "Riwayat Order",
+    href: "/dashboard/orders",
+    icon: ClipboardList,
+    testId: "nav-orders",
   },
   {
     label: "Pengaturan Akun",

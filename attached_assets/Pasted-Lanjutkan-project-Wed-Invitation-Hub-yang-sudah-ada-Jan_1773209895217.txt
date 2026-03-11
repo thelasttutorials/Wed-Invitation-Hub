@@ -1,0 +1,534 @@
+Lanjutkan project Wed Invitation Hub yang sudah ada. Jangan rewrite dari nol. Jangan merusak fitur yang sudah berjalan seperti landing page, admin auth, invitations, RSVP, wishes, pricing, billing, dan struktur client/server/shared.
+
+TUJUAN UTAMA
+Buat sistem Admin Builder drag & drop untuk membuat template undangan digital pernikahan secara visual, rapi, dan benar-benar bisa dipakai.
+
+Admin harus bisa:
+1. membuat template undangan dengan drag & drop
+2. mengatur urutan section
+3. menambah, edit, hapus section
+4. mengubah style, warna, font, background, spacing, dan konten
+5. menyimpan template ke database
+6. preview template secara realtime
+7. menggunakan template untuk invitation publik
+8. menyediakan template tema Islamic dan Modern yang elegan, cantik, mobile friendly, dan konsisten
+
+Jangan buat UI dummy. Semua tombol, drag & drop, save, preview, publish, dan edit harus benar-benar aktif.
+
+==================================================
+ATURAN PENTING
+==================================================
+
+- Jangan bangun ulang project dari nol
+- Lanjutkan dari struktur project yang sudah ada
+- Jangan merusak auth admin, invitation CRUD, RSVP, wishes, pricing, dan billing
+- Fokus pada admin template builder drag & drop
+- Semua template harus bisa disimpan permanen di database
+- Preview harus sesuai hasil template yang dibuat
+- Builder harus usable di desktop dan tetap menghasilkan tampilan invitation yang mobile-friendly
+- Desain harus elegan, modern, premium, dan cocok untuk undangan digital pernikahan
+
+==================================================
+1. ADMIN TEMPLATE BUILDER
+==================================================
+
+Buat halaman admin baru:
+
+/admin/templates
+/admin/templates/new
+/admin/templates/:id/edit
+/admin/templates/:id/preview
+
+Di admin templates, admin bisa:
+- melihat daftar template
+- membuat template baru
+- edit template
+- hapus template
+- duplicate template
+- preview template
+- publish / unpublish template
+- tandai template sebagai:
+  - Islamic
+  - Modern
+  - Elegant
+  - Premium
+  - Free
+
+==================================================
+2. DRAG & DROP BUILDER
+==================================================
+
+Buat visual builder drag & drop yang benar-benar aktif.
+
+Admin bisa drag & drop section berikut ke canvas template:
+
+- Cover / Opening Screen
+- Hero Couple Section
+- Bride & Groom Profile
+- Quran Verse / Bismillah Section
+- Event Detail
+- Countdown
+- Love Story
+- Gallery
+- Video Section
+- RSVP Section
+- Wishes / Guest Book
+- Gift / Amplop Digital
+- Map / Location
+- Dress Code
+- Footer / Closing
+- Custom Text Block
+- Divider / Ornamen
+
+Fitur builder:
+- drag section dari sidebar ke canvas
+- drag untuk re-order section
+- klik section untuk edit properties
+- duplicate section
+- delete section
+- hide/show section
+- lock section
+- save draft
+- publish template
+
+Gunakan library drag & drop yang stabil dan modern, misalnya dnd-kit atau library React drag and drop yang cocok untuk builder UI.
+Pastikan drag & drop smooth dan tidak buggy.
+
+==================================================
+3. STRUCTURE TEMPLATE DATA
+==================================================
+
+Buat schema/template model yang rapi untuk menyimpan layout builder.
+
+Tambahkan tabel atau struktur database untuk:
+
+templates
+- id
+- name
+- slug
+- category
+- theme_type
+- description
+- thumbnail_url
+- preview_image_url
+- is_published
+- is_premium
+- created_at
+- updated_at
+
+template_sections
+- id
+- template_id
+- section_type
+- sort_order
+- is_enabled
+- config_json
+- style_json
+- created_at
+- updated_at
+
+Atau gunakan struktur JSON layout tunggal jika lebih cocok, tapi tetap rapi dan mudah di-maintain.
+
+Template harus menyimpan:
+- daftar section
+- urutan section
+- content per section
+- style per section
+- global theme settings
+
+==================================================
+4. PROPERTY EDITOR / SIDEBAR EDITOR
+==================================================
+
+Saat admin klik suatu section di canvas, tampilkan panel editor properties.
+
+Admin bisa edit:
+
+A. Content
+- heading
+- subheading
+- body text
+- bride name
+- groom name
+- parents text
+- date
+- time
+- venue
+- quote
+- doa
+- ayat Quran
+- CTA text
+- gallery image list
+- button text
+
+B. Style
+- warna background
+- warna text
+- warna accent
+- border radius
+- shadow
+- spacing
+- alignment
+- font size
+- font family
+- section width
+- padding / margin
+
+C. Media
+- background image
+- cover image
+- ornament image
+- gallery images
+- video URL
+- audio / background music
+
+D. Visibility
+- tampil / sembunyi
+- desktop / mobile adjustments jika perlu
+
+==================================================
+5. GLOBAL THEME SETTINGS
+==================================================
+
+Buat global theme settings untuk seluruh template.
+
+Admin bisa mengatur:
+- primary color
+- secondary color
+- background color
+- text color
+- accent color
+- font heading
+- font body
+- section spacing default
+- card style
+- button style
+- animation style
+- ornament style
+
+Global settings ini harus otomatis mempengaruhi semua section, tetapi section tertentu tetap bisa override style jika dibutuhkan.
+
+==================================================
+6. TEMPLATE CATEGORY DAN STYLE
+==================================================
+
+Buat minimal 2 kategori utama template:
+
+1. Islamic
+2. Modern
+
+Tambahkan juga style tags:
+- Elegant
+- Minimal
+- Romantic
+- Premium
+
+==================================================
+7. TEMPLATE ISLAMIC
+==================================================
+
+Buat minimal 3 template Islamic siap pakai dengan desain bagus, lembut, premium, dan sesuai tema pernikahan Islami.
+
+Karakter desain Islamic:
+- elegan
+- bersih
+- nuansa syar'i dan mewah
+- ornamen islami halus
+- motif geometri islami ringan
+- warna hijau sage, emerald, gold lembut, ivory, cream, beige, white
+- typography yang anggun dan mudah dibaca
+- ada section Bismillah / ayat Quran / doa pernikahan
+- cocok untuk akad dan resepsi muslim
+
+Contoh template Islamic:
+1. Islamic Sage Gold
+2. Islamic Ivory Emerald
+3. Islamic Royal Cream
+
+Pastikan section bawaan template Islamic minimal:
+- Cover Islami
+- Bismillah / ayat Quran
+- Bride & Groom
+- Event Detail
+- Countdown
+- Love Story
+- Gallery
+- RSVP
+- Wishes
+- Map
+- Gift
+- Closing prayer
+
+==================================================
+8. TEMPLATE MODERN
+==================================================
+
+Buat minimal 3 template Modern siap pakai dengan desain premium, clean, dan kekinian.
+
+Karakter desain Modern:
+- clean
+- elegant
+- minimal
+- layout rapi
+- whitespace bagus
+- visual premium
+- mobile-first
+- tipografi modern
+- warna soft, classy, dan profesional
+- animasi halus
+
+Contoh template Modern:
+1. Modern Minimal White
+2. Modern Dusty Rose
+3. Modern Midnight Elegant
+
+Pastikan section bawaan template Modern minimal:
+- Cover Modern
+- Hero Couple
+- Event Detail
+- Countdown
+- Love Story
+- Gallery
+- RSVP
+- Wishes
+- Map
+- Gift
+- Closing
+
+==================================================
+9. DESIGN QUALITY
+==================================================
+
+Semua template harus:
+- responsive
+- mobile friendly
+- elegan
+- premium looking
+- spacing rapi
+- hierarchy tipografi jelas
+- komponen konsisten
+- tidak norak
+- tidak terlalu ramai
+- nyaman dibaca
+- cocok untuk wedding invitation digital
+
+Gunakan Tailwind CSS dengan desain clean.
+Boleh gunakan shadcn/ui jika perlu untuk panel admin.
+Boleh gunakan animation ringan dan halus.
+Jangan gunakan warna mencolok yang merusak nuansa elegan.
+
+==================================================
+10. LIVE PREVIEW
+==================================================
+
+Builder harus punya live preview realtime.
+
+Saat admin mengubah:
+- urutan section
+- konten
+- warna
+- gambar
+- font
+- spacing
+
+Preview harus langsung berubah tanpa reload penuh jika memungkinkan.
+
+Tambahkan mode preview:
+- desktop
+- mobile
+
+==================================================
+11. TEMPLATE APPLICATION TO INVITATION
+==================================================
+
+Template yang dibuat di builder harus benar-benar bisa dipakai oleh undangan publik.
+
+Saat admin atau user memilih template:
+- invitation publik harus render berdasarkan template yang dipilih
+- data invitation harus mengisi placeholder template
+- section yang diaktifkan di template harus tampil di halaman undangan
+- style template harus ikut diterapkan
+
+Pastikan halaman publik seperti /invite/:slug bisa menggunakan template builder ini dengan benar.
+
+==================================================
+12. PLACEHOLDER MAPPING DATA
+==================================================
+
+Buat sistem mapping data invitation ke template.
+
+Contoh placeholder:
+- {{bride_name}}
+- {{groom_name}}
+- {{wedding_date}}
+- {{wedding_time}}
+- {{venue_name}}
+- {{venue_address}}
+- {{opening_quote}}
+- {{love_story}}
+- {{quran_verse}}
+- {{gift_info}}
+- {{gallery}}
+- {{maps_link}}
+
+Builder harus mendukung placeholder ini agar template bisa reusable untuk banyak invitation.
+
+==================================================
+13. SECTION COMPONENT SYSTEM
+==================================================
+
+Bangun sistem section component yang modular.
+
+Setiap section punya:
+- renderer frontend publik
+- config default
+- editor panel
+- style config
+- validation
+
+Contoh component:
+- CoverSection
+- BismillahSection
+- CoupleSection
+- EventSection
+- CountdownSection
+- StorySection
+- GallerySection
+- RsvpSection
+- WishesSection
+- GiftSection
+- MapSection
+- ClosingSection
+
+Jangan hardcode satu template besar. Buat sistem modular agar builder scalable.
+
+==================================================
+14. ADMIN UX YANG BAGUS
+==================================================
+
+Halaman builder admin harus punya:
+- sidebar daftar section
+- canvas preview
+- panel properties
+- tombol save
+- tombol publish
+- tombol duplicate template
+- tombol preview
+- status draft / published
+- search template
+- filter category
+- thumbnail template
+
+Builder admin harus terasa seperti page builder ringan yang enak dipakai.
+
+==================================================
+15. FITUR TAMBAHAN YANG HARUS BAGUS
+==================================================
+
+Tambahkan fitur bagus berikut:
+
+- autosave draft ringan jika memungkinkan
+- duplicate section
+- reset style section ke default
+- copy style dari section lain
+- template thumbnail generator atau minimal thumbnail upload
+- preview invitation dengan sample data
+- import/export template JSON jika memungkinkan
+- section visibility toggle
+- global font pairing yang cocok
+- animation preset ringan
+
+==================================================
+16. VALIDATION
+==================================================
+
+Pastikan validasi builder berjalan:
+- nama template wajib
+- slug unik
+- section order valid
+- config JSON valid
+- required content tidak kosong jika section aktif
+- media URL / upload valid
+
+==================================================
+17. API / BACKEND YANG DIBUTUHKAN
+==================================================
+
+Tambahkan / rapikan endpoint admin:
+
+GET /api/admin/templates
+POST /api/admin/templates
+GET /api/admin/templates/:id
+PATCH /api/admin/templates/:id
+DELETE /api/admin/templates/:id
+POST /api/admin/templates/:id/duplicate
+PATCH /api/admin/templates/:id/publish
+GET /api/admin/templates/:id/preview-data
+
+Jika perlu tambahkan endpoint upload media yang aman.
+
+==================================================
+18. FRONTEND ROUTE YANG HARUS ADA
+==================================================
+
+Pastikan route berikut aktif:
+- /admin/templates
+- /admin/templates/new
+- /admin/templates/:id/edit
+- /admin/templates/:id/preview
+
+Jangan ada blank page.
+Jangan ada tombol mati.
+
+==================================================
+19. DATA DEMO / TEMPLATE AWAL
+==================================================
+
+Seed minimal 6 template awal:
+
+Islamic:
+- Islamic Sage Gold
+- Islamic Ivory Emerald
+- Islamic Royal Cream
+
+Modern:
+- Modern Minimal White
+- Modern Dusty Rose
+- Modern Midnight Elegant
+
+Masing-masing harus punya:
+- thumbnail
+- section bawaan
+- style bagus
+- bisa di-preview
+- bisa dipilih untuk invitation
+
+==================================================
+20. FINAL RESULT YANG DIINGINKAN
+==================================================
+
+Hasil akhir wajib seperti ini:
+
+- admin bisa membuat template undangan digital dengan drag & drop
+- admin bisa mengatur layout, urutan section, konten, warna, style, font, dan media
+- template bisa disimpan sebagai draft atau published
+- template Islamic dan Modern tersedia dan benar-benar bagus
+- template bisa dipreview secara realtime
+- template benar-benar bisa dipakai oleh undangan publik
+- desain mobile-friendly, modern, elegan, dan premium
+- semua tombol, drag & drop, save, edit, publish, dan preview benar-benar aktif
+- project tetap stabil dan tidak merusak fitur lain
+
+OUTPUT SETELAH SELESAI
+Berikan ringkasan singkat:
+1. file apa saja yang diubah
+2. route apa saja yang aktif
+3. template apa saja yang sudah dibuat
+4. fitur builder apa saja yang sudah aktif
+5. apa yang masih perlu dicek jika ada
+
+INSTRUKSI TAMBAHAN
+Kerjakan perubahan secara bertahap tanpa merusak fitur yang sudah berjalan.
+Jangan refactor file lain yang tidak berkaitan.
+Pastikan hasil bisa dijalankan sebelum selesai.
+Prioritas utama adalah builder admin drag & drop yang benar-benar usable, rapi, dan sesuai tema wedding.

@@ -1,0 +1,361 @@
+Lanjutkan project Wed Invitation Hub yang sudah ada. Jangan rewrite project dari nol. Jangan merusak fitur yang sudah berjalan seperti landing page, admin login, invitations, RSVP, wishes, dan struktur folder client/server/shared.
+
+Tujuan utama adalah menjadikan project ini platform undangan digital pernikahan SaaS dengan:
+
+1. login/register menggunakan email OTP
+2. paket langganan Gratis / Premium / Pro
+3. pembayaran paket Premium/Pro menggunakan transfer bank manual
+4. upload bukti transfer oleh user
+5. admin review pembayaran dan approve / reject
+6. fitur undangan aktif atau terkunci sesuai paket user
+7. semua data tersimpan di database
+8. tidak ada UI dummy atau route mati
+
+Kerjakan perubahan secara bertahap dan pastikan server tetap bisa dijalankan setelah perubahan.
+
+==================================================
+STEP 1 — USER AUTH EMAIL OTP
+==================================================
+
+Tambahkan auth user berbasis email OTP tanpa password.
+
+Flow:
+
+1 user buka halaman login/register
+2 user memasukkan email
+3 user klik "Kirim Kode"
+4 server generate OTP 6 digit
+5 OTP dikirim ke email user
+6 user memasukkan kode OTP
+7 jika valid user login
+
+Tambahkan tabel:
+
+users
+- id
+- email
+- created_at
+- updated_at
+- is_verified
+
+email_verifications
+- id
+- email
+- code
+- expires_at
+- used_at
+- created_at
+
+Aturan OTP:
+
+- kode 6 digit
+- berlaku 5 menit
+- hanya bisa dipakai sekali
+- rate limit request OTP
+
+API:
+
+POST /api/auth/request-code
+POST /api/auth/verify-code
+GET /api/auth/me
+POST /api/auth/logout
+
+Frontend:
+
+/login
+/register
+
+UI:
+
+step 1 input email
+step 2 input OTP
+
+==================================================
+STEP 2 — SISTEM PAKET LANGGANAN
+==================================================
+
+Tambahkan paket:
+
+Mulai Gratis
+Premium
+Pro
+
+Schema:
+
+pricing_plans
+id
+name
+slug
+price
+description
+max_invitations
+max_gallery_photos
+allow_premium_templates
+allow_music
+allow_love_story
+allow_gift
+allow_custom_domain
+is_active
+created_at
+updated_at
+
+user_subscriptions
+id
+user_id
+plan_id
+status
+started_at
+expires_at
+created_at
+updated_at
+
+Seed paket:
+
+Mulai Gratis
+Premium
+Pro
+
+Aturan paket:
+
+Gratis
+- 1 undangan
+- 3 foto galeri
+- template standar
+- RSVP aktif
+- wishes aktif
+
+Premium
+- 5 undangan
+- 15 foto galeri
+- template premium
+- music
+- love story
+- gift
+
+Pro
+- unlimited undangan
+- unlimited galeri
+- semua template
+- semua fitur aktif
+
+==================================================
+STEP 3 — HALAMAN PRICING
+==================================================
+
+Tambahkan halaman:
+
+/pricing
+
+User dapat melihat:
+
+Mulai Gratis
+Premium
+Pro
+
+User dapat klik:
+
+Mulai Gratis
+Pilih Premium
+Pilih Pro
+
+Jika user pilih Gratis:
+
+subscription langsung aktif.
+
+==================================================
+STEP 4 — SISTEM ORDER PEMBAYARAN
+==================================================
+
+Tambahkan sistem order untuk Premium dan Pro.
+
+Schema:
+
+orders
+id
+user_id
+plan_id
+order_number
+amount
+payment_method
+payment_status
+created_at
+
+payment_method:
+bank_transfer
+
+payment_status:
+
+pending
+waiting_confirmation
+paid
+rejected
+
+Flow:
+
+user pilih Premium / Pro
+system buat order
+user diarahkan ke halaman transfer
+
+==================================================
+STEP 5 — UPLOAD BUKTI TRANSFER
+==================================================
+
+Tambahkan upload bukti transfer.
+
+Schema:
+
+payment_confirmations
+id
+order_id
+sender_name
+sender_bank
+transfer_date
+transfer_amount
+proof_image_url
+note
+created_at
+
+User upload:
+
+sender_name
+sender_bank
+transfer_date
+transfer_amount
+bukti transfer
+
+Status order berubah menjadi:
+
+waiting_confirmation
+
+==================================================
+STEP 6 — ADMIN REVIEW PEMBAYARAN
+==================================================
+
+Admin dashboard harus memiliki:
+
+/admin/orders
+
+Admin dapat melihat:
+
+user
+paket
+nominal
+bukti transfer
+tanggal transfer
+
+Admin action:
+
+Approve
+Reject
+
+Jika approve:
+
+order.payment_status = paid
+subscription user active
+
+Jika reject:
+
+order.payment_status = rejected
+
+==================================================
+STEP 7 — BANK SETTINGS
+==================================================
+
+Tambahkan tabel:
+
+bank_settings
+id
+bank_name
+account_number
+account_holder
+payment_note
+
+Seed:
+
+Bank BCA
+1234567890
+Wed Invitation Hub
+
+Admin dapat edit bank settings.
+
+==================================================
+STEP 8 — LOCK FITUR BERDASARKAN PAKET
+==================================================
+
+Backend dan frontend harus memvalidasi fitur berdasarkan paket.
+
+Contoh:
+
+Gratis tidak boleh:
+
+- template premium
+- music
+- love story
+- gift
+- lebih dari 1 undangan
+- lebih dari 3 foto galeri
+
+Backend harus menolak request yang melanggar batas paket.
+
+==================================================
+STEP 9 — DASHBOARD USER
+==================================================
+
+Tambahkan halaman:
+
+/dashboard
+
+User dapat melihat:
+
+paket aktif
+jumlah undangan
+limit galeri
+status pembayaran
+
+Tambahkan badge:
+
+Current Plan
+Upgrade Plan
+
+==================================================
+STEP 10 — FINAL VALIDATION
+==================================================
+
+Pastikan:
+
+server dapat dijalankan
+tidak ada error besar
+tidak ada route mati
+semua form submit ke backend
+data tersimpan ke database
+pembatasan fitur bekerja
+admin approval bekerja
+pricing page bekerja
+OTP login bekerja
+
+==================================================
+FINAL RESULT
+==================================================
+
+User dapat:
+
+login dengan email OTP
+memilih paket
+menggunakan paket gratis
+upgrade ke premium
+transfer bank
+upload bukti transfer
+
+Admin dapat:
+
+melihat order
+approve pembayaran
+reject pembayaran
+mengatur harga paket
+mengatur rekening bank
+
+Semua fitur harus berjalan end-to-end.
+
+
+Kerjakan perubahan bertahap tanpa merusak fitur yang sudah berjalan. 
+Pastikan project masih bisa dijalankan setelah perubahan.

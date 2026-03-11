@@ -115,11 +115,19 @@ export function registerUserAuthRoutes(app: Express) {
     await storage.markVerificationUsed(verification.id);
 
     let user = await storage.getUserByEmail(emailLower);
+    const isNew = !user;
     if (!user) {
       user = await storage.createUser(emailLower);
     } else if (!user.isVerified) {
       await storage.verifyUser(user.id);
       user = (await storage.getUserById(user.id))!;
+    }
+
+    if (isNew) {
+      try {
+        const freePlan = await storage.getPricingPlanBySlug("gratis");
+        if (freePlan) await storage.createSubscription(user.id, freePlan.id, "active");
+      } catch {}
     }
 
     req.session.userId = user.id;

@@ -23,14 +23,20 @@ import {
   Layers,
   LogOut,
   Heart,
+  Tag,
+  ShoppingBag,
+  Building2,
 } from "lucide-react";
 
 const navItems = [
-  { label: "Dashboard",    href: "/admin",             icon: LayoutDashboard },
-  { label: "Landing Page", href: "/admin/landing",     icon: Layers },
-  { label: "Undangan",     href: "/admin/invitations", icon: FileText },
-  { label: "RSVP",         href: "/admin/rsvp",        icon: Users },
-  { label: "Ucapan",       href: "/admin/wishes",      icon: MessageSquare },
+  { label: "Dashboard",    href: "/admin",                 icon: LayoutDashboard },
+  { label: "Landing Page", href: "/admin/landing",         icon: Layers },
+  { label: "Undangan",     href: "/admin/invitations",     icon: FileText },
+  { label: "RSVP",         href: "/admin/rsvp",            icon: Users },
+  { label: "Ucapan",       href: "/admin/wishes",          icon: MessageSquare },
+  { label: "Paket",        href: "/admin/pricing",         icon: Tag },
+  { label: "Orders",       href: "/admin/orders",          icon: ShoppingBag },
+  { label: "Rekening Bank",href: "/admin/bank-settings",   icon: Building2 },
 ];
 
 export function AdminSidebar() {

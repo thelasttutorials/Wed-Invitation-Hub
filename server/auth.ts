@@ -1,6 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import { storage } from "./storage";
+import type { PricingPlan } from "@shared/schema";
 
 // ─────────────────────────────────────────────────────────────
 // Extend express-session to carry adminId
@@ -256,4 +257,84 @@ export function registerAuthRoutes(app: Express) {
       res.status(500).json({ error: "Gagal memuat data admin." });
     }
   });
+}
+
+// ─────────────────────────────────────────────────────────────
+// Seed default pricing plans on first startup
+// ─────────────────────────────────────────────────────────────
+export async function seedPricingPlans() {
+  type PlanSeed = Omit<PricingPlan, "id" | "createdAt" | "updatedAt">;
+  const plans: PlanSeed[] = [
+    {
+      name: "Mulai Gratis",
+      slug: "gratis",
+      price: 0,
+      description: "Coba buat undangan digital pertama kamu",
+      maxInvitations: 1,
+      maxGalleryPhotos: 3,
+      allowPremiumTemplates: false,
+      allowMusic: false,
+      allowLoveStory: false,
+      allowGift: false,
+      allowCustomDomain: false,
+      isActive: true,
+    },
+    {
+      name: "Premium",
+      slug: "premium",
+      price: 99000,
+      description: "Untuk pasangan yang menginginkan undangan lebih lengkap",
+      maxInvitations: 5,
+      maxGalleryPhotos: 15,
+      allowPremiumTemplates: true,
+      allowMusic: true,
+      allowLoveStory: true,
+      allowGift: true,
+      allowCustomDomain: false,
+      isActive: true,
+    },
+    {
+      name: "Pro",
+      slug: "pro",
+      price: 199000,
+      description: "Fitur lengkap tanpa batas untuk hari istimewa Anda",
+      maxInvitations: 999,
+      maxGalleryPhotos: 999,
+      allowPremiumTemplates: true,
+      allowMusic: true,
+      allowLoveStory: true,
+      allowGift: true,
+      allowCustomDomain: true,
+      isActive: true,
+    },
+  ];
+
+  for (const plan of plans) {
+    try {
+      await storage.upsertPricingPlan(plan.slug, plan);
+    } catch (e) {
+      console.error(`[auth] Failed to seed plan ${plan.slug}:`, e);
+    }
+  }
+  console.log("[auth] Pricing plans seeded.");
+}
+
+// ─────────────────────────────────────────────────────────────
+// Seed default bank settings on first startup
+// ─────────────────────────────────────────────────────────────
+export async function seedBankSettings() {
+  try {
+    const existing = await storage.getBankSettings();
+    if (!existing) {
+      await storage.upsertBankSettings({
+        bankName: "BCA",
+        accountNumber: "1234567890",
+        accountHolder: "Wed Invitation Hub",
+        paymentNote: "Transfer sesuai nominal lalu upload bukti pembayaran",
+      });
+      console.log("[auth] Default bank settings seeded.");
+    }
+  } catch (e) {
+    console.error("[auth] Failed to seed bank settings:", e);
+  }
 }
