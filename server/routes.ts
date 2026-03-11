@@ -32,6 +32,19 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
+  app.get("/api/invitations/id/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) return res.status(400).json({ error: "ID tidak valid." });
+      const inv = await storage.getInvitationById(id);
+      if (!inv) return res.status(404).json({ error: "Undangan tidak ditemukan." });
+      const loveStory = await storage.getLoveStoryByInvitation(inv.id);
+      res.json({ invitation: inv, loveStory });
+    } catch (e) {
+      res.status(500).json({ error: "Gagal memuat undangan." });
+    }
+  });
+
   app.get("/api/invitations/:slug", async (req, res) => {
     try {
       const inv = await storage.getInvitationBySlug(req.params.slug);
