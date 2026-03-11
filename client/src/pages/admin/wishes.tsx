@@ -31,7 +31,7 @@ function InvitationWishesRow({ inv }: { inv: Invitation }) {
           <p className="font-medium text-slate-800 text-sm truncate">
             {inv.groomName} &amp; {inv.brideName}
           </p>
-          <p className="text-xs text-slate-400 truncate">/invitation/{inv.slug}</p>
+          <p className="text-xs text-slate-400 truncate">/invite/{inv.slug}</p>
         </div>
         {open ? (
           <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />

@@ -211,6 +211,32 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
+  // ── Public Wishes (canonical endpoint for /invite/:slug page) ───────────────
+
+  app.post("/api/public/invitations/:slug/wishes", async (req, res) => {
+    try {
+      const inv = await storage.getInvitationBySlug(req.params.slug);
+      if (!inv) return res.status(404).json({ error: "Undangan tidak ditemukan." });
+
+      const { guest_name, message } = req.body;
+
+      const parsed = insertWishSchema.safeParse({
+        invitationId: inv.id,
+        guestName:    guest_name ?? req.body.guestName ?? "",
+        message:      message    ?? "",
+      });
+
+      if (!parsed.success) {
+        return res.status(400).json({ error: "Data tidak lengkap.", details: parsed.error.flatten() });
+      }
+
+      const entry = await storage.createWish(parsed.data);
+      res.status(201).json(entry);
+    } catch {
+      res.status(500).json({ error: "Gagal menyimpan ucapan." });
+    }
+  });
+
   // ── Wishes (guestbook) ────────────────────────────────────────────────────────
 
   app.get("/api/invitations/:id/guestbook", requireAdmin, async (req, res) => {

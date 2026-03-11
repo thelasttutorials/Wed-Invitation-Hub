@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useSearch } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,11 +11,12 @@ import {
   MapPin, Calendar, Clock, Heart, ChevronDown,
   Share2, ExternalLink, Music2, Pause, ArrowUp, Users, Send, CheckCircle2,
 } from "lucide-react";
-import type { Invitation, LoveStoryItem } from "@shared/schema";
+import type { Invitation, LoveStoryItem, Wish } from "@shared/schema";
 
 interface InvitationData {
   invitation: Invitation;
   loveStory: LoveStoryItem[];
+  guestbook: Wish[];
 }
 
 function useCountdown(targetDate: string | null | undefined) {
@@ -80,6 +81,21 @@ export default function InvitePage() {
     note: "",
   });
   const [rsvpDone, setRsvpDone] = useState(false);
+
+  const [wishForm, setWishForm] = useState({ guest_name: guestName === "Tamu Undangan" ? "" : guestName, message: "" });
+
+  const wishesMutation = useMutation({
+    mutationFn: (body: typeof wishForm) =>
+      apiRequest("POST", `/api/public/invitations/${slug}/wishes`, body),
+    onSuccess: () => {
+      setWishForm(f => ({ ...f, message: "" }));
+      queryClient.invalidateQueries({ queryKey: ["/api/invitations", slug] });
+      toast({ title: "Ucapan terkirim!", description: "Terima kasih atas doa dan ucapanmu." });
+    },
+    onError: () => {
+      toast({ title: "Gagal mengirim ucapan", description: "Silakan coba lagi.", variant: "destructive" });
+    },
+  });
 
   const rsvpMutation = useMutation({
     mutationFn: (body: typeof rsvpForm) =>
@@ -169,7 +185,7 @@ export default function InvitePage() {
     );
   }
 
-  const { invitation, loveStory } = data;
+  const { invitation, loveStory, guestbook = [] } = data;
   const coverBg = invitation.coverPhotoUrl ||
     "https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=80";
 
@@ -644,6 +660,92 @@ export default function InvitePage() {
                     <>Kirim Konfirmasi <Send className="w-4 h-4 ml-2" /></>
                   )}
                 </Button>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Ucapan & Doa */}
+        <section data-testid="section-wishes" className="py-16 px-6 bg-white" id="ucapan">
+          <div className="max-w-md mx-auto space-y-8">
+            <div className="text-center">
+              <p className="text-rose-400 text-sm font-medium tracking-widest uppercase mb-1">Doa &amp; Harapan</p>
+              <h2 className="font-serif text-2xl font-bold text-gray-800">Ucapan Tamu</h2>
+              <p className="text-gray-500 text-sm mt-2">Sampaikan doa dan ucapan tulus untuk pasangan</p>
+            </div>
+
+            {/* Form ucapan */}
+            <div className="bg-[#fefaf7] rounded-2xl p-6 border border-rose-100 space-y-4">
+              <div>
+                <Label htmlFor="wish-name" className="text-sm font-medium text-gray-700">
+                  Nama Lengkap
+                </Label>
+                <Input
+                  id="wish-name"
+                  data-testid="input-wish-name"
+                  value={wishForm.guest_name}
+                  onChange={e => setWishForm(f => ({ ...f, guest_name: e.target.value }))}
+                  placeholder="Nama kamu"
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="wish-message" className="text-sm font-medium text-gray-700">
+                  Pesan &amp; Doa
+                </Label>
+                <Textarea
+                  id="wish-message"
+                  data-testid="input-wish-message"
+                  value={wishForm.message}
+                  onChange={e => setWishForm(f => ({ ...f, message: e.target.value }))}
+                  placeholder="Tulis ucapan dan doa tulus kamu di sini..."
+                  className="mt-1"
+                  rows={4}
+                />
+              </div>
+              <Button
+                onClick={() => {
+                  if (!wishForm.guest_name.trim()) {
+                    toast({ title: "Nama wajib diisi", variant: "destructive" });
+                    return;
+                  }
+                  if (!wishForm.message.trim()) {
+                    toast({ title: "Pesan wajib diisi", variant: "destructive" });
+                    return;
+                  }
+                  wishesMutation.mutate(wishForm);
+                }}
+                disabled={wishesMutation.isPending}
+                className="w-full bg-rose-500 hover:bg-rose-600 text-white rounded-xl"
+                data-testid="button-submit-wish"
+              >
+                {wishesMutation.isPending ? "Mengirim..." : (
+                  <>Kirim Ucapan <Send className="w-4 h-4 ml-2" /></>
+                )}
+              </Button>
+            </div>
+
+            {/* Daftar ucapan */}
+            {guestbook.length > 0 && (
+              <div className="space-y-3" data-testid="wish-list">
+                {guestbook.map((wish) => (
+                  <div
+                    key={wish.id}
+                    data-testid={`wish-item-${wish.id}`}
+                    className="bg-[#fefaf7] rounded-xl px-5 py-4 border border-rose-50"
+                  >
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <div className="w-7 h-7 rounded-full bg-rose-100 flex items-center justify-center text-xs font-bold text-rose-500 uppercase shrink-0">
+                        {wish.guestName.charAt(0)}
+                      </div>
+                      <span className="text-sm font-semibold text-gray-800">{wish.guestName}</span>
+                      <span className="ml-auto text-xs text-gray-400">
+                        {new Date(wish.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 leading-relaxed pl-9">{wish.message}</p>
+                  </div>
+                ))}
               </div>
             )}
           </div>
