@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/landing";
 import InvitationPage from "@/pages/invitation";
+import InvitePage from "@/pages/invite";
 import AdminLogin from "@/pages/admin/login";
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminInvitations from "@/pages/admin/invitations";
@@ -21,6 +22,7 @@ function Router() {
     <Switch>
       {/* Public routes */}
       <Route path="/" component={Landing} />
+      <Route path="/invite/:slug" component={InvitePage} />
       <Route path="/invitation/:slug" component={InvitationPage} />
 
       {/* Admin login — no guard */}

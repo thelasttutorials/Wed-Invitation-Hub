@@ -27,7 +27,7 @@ export default function AdminInvitations() {
   });
 
   const copyLink = (slug: string) => {
-    const url = `${window.location.origin}/invitation/${slug}`;
+    const url = `${window.location.origin}/invite/${slug}`;
     navigator.clipboard.writeText(url);
     toast({ title: "Link disalin!" });
   };
@@ -110,7 +110,7 @@ export default function AdminInvitations() {
                     className="text-slate-400 hover:text-blue-500"
                     data-testid={`button-view-${inv.id}`}
                   >
-                    <a href={`/invitation/${inv.slug}`} target="_blank" rel="noopener noreferrer">
+                    <a href={`/invite/${inv.slug}`} target="_blank" rel="noopener noreferrer">
                       <Eye className="w-4 h-4" />
                     </a>
                   </Button>

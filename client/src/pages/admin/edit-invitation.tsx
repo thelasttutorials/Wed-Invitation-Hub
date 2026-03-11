@@ -179,7 +179,7 @@ export default function AdminEditInvitation() {
           </div>
           <div className="flex items-center gap-2">
             <a
-              href={`/invitation/${data.invitation.slug}`}
+              href={`/invite/${data.invitation.slug}`}
               target="_blank"
               rel="noopener noreferrer"
             >
