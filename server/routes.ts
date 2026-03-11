@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import { z } from "zod";
 import { storage } from "./storage";
 import { requireAdmin } from "./auth";
 import {
@@ -203,6 +204,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     hero_subtitle:      "Platform undangan pernikahan online terbaik di Indonesia. Elegan, personal, dan mudah dibagikan.",
     hero_cta_primary:   "Buat Undangan Sekarang",
     hero_cta_secondary: "Lihat Contoh",
+    hero_cta_link:      "/admin/new",
   };
 
   app.get("/api/landing", async (_req, res) => {
@@ -215,10 +217,54 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
         hero_subtitle:      map.hero_subtitle      || HERO_DEFAULTS.hero_subtitle,
         hero_cta_primary:   map.hero_cta_primary   || HERO_DEFAULTS.hero_cta_primary,
         hero_cta_secondary: map.hero_cta_secondary || HERO_DEFAULTS.hero_cta_secondary,
+        hero_cta_link:      map.hero_cta_link      || HERO_DEFAULTS.hero_cta_link,
       });
     } catch {
-      // Always return something — never break the public landing page
       res.json(HERO_DEFAULTS);
+    }
+  });
+
+  // ── Admin landing hero CRUD ────────────────────────────────────────────────────
+
+  const heroSettingSchema = z.object({
+    hero_title:       z.string().min(1, "Judul wajib diisi"),
+    hero_subtitle:    z.string().min(1, "Subjudul wajib diisi"),
+    hero_cta_primary: z.string().min(1, "Teks tombol wajib diisi"),
+    hero_cta_link:    z.string().min(1, "Link tombol wajib diisi"),
+  });
+
+  app.get("/api/admin/landing", requireAdmin, async (_req, res) => {
+    try {
+      const settings = await storage.getAllLandingSettings();
+      const map: Record<string, string> = {};
+      for (const s of settings) map[s.key] = s.value;
+      res.json({
+        hero_title:       map.hero_title       || HERO_DEFAULTS.hero_title,
+        hero_subtitle:    map.hero_subtitle    || HERO_DEFAULTS.hero_subtitle,
+        hero_cta_primary: map.hero_cta_primary || HERO_DEFAULTS.hero_cta_primary,
+        hero_cta_link:    map.hero_cta_link    || HERO_DEFAULTS.hero_cta_link,
+      });
+    } catch {
+      res.status(500).json({ error: "Gagal memuat pengaturan." });
+    }
+  });
+
+  app.patch("/api/admin/landing", requireAdmin, async (req, res) => {
+    const parsed = heroSettingSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ error: parsed.error.flatten().fieldErrors });
+    }
+    const { hero_title, hero_subtitle, hero_cta_primary, hero_cta_link } = parsed.data;
+    try {
+      await storage.upsertManyLandingSettings([
+        { key: "hero_title",       value: hero_title },
+        { key: "hero_subtitle",    value: hero_subtitle },
+        { key: "hero_cta_primary", value: hero_cta_primary },
+        { key: "hero_cta_link",    value: hero_cta_link },
+      ]);
+      res.json({ ok: true });
+    } catch {
+      res.status(500).json({ error: "Gagal menyimpan pengaturan." });
     }
   });
 

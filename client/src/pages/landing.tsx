@@ -34,6 +34,7 @@ const HERO_DEFAULTS = {
   hero_subtitle:      "Platform undangan pernikahan online terbaik di Indonesia. Elegan, personal, dan mudah dibagikan.",
   hero_cta_primary:   "Buat Undangan Sekarang",
   hero_cta_secondary: "Lihat Contoh",
+  hero_cta_link:      "/admin/new",
 };
 
 export default function Landing() {
@@ -370,10 +371,12 @@ export default function Landing() {
 
           {/* CTA Buttons */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Button size="lg" data-testid="button-hero-buat-undangan" className="gap-2 px-8 text-base">
-              {heroData.hero_cta_primary}
-              <ChevronRight className="w-4 h-4" />
-            </Button>
+            <a href={heroData.hero_cta_link || HERO_DEFAULTS.hero_cta_link}>
+              <Button size="lg" data-testid="button-hero-buat-undangan" className="gap-2 px-8 text-base">
+                {heroData.hero_cta_primary}
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </a>
             <Button
               variant="outline"
               size="lg"
