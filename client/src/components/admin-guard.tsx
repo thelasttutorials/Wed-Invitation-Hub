@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Loader2 } from "lucide-react";
@@ -19,6 +20,12 @@ export default function AdminGuard({ children, pageTitle }: AdminGuardProps) {
     staleTime: 60_000,
   });
 
+  useEffect(() => {
+    if (!isLoading && (isError || !data)) {
+      navigate("/admin/login");
+    }
+  }, [isLoading, isError, data, navigate]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
@@ -28,8 +35,11 @@ export default function AdminGuard({ children, pageTitle }: AdminGuardProps) {
   }
 
   if (isError || !data) {
-    navigate("/admin/login");
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+      </div>
+    );
   }
 
   return (
