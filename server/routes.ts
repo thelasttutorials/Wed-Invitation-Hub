@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { requireAdmin } from "./auth";
 import {
   insertInvitationSchema,
   updateInvitationSchema,
@@ -22,7 +23,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
 
   // ── Invitations ───────────────────────────────────────────────────────────────
 
-  app.get("/api/invitations", async (_req, res) => {
+  app.get("/api/invitations", requireAdmin, async (_req, res) => {
     try {
       const invitations = await storage.getAllInvitations();
       res.json(invitations);
@@ -32,9 +33,9 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   // Must come before /:slug to avoid "id" being treated as a slug
-  app.get("/api/invitations/id/:id", async (req, res) => {
+  app.get("/api/invitations/id/:id", requireAdmin, async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const id = parseInt(req.params.id as string);
       if (isNaN(id)) return res.status(400).json({ error: "ID tidak valid." });
       const inv = await storage.getInvitationById(id);
       if (!inv) return res.status(404).json({ error: "Undangan tidak ditemukan." });
@@ -60,7 +61,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
-  app.post("/api/invitations", async (req, res) => {
+  app.post("/api/invitations", requireAdmin, async (req, res) => {
     try {
       const body = req.body;
       if (!body.slug) {
@@ -95,9 +96,9 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
-  app.patch("/api/invitations/:id", async (req, res) => {
+  app.patch("/api/invitations/:id", requireAdmin, async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const id = parseInt(req.params.id as string);
       if (isNaN(id)) return res.status(400).json({ error: "ID tidak valid." });
 
       const body = req.body;
@@ -123,9 +124,9 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
-  app.delete("/api/invitations/:id", async (req, res) => {
+  app.delete("/api/invitations/:id", requireAdmin, async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const id = parseInt(req.params.id as string);
       if (isNaN(id)) return res.status(400).json({ error: "ID tidak valid." });
       const ok = await storage.deleteInvitation(id);
       if (!ok) return res.status(404).json({ error: "Undangan tidak ditemukan." });
@@ -137,9 +138,9 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
 
   // ── RSVP ──────────────────────────────────────────────────────────────────────
 
-  app.get("/api/invitations/:id/rsvp", async (req, res) => {
+  app.get("/api/invitations/:id/rsvp", requireAdmin, async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const id = parseInt(req.params.id as string);
       if (isNaN(id)) return res.status(400).json({ error: "ID tidak valid." });
       const entries = await storage.getRsvpsByInvitation(id);
       res.json(entries);
@@ -167,9 +168,9 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
 
   // ── Wishes (guestbook) ────────────────────────────────────────────────────────
 
-  app.get("/api/invitations/:id/guestbook", async (req, res) => {
+  app.get("/api/invitations/:id/guestbook", requireAdmin, async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const id = parseInt(req.params.id as string);
       if (isNaN(id)) return res.status(400).json({ error: "ID tidak valid." });
       const entries = await storage.getWishesByInvitation(id);
       res.json(entries);
@@ -211,7 +212,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
 
   // ── Stats ─────────────────────────────────────────────────────────────────────
 
-  app.get("/api/stats", async (_req, res) => {
+  app.get("/api/stats", requireAdmin, async (_req, res) => {
     try {
       const invitations = await storage.getAllInvitations();
       let totalRsvp = 0;

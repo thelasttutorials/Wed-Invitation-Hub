@@ -67,10 +67,28 @@ Key method groups:
 - **Background**: White / Slate-50 alternating sections
 - **Border radius**: `rounded-md` (cards), `rounded-xl` (large cards)
 
-## Security Status
-- Admin routes are **unprotected** — no login/auth middleware exists yet
-- Auth packages installed but unused: `passport`, `passport-local`, `express-session`
-- No `/admin/login` page yet
+## Auth & Security
+
+### Admin Login
+- Login page: `/admin/login` (`client/src/pages/admin/login.tsx`)
+- Session stored via `express-session` (memory store, 7-day cookie)
+- Passwords hashed with `bcryptjs` (cost factor 12)
+- Default admin: `admin@wedhub.com` / `admin123` (seeded on startup in `server/auth.ts`)
+
+### Auth API
+- `POST /api/admin/login` — validates credentials, sets session
+- `POST /api/admin/logout` — destroys session
+- `GET /api/admin/me` — returns admin info if authenticated, 401 otherwise
+
+### Route Protection
+- Backend: `requireAdmin` middleware (in `server/auth.ts`) protects all admin API routes
+- Frontend: `AdminGuard` component (`client/src/components/admin-guard.tsx`) wraps all `/admin/*` routes and redirects to `/admin/login` if `GET /api/admin/me` returns 401
+
+### Protected API Routes (require session)
+`GET /api/invitations`, `GET /api/invitations/id/:id`, `POST /api/invitations`, `PATCH /api/invitations/:id`, `DELETE /api/invitations/:id`, `GET /api/invitations/:id/rsvp`, `GET /api/invitations/:id/guestbook`, `GET /api/stats`
+
+### Public API Routes (no auth required)
+`GET /api/invitations/:slug`, `POST /api/invitations/:slug/rsvp`, `POST /api/invitations/:slug/guestbook`, `GET /api/landing-settings`
 
 ## Migration
 - Run `npm run db:push` to sync schema → database

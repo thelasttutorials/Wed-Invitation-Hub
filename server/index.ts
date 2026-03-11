@@ -1,5 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
+import session from "express-session";
 import { registerRoutes } from "./routes";
+import { registerAuthRoutes, seedDefaultAdmin } from "./auth";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
@@ -21,6 +23,19 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: false }));
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "wedsaas-fallback-secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 hari
+    },
+  }),
+);
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -60,7 +75,9 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  registerAuthRoutes(app);
   await registerRoutes(httpServer, app);
+  await seedDefaultAdmin();
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

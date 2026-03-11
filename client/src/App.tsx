@@ -6,18 +6,39 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/landing";
 import InvitationPage from "@/pages/invitation";
+import AdminLogin from "@/pages/admin/login";
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminNewInvitation from "@/pages/admin/new-invitation";
 import AdminEditInvitation from "@/pages/admin/edit-invitation";
+import AdminGuard from "@/components/admin-guard";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Landing} />
       <Route path="/invitation/:slug" component={InvitationPage} />
-      <Route path="/admin" component={AdminDashboard} />
-      <Route path="/admin/new" component={AdminNewInvitation} />
-      <Route path="/admin/:id/edit" component={AdminEditInvitation} />
+      <Route path="/admin/login" component={AdminLogin} />
+      <Route path="/admin">
+        {() => (
+          <AdminGuard>
+            <AdminDashboard />
+          </AdminGuard>
+        )}
+      </Route>
+      <Route path="/admin/new">
+        {() => (
+          <AdminGuard>
+            <AdminNewInvitation />
+          </AdminGuard>
+        )}
+      </Route>
+      <Route path="/admin/:id/edit">
+        {() => (
+          <AdminGuard>
+            <AdminEditInvitation />
+          </AdminGuard>
+        )}
+      </Route>
       <Route component={NotFound} />
     </Switch>
   );
