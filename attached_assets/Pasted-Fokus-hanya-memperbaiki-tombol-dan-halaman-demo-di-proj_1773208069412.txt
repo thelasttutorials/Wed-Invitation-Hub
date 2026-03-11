@@ -1,0 +1,73 @@
+Fokus hanya memperbaiki tombol dan halaman demo di project ini. Jangan refactor fitur lain dulu.
+
+Konteks:
+- Landing page sudah menampilkan tombol "Lihat Demo" / "Lihat Contoh".
+- Saat ini demo tidak bisa dibuka.
+- Project sudah punya route public landing, invite, dan admin.
+- Tugas utama adalah memastikan semua tombol demo benar-benar mengarah ke halaman yang aktif.
+
+Tugas:
+1. Audit semua tombol/link berikut di landing page:
+   - hero CTA secondary: "Lihat Contoh" / "Lihat Demo"
+   - tombol "Lihat Demo" di setiap kartu tema
+   - CTA bawah: "Lihat Contoh Undangan"
+   - link lain yang seharusnya membuka preview undangan
+
+2. Temukan semua href / onClick / route target yang dipakai tombol demo.
+3. Jika target route belum ada atau salah, perbaiki.
+
+Implementasi yang diinginkan:
+4. Buat route demo publik yang benar-benar aktif. Gunakan salah satu pola ini:
+   - /demo
+   - /demo/:theme
+   - atau langsung arahkan ke /invite/demo-wedding
+5. Pastikan tombol "Lihat Demo" selalu membuka halaman demo yang valid, bukan blank page / not found.
+
+6. Buat 1 data demo undangan yang stabil untuk preview, misalnya:
+   - slug: demo-wedding
+   - bride_name: Rizky
+   - groom_name: Dinda
+   - wedding_date: 2026-02-14
+   - wedding_time: 10:00
+   - venue_name: The Grand Ballroom
+   - venue_address: Jakarta
+   - opening_quote: Dengan memohon rahmat dan ridho Allah SWT...
+   - love_story: data contoh
+   - invitation_status: active
+
+7. Jika database sudah aktif:
+   - seed data demo ke database
+   - gunakan data demo itu untuk route preview
+8. Jika database belum siap untuk demo:
+   - buat fallback demo data yang aman di frontend/backend
+   - tapi hanya untuk route demo, bukan untuk semua data utama
+
+9. Pastikan route demo mendukung query parameter:
+   - /invite/demo-wedding?to=Bapak+Rahmat
+   atau
+   - /demo?to=Bapak+Rahmat
+
+10. Halaman demo harus menampilkan minimal:
+   - cover pembuka
+   - nama tamu dari query parameter
+   - nama mempelai
+   - tanggal & waktu acara
+   - lokasi
+   - tombol Google Maps
+   - love story singkat
+   - galeri contoh
+   - RSVP form
+   - wishes form
+
+11. Perbaiki semua tombol demo di landing page agar mengarah ke route demo aktif.
+12. Jangan ubah desain besar.
+13. Jangan sentuh auth/admin kecuali diperlukan untuk memperbaiki link demo.
+14. Pastikan setelah selesai:
+   - tidak ada tombol "Lihat Demo" yang mati
+   - tidak ada broken route
+   - halaman demo bisa dibuka langsung dari landing page
+
+Output setelah selesai:
+- sebutkan file yang diubah
+- sebutkan route demo final yang dipakai
+- pastikan semua tombol demo sekarang menuju route itu
