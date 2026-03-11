@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
 import { useRef, useState } from "react";
+import { useSEO } from "@/lib/seo";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import UserGuard from "@/components/user-guard";
 import { UserSidebar } from "@/components/user-sidebar";
@@ -888,7 +889,23 @@ interface DashboardProps {
   section?: DashboardSection;
 }
 
+const SECTION_TITLES: Record<string, string> = {
+  home: "Dashboard",
+  invitations: "Undangan Saya",
+  new: "Buat Undangan Baru",
+  rsvp: "RSVP Tamu",
+  wishes: "Ucapan & Doa",
+  settings: "Pengaturan Akun",
+  billing: "Paket & Tagihan",
+  orders: "Pesanan",
+};
+
 export default function Dashboard({ section = "home" }: DashboardProps) {
+  useSEO({
+    title: `${SECTION_TITLES[section] ?? "Dashboard"} — WedSaas`,
+    noIndex: true,
+  });
+
   return (
     <UserGuard>
       <SidebarProvider>

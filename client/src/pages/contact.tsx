@@ -1,3 +1,4 @@
+import { useSEO } from "@/lib/seo";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertContactMessageSchema, type InsertContactMessage } from "@shared/schema";
@@ -12,6 +13,11 @@ import { Heart, Send, Mail, MapPin, Phone } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 
 export default function ContactPage() {
+  useSEO({
+    title: "Hubungi Kami — WedSaas",
+    description: "Ada pertanyaan atau butuh bantuan? Hubungi tim WedSaas. Kami siap membantu Anda membuat undangan pernikahan digital yang sempurna.",
+  });
+
   const { toast } = useToast();
   const form = useForm<InsertContactMessage>({
     resolver: zodResolver(insertContactMessageSchema),

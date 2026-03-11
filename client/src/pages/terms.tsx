@@ -1,8 +1,15 @@
+import { useSEO } from "@/lib/seo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart } from "lucide-react";
 
 export default function TermsPage() {
+  useSEO({
+    title: "Syarat & Ketentuan — WedSaas",
+    description: "Baca syarat dan ketentuan penggunaan platform WedSaas. Pelajari hak dan kewajiban pengguna layanan undangan pernikahan digital kami.",
+    noIndex: true,
+  });
+
   return (
     <div className="min-h-screen bg-slate-50 py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">

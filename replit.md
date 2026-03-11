@@ -197,6 +197,27 @@ A full-stack SaaS platform for digital wedding invitations in Indonesian. Built 
 - Admin: `adminId` in session; Customer: `userId` in session — coexist via TS module augmentation
 - `SESSION_SECRET` env var required in production
 
+## SEO & Performance
+
+### Google Fonts
+- Only 2 font families loaded: `Plus Jakarta Sans` (body) + `Playfair Display` (headings/wedding)
+- Removed 23 unused font families from `client/index.html` — major page load improvement
+
+### Per-page SEO
+- `client/src/lib/seo.ts`: `useSEO({ title, description, noIndex? })` hook — updates document.title + meta tags via useEffect
+- Applied to: landing, pricing, contact, privacy, terms, auth-login, dashboard, invite (dynamic), demo (dynamic)
+- Private pages (dashboard, auth, privacy, terms) use `noIndex: true`
+- Invite page: title/description dynamically reflects groomName & brideName from invitation data
+
+### SEO Endpoints (Express)
+- `GET /robots.txt` — disallows /admin, /dashboard, /api; references sitemap
+- `GET /sitemap.xml` — includes /, /pricing, /contact, /privacy, /terms
+
+### Lazy Loading
+- `client/src/App.tsx`: All non-critical pages use `React.lazy()` + `Suspense`
+- Critical path kept eager: Landing, AuthLogin, AdminLogin, AdminGuard
+- Heavy pages lazy-loaded: InvitePage, DemoPage, InvitationPage, Dashboard, TemplateBuilder, GuestManagementPage, all admin pages
+
 ## Development
 - Run: `npm run dev` (workflow: "Start application")
 - DB sync: `npm run db:push`

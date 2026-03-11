@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSEO } from "@/lib/seo";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -38,6 +39,11 @@ const HERO_DEFAULTS = {
 };
 
 export default function Landing() {
+  useSEO({
+    title: "WedSaas — Undangan Pernikahan Digital yang Elegan & Modern",
+    description: "Buat undangan pernikahan digital yang memukau dalam hitungan menit. Pilih tema elegan, kelola RSVP online, dan bagikan ke semua tamu. Mulai gratis!",
+  });
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 

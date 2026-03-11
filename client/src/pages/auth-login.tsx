@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
+import { useSEO } from "@/lib/seo";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,6 +35,12 @@ type EmailForm = z.infer<typeof emailSchema>;
 type CodeForm = z.infer<typeof codeSchema>;
 
 export default function AuthLogin() {
+  useSEO({
+    title: "Masuk — WedSaas",
+    description: "Masuk ke akun WedSaas Anda untuk membuat dan mengelola undangan pernikahan digital.",
+    noIndex: true,
+  });
+
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [step, setStep] = useState<"email" | "code">("email");

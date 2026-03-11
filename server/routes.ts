@@ -533,5 +533,44 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
+  // ── SEO: robots.txt ─────────────────────────────────────────────────────────
+  app.get("/robots.txt", (_req, res) => {
+    res.type("text/plain");
+    res.send(
+      [
+        "User-agent: *",
+        "Allow: /",
+        "Disallow: /admin",
+        "Disallow: /dashboard",
+        "Disallow: /api",
+        "",
+        "Sitemap: https://wedsaas.id/sitemap.xml",
+      ].join("\n"),
+    );
+  });
+
+  // ── SEO: sitemap.xml ─────────────────────────────────────────────────────────
+  app.get("/sitemap.xml", (_req, res) => {
+    const BASE = "https://wedsaas.id";
+    const today = new Date().toISOString().split("T")[0];
+    const pages = [
+      { path: "/",        priority: "1.0", changefreq: "weekly"  },
+      { path: "/pricing", priority: "0.9", changefreq: "monthly" },
+      { path: "/contact", priority: "0.7", changefreq: "monthly" },
+      { path: "/privacy", priority: "0.5", changefreq: "yearly"  },
+      { path: "/terms",   priority: "0.5", changefreq: "yearly"  },
+    ];
+    const urls = pages
+      .map(
+        (p) =>
+          `  <url>\n    <loc>${BASE}${p.path}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${p.changefreq}</changefreq>\n    <priority>${p.priority}</priority>\n  </url>`,
+      )
+      .join("\n");
+    res.type("application/xml");
+    res.send(
+      `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`,
+    );
+  });
+
   return httpServer;
 }

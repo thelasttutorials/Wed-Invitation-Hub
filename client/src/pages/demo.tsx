@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "wouter";
+import { useSEO } from "@/lib/seo";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -107,6 +108,15 @@ export default function DemoPage() {
 
   const { data: template, isLoading } = useQuery<Template>({
     queryKey: ["/api/templates", slug],
+  });
+
+  useSEO({
+    title: template
+      ? `Demo Tema ${template.name} — WedSaas`
+      : "Demo Tema Undangan Pernikahan — WedSaas",
+    description: template
+      ? `Lihat demo tema undangan pernikahan digital ${template.name}. Elegan, modern, dan mudah disesuaikan.`
+      : "Lihat demo tema undangan pernikahan digital WedSaas yang elegan dan modern.",
   });
 
   const countdown = useCountdown(SAMPLE_INVITATION.receptionDate);

@@ -1,5 +1,6 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
+import { useSEO } from "@/lib/seo";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,11 @@ function planFeatures(plan: PricingPlan): string[] {
 }
 
 export default function PricingPage() {
+  useSEO({
+    title: "Harga & Paket — WedSaas",
+    description: "Pilih paket undangan pernikahan digital yang sesuai kebutuhanmu. Mulai gratis, upgrade kapan saja. Paket Premium dan Pro tersedia.",
+  });
+
   const [, navigate] = useLocation();
   const { toast } = useToast();
 

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useSearch } from "wouter";
+import { useSEO } from "@/lib/seo";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -100,6 +101,16 @@ export default function InvitePage() {
   });
 
   const guestName = data?.guest?.name || toParam || "Tamu Undangan";
+
+  useSEO({
+    title: data?.invitation
+      ? `Undangan Pernikahan ${data.invitation.groomName} & ${data.invitation.brideName}`
+      : "Undangan Pernikahan Digital — WedSaas",
+    description: data?.invitation
+      ? `Anda diundang ke pernikahan ${data.invitation.groomName} & ${data.invitation.brideName}. Buka dan konfirmasi kehadiran Anda.`
+      : "Undangan pernikahan digital yang elegan.",
+    noIndex: true,
+  });
 
   const [rsvpForm, setRsvpForm] = useState({
     guest_name: "",
