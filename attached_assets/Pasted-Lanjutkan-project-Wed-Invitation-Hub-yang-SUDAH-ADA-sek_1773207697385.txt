@@ -1,0 +1,220 @@
+Lanjutkan project Wed-Invitation-Hub yang SUDAH ADA sekarang. Jangan bangun ulang dari nol.
+
+KONTEKS PROJECT SAAT INI
+- Project sudah punya folder client, server, shared.
+- Website live saat ini masih tampil sebagai landing page “WedSaas — Undangan Pernikahan Digital yang Elegan & Modern”.
+- server/routes.ts sudah berisi banyak route penting seperti invitations CRUD, public RSVP/wishes, dan landing API.
+- Jadi tugas utama sekarang adalah MENYELESAIKAN dan MENYINKRONKAN semua bagian yang belum aktif, bukan membuat project baru.
+
+TUJUAN
+Perbaiki project ini sampai benar-benar aktif end-to-end sebagai platform undangan digital pernikahan, dengan:
+- admin login aktif
+- dashboard admin aktif
+- landing page bisa diatur dari admin
+- invitations CRUD aktif
+- halaman publik /invite/:slug aktif
+- RSVP tersimpan
+- wishes tersimpan
+- semua data persist ke database
+- tidak ada tombol mati / route rusak / UI dummy
+
+ATURAN PENTING
+- Jangan rewrite total project.
+- Jangan hapus struktur yang sudah ada jika masih bisa dipakai.
+- Jangan menambah fitur di luar scope ini.
+- Fokus perbaiki apa yang sudah ada agar benar-benar jalan.
+- Jika ada kode yang setengah jadi, lanjutkan dan sinkronkan.
+- Semua form dan tombol harus benar-benar tersambung ke backend.
+- Semua data harus tersimpan permanen di database, bukan memory sementara.
+
+LANGKAH KERJA YANG WAJIB DIKERJAKAN
+
+1. AUDIT DAN SINKRONKAN BACKEND
+Periksa dan rapikan hubungan antar file berikut:
+- server/index.ts
+- server/routes.ts
+- server/storage.ts
+- server/auth.ts
+- shared/schema.ts
+
+Pastikan:
+- semua import valid
+- semua fungsi yang dipanggil benar-benar ada
+- tidak ada mismatch nama function / type / schema
+- server bisa start tanpa crash
+
+2. PERBAIKI DATABASE DAN STORAGE
+Fokuskan storage utama ke PostgreSQL + Drizzle.
+Jangan gunakan memory storage sebagai sumber data utama.
+
+Pastikan tabel minimal ini benar-benar ada dan dipakai:
+- admins
+- landing_settings
+- invitations
+- love_stories
+- rsvps
+- wishes
+
+Tambahkan relasi yang masuk akal.
+Buat migration yang rapi.
+Kalau ada storage lama, pertahankan interface yang dipakai route agar perubahan aman.
+
+3. PERBAIKI ADMIN AUTH
+Aktifkan admin auth sampai benar-benar jalan:
+- GET /api/admin/me
+- POST /api/admin/login
+- POST /api/admin/logout
+- session auth
+- protected admin routes
+
+Buat seed admin default:
+- email: admin@wedhub.com
+- password: admin123
+
+Password harus hashed.
+
+4. BUAT / RAPIIKAN HALAMAN ADMIN
+Pastikan frontend punya route dan page nyata untuk:
+- /admin/login
+- /admin
+- /admin/landing
+- /admin/invitations
+- /admin/rsvp
+- /admin/wishes
+
+Jika belum ada, buat versi sederhana tapi stabil.
+Jangan blank page.
+
+Sidebar admin minimal:
+- Dashboard
+- Landing Page
+- Invitations
+- RSVP
+- Wishes
+
+5. HUBUNGKAN LANDING PAGE KE DATABASE
+Landing page publik jangan hardcoded penuh.
+Minimal hero section harus dibaca dari database/API.
+
+Field minimal landing_settings:
+- hero_title
+- hero_subtitle
+- cta_text
+- cta_link
+- short_description
+
+Buat / rapikan endpoint:
+- GET /api/landing
+- GET /api/admin/landing
+- PATCH /api/admin/landing
+
+Di admin, halaman “Landing Page” harus bisa edit field di atas.
+Setelah disimpan, landing page publik ikut berubah.
+
+6. AKTIFKAN CRUD INVITATIONS
+Pastikan admin bisa:
+- lihat daftar undangan
+- tambah undangan
+- edit undangan
+- hapus undangan
+
+Field minimal:
+- slug
+- bride_name
+- groom_name
+- bride_parents
+- groom_parents
+- wedding_date
+- wedding_time
+- venue_name
+- venue_address
+- google_maps_link
+- opening_quote
+- love_story
+- invitation_status
+
+Pastikan slug unik.
+Gunakan route yang sudah ada jika memungkinkan, jangan duplicating route.
+
+7. AKTIFKAN HALAMAN PUBLIK UNDANGAN
+Pastikan route frontend publik:
+- /invite/:slug
+
+Halaman ini harus ambil data dari backend/database berdasarkan slug dan menampilkan:
+- cover pembuka
+- nama tamu dari query ?to=
+- nama mempelai
+- tanggal dan waktu acara
+- lokasi
+- tombol Google Maps
+- opening quote
+- love story
+- RSVP form
+- wishes form
+- daftar ucapan
+
+Jika slug tidak ditemukan, tampilkan halaman not found yang rapi.
+
+8. AKTIFKAN RSVP END-TO-END
+Pastikan form RSVP di /invite/:slug benar-benar kirim ke endpoint yang aktif.
+Gunakan endpoint existing jika sudah ada.
+
+Field RSVP:
+- guest_name
+- attendance_status
+- guest_count
+- note
+
+Setelah submit:
+- data tersimpan ke database
+- admin bisa melihatnya di halaman /admin/rsvp
+
+9. AKTIFKAN WISHES END-TO-END
+Pastikan form wishes/ucapan di /invite/:slug benar-benar aktif.
+
+Field:
+- guest_name
+- message
+
+Setelah submit:
+- data tersimpan ke database
+- tampil di halaman undangan
+- admin bisa melihatnya di halaman /admin/wishes
+
+10. RAPIIKAN FRONTEND ROUTING
+Pastikan client routing benar-benar memuat:
+- landing page
+- admin login
+- admin dashboard
+- invitations admin
+- public invitation page
+
+Perbaiki blank page, broken route, broken import, dan component yang belum terhubung.
+
+11. FINAL CLEANUP
+Sebelum selesai, pastikan:
+- project build/run tanpa error besar
+- tidak ada TypeScript error penting
+- tidak ada broken import
+- tidak ada tombol mati
+- tidak ada mock data yang masih jadi sumber utama
+- semua data persist di database
+- semua halaman utama bisa dibuka
+
+HASIL AKHIR YANG SAYA MAU
+- website tetap punya landing page marketing
+- admin login aktif
+- admin dashboard aktif
+- landing page bisa diedit dari admin
+- invitations CRUD aktif
+- /invite/:slug aktif
+- RSVP aktif
+- wishes aktif
+- semua data tersimpan permanen
+- project stabil dan siap dipakai
+
+OUTPUT SETELAH SELESAI
+Berikan ringkasan singkat:
+1. file apa saja yang diubah
+2. fitur apa saja yang sekarang sudah aktif
+3. apa yang masih belum sempurna jika ada
