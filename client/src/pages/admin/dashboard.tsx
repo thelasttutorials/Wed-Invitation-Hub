@@ -1,13 +1,11 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { apiRequest } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/ui/card";
 import {
-  Heart, Plus, Edit2, Trash2, Eye, LayoutDashboard,
-  FileText, Users, MessageSquare, ExternalLink, Copy
+  FileText, Users, MessageSquare, Plus,
+  Layers, ArrowRight,
 } from "lucide-react";
 import type { Invitation } from "@shared/schema";
 
@@ -18,180 +16,150 @@ interface Stats {
   recentInvitations: Invitation[];
 }
 
-function StatCard({ icon: Icon, label, value, color }: { icon: any; label: string; value: number; color: string }) {
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  href,
+  color,
+}: {
+  icon: any;
+  label: string;
+  value: number;
+  href: string;
+  color: string;
+}) {
   return (
-    <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-      <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${color}`}>
-        <Icon className="w-5 h-5 text-white" />
-      </div>
-      <p className="text-2xl font-bold text-gray-800" data-testid={`stat-${label.toLowerCase().replace(/\s/g, "-")}`}>{value}</p>
-      <p className="text-gray-500 text-sm">{label}</p>
-    </div>
+    <Link href={href}>
+      <Card className="hover:shadow-md transition-shadow cursor-pointer group">
+        <CardContent className="p-5">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${color}`}>
+            <Icon className="w-5 h-5 text-white" />
+          </div>
+          <p
+            className="text-2xl font-bold text-slate-800"
+            data-testid={`stat-${label.toLowerCase().replace(/\s/g, "-")}`}
+          >
+            {value}
+          </p>
+          <div className="flex items-center justify-between mt-0.5">
+            <p className="text-slate-500 text-sm">{label}</p>
+            <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-slate-500 transition-colors" />
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
 
 export default function AdminDashboard() {
-  const { toast } = useToast();
-  const qc = useQueryClient();
-
-  const { data: stats, isLoading: statsLoading } = useQuery<Stats>({
+  const { data: stats, isLoading } = useQuery<Stats>({
     queryKey: ["/api/stats"],
   });
 
-  const { data: invitations = [], isLoading } = useQuery<Invitation[]>({
-    queryKey: ["/api/invitations"],
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => apiRequest("DELETE", `/api/invitations/${id}`),
-    onSuccess: () => {
-      toast({ title: "Undangan dihapus" });
-      qc.invalidateQueries({ queryKey: ["/api/invitations"] });
-      qc.invalidateQueries({ queryKey: ["/api/stats"] });
-    },
-    onError: () => toast({ title: "Gagal menghapus", variant: "destructive" }),
-  });
-
-  const copyLink = (slug: string) => {
-    const url = `${window.location.origin}/invitation/${slug}`;
-    navigator.clipboard.writeText(url);
-    toast({ title: "Link disalin!" });
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Heart className="w-5 h-5 text-rose-500" />
-            <span className="font-bold text-gray-800">WedSaas</span>
-            <span className="text-gray-300 mx-1">|</span>
-            <span className="text-gray-500 text-sm flex items-center gap-1">
-              <LayoutDashboard className="w-4 h-4" /> Dashboard
-            </span>
-          </div>
-          <Link href="/">
-            <Button variant="ghost" size="sm" className="text-gray-500">
-              <ExternalLink className="w-4 h-4 mr-1" /> Landing Page
-            </Button>
-          </Link>
+    <div className="p-6 max-w-4xl mx-auto space-y-8">
+      {/* Welcome */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-slate-900">Dashboard</h1>
+          <p className="text-slate-500 text-sm mt-0.5">Selamat datang di panel admin WedSaas</p>
         </div>
-      </header>
+        <Link href="/admin/invitations">
+          <Button size="sm" data-testid="button-new-invitation">
+            <Plus className="w-4 h-4 mr-1.5" />
+            Buat Undangan
+          </Button>
+        </Link>
+      </div>
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-          {statsLoading ? (
+      {/* Stats */}
+      <div>
+        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+          Ringkasan
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {isLoading ? (
             Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-24 rounded-2xl" />
+              <Skeleton key={i} className="h-28 rounded-xl" />
             ))
           ) : (
             <>
-              <StatCard icon={FileText} label="Total Undangan" value={stats?.totalInvitations ?? 0} color="bg-blue-500" />
-              <StatCard icon={Users} label="Total RSVP" value={stats?.totalRsvp ?? 0} color="bg-rose-500" />
-              <StatCard icon={MessageSquare} label="Buku Tamu" value={stats?.totalGuestbook ?? 0} color="bg-emerald-500" />
+              <StatCard
+                icon={FileText}
+                label="Total Undangan"
+                value={stats?.totalInvitations ?? 0}
+                href="/admin/invitations"
+                color="bg-blue-500"
+              />
+              <StatCard
+                icon={Users}
+                label="Total RSVP"
+                value={stats?.totalRsvp ?? 0}
+                href="/admin/rsvp"
+                color="bg-rose-500"
+              />
+              <StatCard
+                icon={MessageSquare}
+                label="Ucapan Masuk"
+                value={stats?.totalGuestbook ?? 0}
+                href="/admin/wishes"
+                color="bg-emerald-500"
+              />
             </>
           )}
         </div>
+      </div>
 
-        {/* Invitations list */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-            <h2 className="font-semibold text-gray-800">Daftar Undangan</h2>
-            <Link href="/admin/new">
-              <Button className="bg-rose-500 hover:bg-rose-600 text-white rounded-xl" size="sm" data-testid="button-new-invitation">
-                <Plus className="w-4 h-4 mr-1" /> Buat Undangan
-              </Button>
-            </Link>
-          </div>
-
-          {isLoading ? (
-            <div className="p-6 space-y-3">
-              {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-16 rounded-xl" />)}
-            </div>
-          ) : invitations.length === 0 ? (
-            <div className="py-16 text-center">
-              <Heart className="w-10 h-10 text-gray-200 mx-auto mb-3" />
-              <p className="text-gray-500 text-sm">Belum ada undangan. Buat yang pertama!</p>
-              <Link href="/admin/new">
-                <Button className="mt-4 bg-rose-500 hover:bg-rose-600 text-white rounded-xl" data-testid="button-create-first">
-                  <Plus className="w-4 h-4 mr-1" /> Buat Undangan
-                </Button>
-              </Link>
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-50">
-              {invitations.map(inv => (
-                <div key={inv.id} className="px-6 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors" data-testid={`invitation-row-${inv.id}`}>
-                  <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center shrink-0">
-                    <Heart className="w-5 h-5 text-rose-400" />
+      {/* Quick links */}
+      <div>
+        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+          Akses Cepat
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {[
+            {
+              href: "/admin/invitations",
+              icon: FileText,
+              title: "Kelola Undangan",
+              desc: "Buat, edit, dan bagikan link undangan",
+            },
+            {
+              href: "/admin/landing",
+              icon: Layers,
+              title: "Landing Page",
+              desc: "Lihat pengaturan halaman utama",
+            },
+            {
+              href: "/admin/rsvp",
+              icon: Users,
+              title: "Data RSVP",
+              desc: "Pantau konfirmasi kehadiran tamu",
+            },
+            {
+              href: "/admin/wishes",
+              icon: MessageSquare,
+              title: "Ucapan & Doa",
+              desc: "Baca ucapan dari para tamu undangan",
+            },
+          ].map((item) => (
+            <Link key={item.href} href={item.href}>
+              <Card className="hover:shadow-md transition-shadow cursor-pointer group">
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 group-hover:bg-blue-50 transition-colors">
+                    <item.icon className="w-4 h-4 text-slate-500 group-hover:text-blue-600 transition-colors" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-medium text-gray-800 truncate">
-                        {inv.groomName} &amp; {inv.brideName}
-                      </p>
-                      <Badge variant={inv.isPublished ? "default" : "secondary"} className={inv.isPublished ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-100" : ""}>
-                        {inv.isPublished ? "Aktif" : "Draft"}
-                      </Badge>
-                    </div>
-                    <p className="text-gray-400 text-xs mt-0.5 truncate">
-                      /invitation/{inv.slug}
-                      {inv.receptionDate && ` · ${new Date(inv.receptionDate).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}`}
-                    </p>
+                    <p className="text-sm font-medium text-slate-800">{item.title}</p>
+                    <p className="text-xs text-slate-400 truncate">{item.desc}</p>
                   </div>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      asChild
-                      className="text-gray-400 hover:text-blue-500"
-                      data-testid={`button-view-${inv.id}`}
-                    >
-                      <a href={`/invitation/${inv.slug}`} target="_blank" rel="noopener noreferrer">
-                        <Eye className="w-4 h-4" />
-                      </a>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => copyLink(inv.slug)}
-                      className="text-gray-400 hover:text-emerald-500"
-                      data-testid={`button-copy-${inv.id}`}
-                    >
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                    <Link href={`/admin/${inv.id}/edit`}>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-gray-400 hover:text-gray-700"
-                        data-testid={`button-edit-${inv.id}`}
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </Button>
-                    </Link>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        if (confirm(`Hapus undangan ${inv.groomName} & ${inv.brideName}?`)) {
-                          deleteMutation.mutate(inv.id);
-                        }
-                      }}
-                      className="text-gray-400 hover:text-rose-500"
-                      data-testid={`button-delete-${inv.id}`}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+                  <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-slate-500 transition-colors shrink-0" />
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
         </div>
-      </main>
+      </div>
     </div>
   );
 }
