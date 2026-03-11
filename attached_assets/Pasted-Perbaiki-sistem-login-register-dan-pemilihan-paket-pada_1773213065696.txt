@@ -1,0 +1,153 @@
+Perbaiki sistem login, register, dan pemilihan paket pada project Wed Invitation Hub agar alurnya jelas, konsisten, dan semua tombol bekerja.
+
+Jangan rewrite project dari nol.
+Jangan merusak fitur lain seperti template builder, invitations, RSVP, pembayaran transfer, dan admin dashboard.
+
+==================================================
+TUJUAN
+==================================================
+
+Flow yang diinginkan:
+
+1. User membuka halaman pricing
+2. User memilih paket:
+   - Mulai Gratis
+   - Premium
+   - Pro
+
+3. Jika user belum login:
+   - diarahkan ke halaman login atau register
+
+4. Jika user sudah punya akun:
+   - login terlebih dahulu
+
+5. Setelah login / register berhasil:
+   - sistem kembali ke paket yang dipilih
+
+6. Jika pilih Mulai Gratis:
+   - paket gratis langsung aktif
+   - user masuk ke dashboard
+
+7. Jika pilih Premium atau Pro:
+   - sistem membuat order
+   - user diarahkan ke halaman billing / pembayaran
+
+==================================================
+PERBAIKI HALAMAN AUTH
+==================================================
+
+Rapikan halaman berikut:
+
+/login
+/register
+
+Pastikan:
+
+- desain login dan register konsisten
+- layout rapi dan modern
+- input field jelas
+- tombol submit bekerja
+- pesan error jelas
+- loading state ada
+
+Tambahkan link:
+
+Login page:
+"Belum punya akun? Daftar"
+
+Register page:
+"Sudah punya akun? Login"
+
+==================================================
+PERBAIKI FLOW PAKET
+==================================================
+
+Di halaman pricing:
+
+Tombol berikut harus bekerja:
+
+Mulai Gratis  
+Pilih Premium  
+Pilih Pro  
+
+Flow:
+
+Jika user belum login:
+redirect ke login/register
+
+Jika user sudah login:
+
+Mulai Gratis:
+- aktifkan paket gratis
+- redirect ke dashboard
+
+Premium / Pro:
+- buat order
+- redirect ke halaman billing
+
+==================================================
+PERBAIKI REDIRECT SETELAH LOGIN
+==================================================
+
+Jika user login atau register setelah memilih paket:
+
+- jangan kembali ke halaman acak
+- lanjutkan ke paket yang dipilih sebelumnya
+
+Contoh:
+
+klik Premium  
+login  
+langsung ke billing Premium
+
+klik Gratis  
+register  
+langsung aktif paket gratis
+
+==================================================
+PERBAIKI ROUTE
+==================================================
+
+Pastikan route berikut berjalan:
+
+/login
+/register
+/pricing
+/dashboard
+/dashboard/billing
+
+==================================================
+VALIDASI
+==================================================
+
+Pastikan:
+
+- user tidak bisa memiliki lebih dari satu paket aktif
+- paket gratis tidak bentrok dengan premium/pro
+- order hanya dibuat untuk paket berbayar
+- hanya user login yang bisa membuat order
+
+==================================================
+HASIL AKHIR
+==================================================
+
+User dapat:
+
+- memilih paket gratis
+- memilih premium atau pro
+- login jika sudah punya akun
+- daftar jika belum punya akun
+- setelah auth kembali ke flow paket
+- masuk dashboard jika paket gratis
+- masuk billing jika paket berbayar
+
+Tidak boleh ada:
+- tombol mati
+- redirect salah
+- halaman kosong
+- route error
+
+
+Kerjakan hanya scope ini: auth flow dan pricing flow.
+Jangan refactor fitur lain yang tidak berkaitan.
+Pastikan project tetap bisa dijalankan setelah perubahan.

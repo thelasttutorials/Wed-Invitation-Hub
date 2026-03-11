@@ -3,10 +3,11 @@ import { useRoute } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Printer, Download, CheckCircle2, ChevronLeft } from "lucide-react";
+import { Printer, CheckCircle2, ChevronLeft } from "lucide-react";
 import { Link } from "wouter";
+import UserGuard from "@/components/user-guard";
 
-export default function InvoicePage() {
+function InvoiceContent() {
   const [, params] = useRoute("/dashboard/invoice/:id");
   const orderId = params?.id;
 
@@ -151,5 +152,13 @@ export default function InvoicePage() {
         }
       `}} />
     </div>
+  );
+}
+
+export default function InvoicePage() {
+  return (
+    <UserGuard>
+      <InvoiceContent />
+    </UserGuard>
   );
 }

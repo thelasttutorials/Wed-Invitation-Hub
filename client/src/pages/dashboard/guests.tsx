@@ -44,9 +44,9 @@ export default function GuestManagementPage() {
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch invitations to get the active one
+  // Fetch user's invitations to get the active one
   const { data: invitations, isLoading: invLoading } = useQuery<any[]>({
-    queryKey: ["/api/invitations"],
+    queryKey: ["/api/my-invitations"],
   });
 
   // For this simplified version, we take the first non-demo invitation

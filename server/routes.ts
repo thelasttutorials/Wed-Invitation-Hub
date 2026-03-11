@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { z } from "zod";
 import { storage } from "./storage";
 import { requireAdmin } from "./auth";
+import { requireUser } from "./userAuth";
 import {
   insertInvitationSchema,
   updateInvitationSchema,
@@ -52,6 +53,17 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   app.get("/api/invitations", requireAdmin, async (_req, res) => {
     try {
       const invitations = await storage.getAllInvitations();
+      res.json(invitations);
+    } catch {
+      res.status(500).json({ error: "Gagal memuat data undangan." });
+    }
+  });
+
+  // User-specific invitation list — for customer dashboard
+  app.get("/api/my-invitations", requireUser, async (req, res) => {
+    try {
+      const userId = req.session.userId!;
+      const invitations = await storage.getInvitationsByUser(userId);
       res.json(invitations);
     } catch {
       res.status(500).json({ error: "Gagal memuat data undangan." });
